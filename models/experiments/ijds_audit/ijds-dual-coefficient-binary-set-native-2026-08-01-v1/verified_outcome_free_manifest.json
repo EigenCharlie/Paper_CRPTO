@@ -1,0 +1,86 @@
+{
+  "schema_version": "2026-08-01.v1.1",
+  "status": "outcome_free_dual_coefficient_binary_set_native_certificates_complete",
+  "run_tag": "ijds-dual-coefficient-binary-set-native-2026-08-01-v1",
+  "official_artifacts": {
+    "menu_certificates": {
+      "path": "data/processed/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/dual_coefficient_binary_set_native_menu_certificates.parquet",
+      "bytes": 36431,
+      "sha256": "77343ebb790db6894de84c83a05dc8bd24c8619daef0f50f3d351754b25d09a1"
+    }
+  },
+  "official_schemas": {
+    "menu_certificates": {
+      "rows": 208,
+      "columns": 44,
+      "dtypes": {
+        "window_id": "str",
+        "role": "str",
+        "period": "str",
+        "predecessor_rows": "int64",
+        "minimum_score": "float64",
+        "minimum_n_candidates": "int64",
+        "maximum_n_candidates": "int64",
+        "maximum_abs_budget_residual": "float64",
+        "minimum_total_allocated": "float64",
+        "maximum_total_allocated": "float64",
+        "minimum_score_portfolio_objective": "float64",
+        "n_candidates": "int64",
+        "n_empty": "int64",
+        "n_singleton_zero": "int64",
+        "n_singleton_one": "int64",
+        "n_two_label": "int64",
+        "n_risk_zero": "int64",
+        "n_risk_one": "int64",
+        "empty_set_score": "float64",
+        "budget_dollars": "float64",
+        "purpose_cap": "float64",
+        "lgd": "float64",
+        "contractual_rate_lower": "float64",
+        "contractual_rate_upper": "float64",
+        "condition_budget_equality": "bool",
+        "condition_no_cash": "bool",
+        "condition_disjoint_purpose_partition": "bool",
+        "condition_upper_only_purpose_caps": "bool",
+        "condition_nonnegative_contractual_rates": "bool",
+        "condition_positive_lgd": "bool",
+        "condition_singleton_zero_capacity_at_least_budget": "bool",
+        "condition_exact_binary_set_labels": "bool",
+        "capacity_lower_bound_dollars": "float64",
+        "capacity_certificate": "str",
+        "payoff_definition": "str",
+        "all_maximin_optimizers_singleton_zero": "bool",
+        "continuous_cap_frontier_collapses": "bool",
+        "cap_domain_lower": "float64",
+        "cap_domain_upper": "float64",
+        "new_optimization_executed": "bool",
+        "raw_archive_read": "bool",
+        "optimizer_unique_certified": "bool",
+        "policy_selected": "bool",
+        "validity_claim_established": "bool"
+      }
+    }
+  },
+  "source_artifacts": {
+    "solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+      "bytes": 99078,
+      "sha256": "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+    },
+    "taxonomy": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+      "bytes": 12686,
+      "sha256": "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+    },
+    "summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+      "bytes": 1429,
+      "sha256": "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+    },
+    "manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json",
+      "bytes": 234143,
+      "sha256": "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+    }
+  }
+}

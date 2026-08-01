@@ -1,0 +1,128 @@
+{
+  "schema_version": "2026-08-01.v1.1",
+  "status": "outcome_free_dual_coefficient_binary_set_native_certificates_complete",
+  "artifact_status": "pending_git_artifact_commit_and_annotated_tag",
+  "run_tag": "ijds-dual-coefficient-binary-set-native-2026-08-01-v1",
+  "protocol": {
+    "tag": "protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1",
+    "tag_object": "d4e1c400a5a0a2be3ad83661a3a796741b2f3363",
+    "commit": "8d0f912023ce61765e15d2370680eb09cfb3a6af"
+  },
+  "predecessor": {
+    "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+    "artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a",
+    "artifact_commit": "3ef847491e1ecdf55315774ddb295a634e441a54"
+  },
+  "official_artifacts": {
+    "menu_certificates": {
+      "path": "data/processed/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/dual_coefficient_binary_set_native_menu_certificates.parquet",
+      "bytes": 36431,
+      "sha256": "77343ebb790db6894de84c83a05dc8bd24c8619daef0f50f3d351754b25d09a1"
+    }
+  },
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/outcome_free_summary.json",
+    "bytes": 997,
+    "sha256": "9a06f1a1a3e2f61a414e1ec9b7c4629d3a0156d49e6021b1dbeff91802eba872"
+  },
+  "execution_receipt": {
+    "path": "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/outcome_free_execution_receipt.json",
+    "bytes": 756,
+    "sha256": "83d4a5964c9c7cfbe103e92875fb3f20404b655deff25c17ba76fa034da9fb08"
+  },
+  "manifest": {
+    "path": "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/verified_outcome_free_manifest.json",
+    "bytes": 3601,
+    "sha256": "4a5aa1cfa2947659bb1cbf2e337685022b0644c1854c639be629af476f44a59c"
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_dual_coefficient_binary_set_native_2026-08-01_v1.yaml": {
+        "path": "configs/experiments/ijds_dual_coefficient_binary_set_native_2026-08-01_v1.yaml",
+        "bytes": 6905,
+        "sha256": "338ba1ceddff389d7dd39e849d6fd6e279b44b5007a62077e40ffa3f1c692021"
+      },
+      "docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md": {
+        "path": "docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md",
+        "bytes": 6660,
+        "sha256": "2fdd926f4c8acf0a97372237aa45875f5cd79c434afa66ff1882172bad170d16"
+      },
+      "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py": {
+        "path": "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py",
+        "bytes": 13996,
+        "sha256": "6df9a9c6a73baca7cf1be9a35ce6cd4bbabe1fe77635d3e77ca080c63cc92130"
+      },
+      "src/ijds_challengers/dual_coefficient_binary_set_native.py": {
+        "path": "src/ijds_challengers/dual_coefficient_binary_set_native.py",
+        "bytes": 18111,
+        "sha256": "eaa61d5548ec76ca1a94b617538f7b7045be5851e801f4b5f0c93fbaaeddcf02"
+      },
+      "tests/test_ijds_dual_coefficient_binary_set_native_v1.py": {
+        "path": "tests/test_ijds_dual_coefficient_binary_set_native_v1.py",
+        "bytes": 6579,
+        "sha256": "21920da14b87a6b8857f56a75d445c922dd842fe5d1dafa45b3f85ce15466d95"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10678,
+        "sha256": "95ba8e332038897c2bc3a1612fdfc5ce2ad52f79701d309e37226ff9ed7d5e09"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430177,
+        "sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+  },
+  "git": {
+    "commit": "8d0f912023ce61765e15d2370680eb09cfb3a6af",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "artifact_contract": {
+    "expected_tag": "artifacts/ijds-dual-coefficient-binary-set-native-2026-08-01-v1",
+    "dvc_required": false
+  },
+  "outcome_columns_passed": [],
+  "new_optimizations": 0,
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}

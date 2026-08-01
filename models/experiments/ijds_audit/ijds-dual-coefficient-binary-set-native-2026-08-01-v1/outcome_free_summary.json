@@ -1,0 +1,32 @@
+{
+  "schema_version": "2026-08-01.v1.1",
+  "status": "outcome_free_dual_coefficient_binary_set_native_certificates_complete",
+  "run_tag": "ijds-dual-coefficient-binary-set-native-2026-08-01-v1",
+  "protocol": {
+    "tag": "protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1",
+    "tag_object": "d4e1c400a5a0a2be3ad83661a3a796741b2f3363",
+    "commit": "8d0f912023ce61765e15d2370680eb09cfb3a6af"
+  },
+  "counts": {
+    "menu_certificates": 208,
+    "new_optimizations": 0
+  },
+  "certificate_sha256": "c4ba53c5b31e07ca563028bc845e1b58eeb1321c7d8289d2b3b6f2a1a562e931",
+  "all_conditions_certified": true,
+  "all_maximin_optimizers_singleton_zero": true,
+  "continuous_cap_frontier_collapses": true,
+  "cap_domain": [
+    0.0,
+    1.0
+  ],
+  "raw_archive_read": false,
+  "outcome_columns_passed": [],
+  "selection": {
+    "cap": null,
+    "window": null,
+    "policy": null
+  },
+  "validity_claim_established": false,
+  "protected_stages_run": [],
+  "protected_artifacts_written": []
+}
