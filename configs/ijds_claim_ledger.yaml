@@ -1,4 +1,4 @@
-schema_version: "2026-07-30.2"
+schema_version: "2026-07-31.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -260,6 +260,26 @@ claims:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
+  - id: decision.complete_hull_score_equivalence_census
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /score_equivalence_complete_hull/complete_census_verified
+    expected: true
+    lineages: [score_equivalence_complete_hull]
+    scope: complete_candidate_monthly_full_budget_affine_hulls_for_all_twenty_six_role_period_menus_with_all_five_thousand_two_hundred_v1d_embedding_and_six_thousand_two_hundred_forty_calibrator_pair_score_comparisons
+    forbidden_inference:
+      [nonequivalence_implies_fixed_cell_allocation_change,
+       nonequivalence_implies_different_optimal_face,
+       common_solver_output_implies_equal_optimal_face,
+       optimizer_uniqueness, selected_embedding, selected_calibrator,
+       calibrator_full_optimizer_equivalence_or_nonequivalence,
+       portfolio_performance, selected_or_funded_set_validity,
+       prospective_generalization]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
   - id: allocation.set_preserving_embedding_changes_allocations
     status: active
     kind: empirical
@@ -292,6 +312,31 @@ claims:
        causal_effect, prospective_validation, confirmation, preregistration,
        independent_replications, conformal_validity_repair,
        joint_attainability_across_overlapping_tracks]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: decision.set_native_robust_counterpart_complete_census
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /set_native_binary_robust_counterpart/complete_census_verified
+    expected: true
+    lineages:
+      [set_native_binary_robust_counterpart.outcome_free,
+       set_native_binary_robust_counterpart.evaluation,
+       set_preserving_embedding]
+    scope: complete_outcome_free_set_native_binary_nonempty_set_exact_worst_label_with_declared_empty_set_fail_closure_frontier_over_one_thousand_two_hundred_forty_eight_cells_and_complete_primary_oot_comparison_of_seven_hundred_twenty_robust_cells_against_all_twenty_five_v1d_embedding_cells_with_loanwise_shared_binary_completion
+    forbidden_inference:
+      [conformal_validity_repair, joint_coverage_of_product_sets,
+       probabilistic_robustness_guarantee, selected_set_validity,
+       funded_set_validity, preferred_robust_counterpart,
+       preferred_embedding, preferred_theta, preferred_gamma,
+       preferred_ruler, preferred_coordinate, preferred_window,
+       selected_policy, policy_winner, universal_favorable_direction,
+       universal_adverse_direction, causal_mechanism,
+       prospective_validation, independent_replications,
+       p_value, joint_attainability_across_grid_cells]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

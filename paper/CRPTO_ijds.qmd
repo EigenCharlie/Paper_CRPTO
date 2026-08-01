@@ -4,37 +4,36 @@ author: "Anonymous"
 date: "July 2026"
 abstract: |
   How should predictive uncertainty be audited when it becomes an optimization
-  coefficient? Conformal Risk-Aware Predict-Then-Optimize (CRPTO) combines
-  Platt-scaled default scores, 90%-target binary split-conformal sets, a
-  continuous upper-endpoint embedding, and monthly credit-allocation linear
-  programs. For binary absolute-residual scores, we derive the threshold as the
-  exact order statistic of two mirror calibration samples, distinguish its
-  calibration and target-support conditions, and show that fixed-target
-  coverage change equals class mass crossing decision boundaries, not threshold
-  distance. The binary set identifies boundary contact but not the subunit
-  endpoint used by the LP. Exact downstream score-order invariance is
-  positive-affine equivalence on feasible allocation differences; binary
-  prediction-set equality and loan ranking are insufficient. In the complete
-  set-equivalent grid, every
-  binary set remains fixed while 9,659/11,520 positive-gamma monthly allocation
-  contrasts change, and pooled outcome direction is not embedding-invariant.
-  Using 640,543 eligible 36-month loans, we freeze allocations before outcomes,
-  reconstruct endpoint availability, and retain 12,076 of 376,890 primary
-  candidates as unresolved. Under the declared six-month Charged Off rule, all
-  40 sharp all-candidate upper bounds across five learners and eight windows
-  are below 0.90 (maximum 0.8977). A closed four-map CatBoost sensitivity
-  retains an upper endpoint below 0.90 in only 18/32 overall cells; uniform
-  closed-family shortfall is not established. All five sharp
-  mean-score-minus-prevalence intervals are negative
-  (least-negative upper endpoint -0.0239). Shared-label bounds quantify
-  adjacent-threshold response. Two outcome-blind rulers expose comparator
-  dependence: all 216 endpoint envelopes over registered cap values spanning
-  $[0.05,0.12]$ include zero, without continuous-support extrema. Across 96
-  funded tracks, count-weighted coverage exceeds invested-dollar-weighted
-  coverage under every unresolved completion (minimum sharp lower gap 0.00854);
-  this is estimand dependence, not funded-set validity. No learner, embedding,
-  theta, gamma, ruler, coordinate, or policy is selected. CRPTO is an
-  executable identification audit, not a deployment certificate.
+  coefficient? CRPTO combines Platt-scaled default scores, 90%-target binary
+  split-conformal sets, a continuous upper-endpoint embedding, and monthly
+  credit-allocation LPs. For binary absolute-residual scores, we characterize
+  the threshold exactly, separate calibration- from target-support conditions,
+  and show that coverage changes by target mass crossing decision boundaries
+  rather than by threshold distance. Binary set equality identifies boundary
+  contact but not the subunit coefficient used by the LP. Exact downstream
+  score-order invariance is positive-affine equivalence on feasible allocation
+  differences. In the complete set-equivalent grid, 9,659/11,520 positive-gamma
+  monthly allocation contrasts change. Across 26 candidate hulls,
+  only 1,872 identity controls are equivalent; all 3,328 informative V1d and
+  6,240 calibrator-pair comparisons lack the certificate. Failure does not
+  prove fixed-cell allocation change, and calibrators alter payoff objectives.
+  A set-native risk coefficient---exact worst label for nonempty sets and
+  declared fail-closure for empty sets---completes 1,200 pooled comparisons:
+  payoff is lower in 1,065 and funded default higher in 1,196.
+  The point-probability objective and remaining constraints persist. This
+  establishes neither a validity
+  repair nor uniform endpoint dominance and carries no joint product-set or
+  probabilistic-robustness guarantee. We audit 640,543 eligible 36-month loans,
+  freeze allocations before outcomes, and retain 12,076/376,890 primary
+  candidates as unresolved. Under a six-month Charged Off endpoint, all 40
+  sharp coverage upper bounds across five separately Platt-scaled learners and
+  eight windows fall below 0.90, whereas a closed four-calibrator CatBoost
+  sensitivity falls below 0.90 in 18/32 cells. These retrospective censuses do
+  not by themselves refute the split-conformal theorem. Two outcome-blind
+  rulers and funded count-versus-dollar bounds expose comparator and estimand
+  dependence. No learner, calibrator, embedding, tuning coordinate, ruler, or
+  policy is selected. CRPTO is an executable identification audit, not a
+  deployment certificate.
 keywords:
   - conformal prediction
   - predict-then-optimize
@@ -155,7 +154,9 @@ expanding ambiguous sets without uniformly restoring nominal coverage. It does
 not, however, persist uniformly over a separately frozen four-map CatBoost
 calibrator family: only 18/32 overall upper endpoints remain below 0.90.
 That complete sensitivity selects no calibrator and does not establish that true
-coverage depends on the map. One score
+coverage depends on the map.
+
+One score
 stratum crosses the nominal $\alpha=0.10$ reference between W7 and W8 with an abrupt change
 in conformal geometry, but its W8 coverage bound remains below nominal and the
 crossing itself is not completion-invariant. Thus the crossing does not, by
@@ -166,6 +167,13 @@ continuous-support extrema. A separate residual-distribution census, a marginal
 mean-score--outcome-gap audit, a fixed policy-catalog transport audit, and three
 funded coverage estimands separate distributional, marginal, decision-catalog,
 and weighting diagnostics without treating any one as the mechanism for another.
+
+The complete-candidate-hull replay then identifies exactly which declared score
+comparisons possess the global feasible-order certificate. A separate
+set-native worst-label-plus-fail-closure challenger removes the continuous endpoint from the risk
+coefficient but is descriptively adverse for default in nearly every pooled
+comparison; set-native semantics alone therefore establish no transport or
+validity repair and no uniform endpoint dominance.
 
 The paper contributes an executable outcome-isolated audit: freeze the population,
 information set, predictive object, and allocations; join outcomes only afterward;
@@ -195,13 +203,12 @@ result. Its three scientific contributions are:
    both ruler constructions. A complete set-preserving sensitivity shows
    empirically that the unidentified continuous embedding can change allocations
    and descriptive endpoint direction without changing any binary set. A
-   monotone common completion audits transport of
+   complete-hull audit evaluates the global certificate on all 26 candidate
+   menus, and a set-native counterpart with declared empty-set fail-closure reports every
+   comparison with the continuous-embedding family without selecting a result.
+   A monotone common completion audits transport of
    the worst loss over the entire fixed policy catalog, while count-, invested-
    dollar-, and fixed-capital coverage expose selection-weight dependence.
-   Constructively, all 40 declared six-month
-   learner--window cells have finite-archive upper endpoints below nominal, the
-   post-inspection joint-block reference remains explicitly exploratory, and no
-   universal portfolio direction is identified.
 
 Several ingredients above---weighted-versus-unweighted mean identities,
 normal-cone optimality, and order-statistic bookkeeping---are standard
@@ -235,7 +242,11 @@ score. Model, payoff, menus, budget, concentration limits, and solver are held
 constant; score and cap cannot be separated because together they define the
 feasible set. This audit-chain perspective also follows work connecting credit
 modeling to reproducible empirical design and the AI--OR interface
-[@das2023creditgraph; @wiberg2025ai_or].
+[@das2023creditgraph; @wiberg2025ai_or]. Decision-value attribution makes a
+complementary distinction by assigning operational value---rather than forecast
+movement---to information and design inputs in a fixed prediction--optimization
+pipeline [@ziliaskopoulos2026dva]. CRPTO does not perform Shapley attribution;
+it instead identifies which claims survive the score--constraint handoff.
 
 Here *calibration* names five noninterchangeable mathematical objects:
 probability calibration of a score, consistency of a surrogate for downstream
@@ -351,6 +362,15 @@ for uncertain objectives and constraints [@im2025spor]. CRPTO neither retrains
 the predictor against regret nor learns a contextual uncertainty region carrying
 one of those downstream guarantees; it freezes the score--set--coefficient
 pipeline and audits which claims survive each handoff.
+
+Two recent preprints move robustness itself upstream: Smart
+Predict-then-Robustly-Optimize trains a surrogate against worst-case covariate
+perturbations, while learned predictive ambiguity sets make a contextual
+Wasserstein radius and scenario distribution decision-aware
+[@caunhye2026smartptro; @guo2026lpas]. Those are new predictive--prescriptive
+algorithms with their own data, perturbation, and validation contracts. They
+motivate a future redesign, not a retrospective robustness certificate for the
+fixed marginal binary sets audited here.
 
 Multi-variable conformal prediction instead makes prediction-set shape and
 calibration parameters the object of a scenario-optimization problem
@@ -1669,6 +1689,96 @@ prospective conclusion, or joint sharpness across overlapping tracks. Online
 Supplement Tables S9K--S9L report the outcome-free allocation census and both
 contrast families.
 
+## Complete-candidate-hull score-equivalence audit
+
+<!-- claim:decision.complete_hull_score_equivalence_census -->
+
+The feasible-difference theorem is a global statement about every allocation
+in a declared candidate menu, not an inference from the funded support returned
+by one solve. We therefore certify the full-budget affine hull separately for
+all 26 role--month menus before applying the theorem. All 26 pass, with
+6,011--28,106 candidate coordinates and affine-hull dimension $n-1$. Exact
+candidate identity, all 80 set-preservation rows, replayed score-vector hashes,
+and 26 positive plus 26 negative synthetic controls also pass. This phase reads
+no evaluation outcomes and runs no optimizer.
+
+In the V1d family, 1,872/5,200 complete-menu comparisons have the global
+positive-affine-modulo-hull certificate. They are exactly the 1,040
+$\theta=0$ identities and the 832 $\theta>0,\gamma=0$ identities. None of the
+3,328 comparisons with both $\theta>0$ and $\gamma>0$ passes. In the separate
+closed four-calibrator family, none of 6,240 unordered method-pair comparisons
+passes: 0/1,248 at $\gamma=0$ and 0/4,992 at positive $\gamma$. These failures
+are not numerical near-misses under the registered tolerance, but their logical
+meaning remains limited: global order equivalence is not certified. They do not
+prove that every fixed constrained cell changes allocation, that two optimal
+faces differ, or that one common solver output would establish equal faces or
+uniqueness. The calibrator maps also change the payoff coefficient, so this
+score-only census is not a full optimizer comparison. Online Supplement Table
+S9M reports the complete five-row partition.
+
+## Set-native binary robust counterpart with declared empty-set fail-closure
+
+<!-- claim:decision.set_native_robust_counterpart_complete_census -->
+
+The compatible continuous fibre in @eq-compatible-embedding-fibre has no
+informative rectangular worst-case loan ordering. A different, explicitly
+set-native risk coefficient is nevertheless available if the protected object
+is the binary label set itself. Define
+
+$$
+r_i(S_i)=
+\begin{cases}
+0,&S_i=\{0\},\\
+1,&S_i\in\{\varnothing,\{1\},\{0,1\}\}.
+\end{cases}
+$$ {#eq-set-native-worst-label}
+
+For nonempty sets this is the worst admissible binary label; the empty-set value
+one is a declared fail-closed decision convention, not a conformal theorem. The
+score is invariant to every continuous embedding of the same binary set. Only
+this risk coefficient is set-native: the plug-in payoff objective and other
+optimization components retain $p_i$. Moreover, marginal coverage does not
+endow the Cartesian product with a joint-coverage guarantee, and the temporal
+archive does not supply the exchangeability needed for a probabilistic robust
+guarantee.
+
+The outcome-free phase reports all 1,248 window--role-month--ruler--coordinate
+frontier cells, including all 720 primary cells, 126,686 positive funded rows,
+208 taxonomy rows, and 1,248 solver-audit rows. Every portfolio exhausts the
+budget. Same-order replay is exact; reversed-order differences are at most
+$1.75\times10^{-10}$ in the objective and $3.01\times10^{-14}$ in normalized
+exposure, and the independent-solver objective-rate discrepancy is at most
+$2.04\times10^{-16}$.
+
+After those allocations are frozen, Phase B compares each robust primary cell
+with all 25 V1d $\theta$--$\gamma$ cells at the same window, month, ruler, and
+coordinate, using one loan-wise binary completion on each funded union. The
+complete robust-minus-V1d pooled census is:
+
+| Metric | Positive | Negative | Contains zero | Total |
+|---|---:|---:|---:|---:|
+| Standardized payoff | 15 | 1,065 | 120 | 1,200 |
+| Funded default | 1,196 | 0 | 4 | 1,200 |
+| Funded binary miscoverage | 1,009 | 120 | 71 | 1,200 |
+
+: Complete pooled set-native-minus-V1d sharp direction partition. Positive
+payoff is favorable; positive default or miscoverage is adverse. Each cell is
+sharp separately under a shared completion, while endpoints across overlapping
+cells are not asserted jointly attainable. {#tbl-set-native-direction}
+
+Thus removing the arbitrary continuous endpoint establishes no transport or
+validity repair and no uniform endpoint dominance in this archive:
+the default contrast is adverse in 1,196/1,200 pooled cells and never favorable,
+while payoff is lower in 1,065.
+The observed coexistence is consistent with the coarse score assigning zero to
+the very large singleton-nondefault class and leaving the plug-in payoff
+objective and remaining constraints to determine choices within risk-score
+ties; it is not a causal mechanism. The grid selects no
+set-native policy, embedding, ruler, coordinate, window, or comparison, and it
+supplies no p-value, independent replication, selected-set validity, joint
+product-set guarantee, or prospective guarantee. Online Supplement Table S9N reports all 75
+$\theta$--$\gamma$ by metric partitions at monthly and pooled levels.
+
 ## Endpoint direction changes with ruler and coordinate
 
 <!-- claim:timing.endpoint_six_month_reconciles_active -->
@@ -1848,9 +1958,20 @@ default coverage and more ambiguous sets, without uniform restoration of nominal
 coverage. The closed CatBoost score-map sensitivity adds a separate boundary:
 the all-below state persists for Platt and beta but not uniformly for isotonic
 or the IVAP scalar, without selecting a map or identifying a transport cause.
+The two decision-interface replays close different open questions. The
+complete-hull census evaluates the score-equivalence theorem over all 26
+declared menus and both declared pair families rather than inferring it from
+sampled funded supports. The set-native challenger then shows that eliminating
+the continuous lifting establishes no validity repair or uniform endpoint
+dominance. Because only the risk coefficient is set-native, the
+probability-dependent payoff objective and other optimization components still
+determine choices within risk-score ties. Together the replays argue for
+calibrating the protected decision loss or uncertainty region under a valid
+context-level sampling contract, not for treating a marginal binary set as a
+ready-made robust LP coefficient.
 
 Expanding the funded-decision layer into its coefficient and allocation
-handoffs gives the six-row claim-boundary card below.
+handoffs gives the eight-row claim-boundary card below.
 
 | Observed or constructed object | What this paper may conclude | What does not pass automatically to the next layer |
 |---|---|---|
@@ -1859,6 +1980,8 @@ handoffs gives the six-row claim-boundary card below.
 | Residual distributions and thresholds | Exact finite binary geometry and a scoped joint-block reference diagnostic | Prospective temporal validity, continuity in threshold distance, or a universal phase |
 | Candidate binary sets | Sharp finite-archive candidate-coverage ranges | A latent-PD interval, a unique continuous endpoint, or selected-set validity |
 | Continuous embedding | A declared LP coefficient and a complete set-preserving sensitivity | Conformal calibration of its magnitude, a preferred embedding, or global decision invariance |
+| Complete candidate-hull certificate | The exact global score-order-equivalence state for every declared menu and score pair | Mandatory allocation change, equality or inequality of optimal faces, or a full calibrator-optimizer ranking |
+| Set-native worst-label counterpart | A complete solver-verified finite-grid challenger whose coefficient depends only on the binary set | Joint product-set coverage, probabilistic robustness, validity repair, or a preferred policy |
 | Frozen funded allocations | Sharp common-outcome bounds for declared funded contrasts and count-versus-dollar estimand differences | FCR control, exposure-weighted conformal validity, causal funding effects, or a policy winner |
 
 : Claim boundary across the score-to-decision handoffs. {#tbl-claim-boundary}
@@ -1971,14 +2094,19 @@ competing-risk redesign would be a new estimand requiring exact event and
 censoring times, overlap, conditional-censoring, and temporal contracts; it would
 not retrospectively complete the 12,076 unresolved binary endpoints.
 
-The portfolio audit starts from the absolute-residual continuous embedding and
-is not set-native. The complete set-preserving sensitivity shows that changing
+The primary portfolio audit starts from the absolute-residual continuous
+embedding and is not set-native. The complete set-preserving sensitivity shows that changing
 the unidentified subunit endpoint can change allocations and descriptive
 outcome directions while every binary set remains fixed; it does not recommend
-an embedding or turn candidate coverage into a funded-set guarantee. The exact
+an embedding or turn candidate coverage into a funded-set guarantee. The
+separate worst-label-plus-fail-closure challenger is set-native in its risk
+coefficient, but its marginal sets have
+no joint product-set guarantee and its complete adverse default census does not
+identify a causal mechanism or prospective policy effect. The exact
 feasible-difference theorem does not certify archive-wide non-affinity from the
-finite grid, require every cell to change, or turn a shared solver output into
-optimizer uniqueness. The
+finite grid alone; the complete-hull replay now certifies the declared global
+score comparisons but still does not require every fixed cell to change or turn
+a shared solver output into optimizer uniqueness. The
 learners, overlapping windows, and second origin
 share one chronology, so they are neither independent nor prospective
 replications. Temporal separation does not restore exchangeability, and candidate
@@ -2002,11 +2130,12 @@ is neither a pristine lockbox nor a preregistration.
 
 # Reproducibility {#sec-reproducibility}
 
-One registry binds 53 DVC pointers and seven exact scientific Git artifact
+One registry binds 53 DVC pointers and nine exact scientific Git artifact
 lineages: V8 common-panel response, V3I marginal gap, residual-distribution
 frontier, decision catalog, funded-estimand audit, the two-stage set-preserving-
-embedding chain, and the four-commit calibrator-sensitivity chain. Publication
-replay regenerates 41 tables and five figure families in both PNG and PDF;
+embedding chain, the four-commit calibrator-sensitivity chain, the complete-hull
+score-equivalence audit, and the two-phase set-native counterpart. Publication
+replay regenerates 43 tables and five figure families in both PNG and PDF;
 Online Supplement Appendix F specifies both replay modes.
 
 # Conclusion {#sec-conclusion}
@@ -2037,8 +2166,18 @@ validity repair. The exact decision interface is sharper: two scores preserve
 the weak order of every feasible allocation exactly when they are
 positive-affine modulo normals of the allocation affine hull. Binary
 prediction-set equality and loan ranking alone do not provide that invariance.
+The complete-hull replay verifies all 26 menus and confines the V1d certificate
+to the 1,872 exact identity controls; none of the 3,328 informative embedding
+comparisons or 6,240 calibrator-pair comparisons passes. Finally, the set-native
+challenger uses the exact worst label for nonempty sets and a declared
+fail-closed empty-set value. It is solver-verified, but the design establishes
+no joint product-set or probabilistic validity guarantee: its default contrast
+is adverse in 1,196/1,200 pooled cells and never favorable. Removing an arbitrary
+lifting is useful model hygiene, not a substitute for joint uncertainty
+calibration or decision-risk control.
 
-CRPTO therefore selects no learner or policy. Its executable contribution is to
+CRPTO therefore selects no learner, calibrator, embedding, ruler, coordinate,
+or policy. Its executable contribution is to
 keep unresolved outcomes, candidate coverage, binary geometry, allocation effects,
 sharp bounds, and comparator support distinct. A portfolio direction is meaningful
 only after its estimand, information boundary, and comparator are specified.

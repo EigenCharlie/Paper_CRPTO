@@ -34,6 +34,7 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "portfolio_structure_sensitivity/loader": "src/ijds_audit/structural_evidence.py",
     "robustness_sensitivities/loader": "src/ijds_audit/robustness_evidence.py",
     "scientific_frontiers/loader": "src/ijds_audit/frontier_evidence.py",
+    "decision_representation/loader": ("src/ijds_audit/decision_representation_evidence.py"),
     "claim_ledger_loader": "src/ijds_audit/claim_ledger.py",
     "source_registry_loader": "src/ijds_audit/publication_sources.py",
     "artifact_descriptor_helper": "src/utils/artifact_descriptor.py",

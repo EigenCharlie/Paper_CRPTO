@@ -77,7 +77,7 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-30.1"
+    assert evidence["schema_version"] == "2026-07-31.1"
     assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT

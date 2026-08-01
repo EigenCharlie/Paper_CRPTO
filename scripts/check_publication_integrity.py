@@ -30,6 +30,8 @@ EXPECTED_SCIENTIFIC_GIT_LINEAGES = (
     "lineages.diagnostics.funded_selection_estimands",
     "lineages.diagnostics.marginal_score_outcome_gap",
     "lineages.diagnostics.residual_transport_frontier",
+    "lineages.diagnostics.score_equivalence_complete_hull",
+    "lineages.diagnostics.set_native_binary_robust_counterpart",
     "lineages.diagnostics.set_preserving_embedding",
     "sensitivities.calibrator_family",
 )
@@ -56,7 +58,11 @@ def _scientific_git_lineages(registry: Mapping[str, Any]) -> tuple[str, ...]:
     for name, raw_identity in diagnostics.items():
         if not isinstance(raw_identity, Mapping):
             raise TypeError(f"Diagnostic lineage {name!r} is malformed.")
-        if "artifact_tag" in raw_identity or "source_artifact_tag" in raw_identity:
+        stages = (
+            raw_identity,
+            *[value for value in raw_identity.values() if isinstance(value, Mapping)],
+        )
+        if any("artifact_tag" in stage or "source_artifact_tag" in stage for stage in stages):
             discovered.add(f"lineages.diagnostics.{name}")
 
     for name, raw_identity in sensitivities.items():
@@ -630,6 +636,166 @@ def _check_calibrator_publication_payload() -> list[str]:
     return [message for failed, message in checks if failed]
 
 
+def _check_decision_representation_payload() -> list[str]:
+    """Fail closed on the two complete decision-representation censuses."""
+    evidence = _evidence()
+    score = evidence.get("score_equivalence_complete_hull", {})
+    set_native = evidence.get("set_native_binary_robust_counterpart", {})
+    if not isinstance(score, Mapping) or not isinstance(set_native, Mapping):
+        return ["decision-representation publication payload is missing"]
+
+    expected_score_rows = [
+        {
+            "family": "v1d_embedding",
+            "cell_group": "theta_zero_self",
+            "cells": 1040,
+            "equivalent_cells": 1040,
+            "without_complete_hull_certificate": 0,
+        },
+        {
+            "family": "v1d_embedding",
+            "cell_group": "theta_positive_gamma_zero",
+            "cells": 832,
+            "equivalent_cells": 832,
+            "without_complete_hull_certificate": 0,
+        },
+        {
+            "family": "v1d_embedding",
+            "cell_group": "theta_positive_gamma_positive",
+            "cells": 3328,
+            "equivalent_cells": 0,
+            "without_complete_hull_certificate": 3328,
+        },
+        {
+            "family": "closed_calibrator_q_gamma",
+            "cell_group": "gamma_zero",
+            "cells": 1248,
+            "equivalent_cells": 0,
+            "without_complete_hull_certificate": 1248,
+        },
+        {
+            "family": "closed_calibrator_q_gamma",
+            "cell_group": "gamma_positive",
+            "cells": 4992,
+            "equivalent_cells": 0,
+            "without_complete_hull_certificate": 4992,
+        },
+    ]
+    score_interpretation = score.get("interpretation", {})
+    score_checks = (
+        score.get("complete_census_verified") is True
+        and score.get("complete_hulls") == 26
+        and score.get("v1d_cells") == 5200
+        and score.get("v1d_identity_equivalent_cells") == 1872
+        and score.get("v1d_substantive_without_certificate") == 3328
+        and score.get("calibrator_cells_without_certificate") == 6240
+        and score.get("rows") == expected_score_rows
+    )
+    score_boundary = (
+        isinstance(score_interpretation, Mapping)
+        and score_interpretation.get("complete_candidate_menu_not_funded_support") is True
+        and score_interpretation.get("outcome_free") is True
+        and score_interpretation.get("optimization_run") is False
+        and score_interpretation.get("failed_certificate_means_fixed_cell_allocation_change")
+        is False
+        and score_interpretation.get("common_solver_output_means_equal_optimal_faces") is False
+        and score_interpretation.get("calibrator_common_objective_established") is False
+        and score_interpretation.get("selected_embedding_or_calibrator") is False
+        and score_interpretation.get("selected_or_funded_set_validity_claimed") is False
+    )
+
+    direction_rows = set_native.get("direction_rows")
+    if not isinstance(direction_rows, list) or any(
+        not isinstance(row, Mapping) for row in direction_rows
+    ):
+        return ["set-native direction rows are malformed"]
+    metrics = (
+        "standardized_payoff",
+        "funded_default",
+        "funded_binary_miscoverage",
+    )
+    monthly_totals = {
+        metric: [
+            sum(int(row[field]) for row in direction_rows if row.get("metric") == metric)
+            for field in ("monthly_positive", "monthly_negative", "monthly_includes_zero")
+        ]
+        for metric in metrics
+    }
+    pooled_totals = {
+        metric: [
+            sum(int(row[field]) for row in direction_rows if row.get("metric") == metric)
+            for field in ("pooled_positive", "pooled_negative", "pooled_includes_zero")
+        ]
+        for metric in metrics
+    }
+    expected_monthly_totals = {
+        "standardized_payoff": [5840, 9853, 2307],
+        "funded_default": [13992, 2462, 1546],
+        "funded_binary_miscoverage": [11947, 4355, 1698],
+    }
+    expected_pooled_totals = {
+        "standardized_payoff": [15, 1065, 120],
+        "funded_default": [1196, 0, 4],
+        "funded_binary_miscoverage": [1009, 120, 71],
+    }
+    set_interpretation = set_native.get("interpretation", {})
+    set_census = (
+        set_native.get("complete_census_verified") is True
+        and set_native.get("phase_a_cells") == 1248
+        and set_native.get("primary_cells") == 720
+        and set_native.get("taxonomy_rows") == 208
+        and set_native.get("solver_audit_rows") == 1248
+        and set_native.get("funded_rows") == 126686
+        and set_native.get("evaluated_robust_cells") == 720
+        and set_native.get("monthly_contrasts") == 18000
+        and set_native.get("pooled_contrasts") == 1200
+        and len(direction_rows) == 75
+        and all(row.get("monthly_cells") == 720 for row in direction_rows)
+        and all(row.get("pooled_cells") == 48 for row in direction_rows)
+        and monthly_totals == expected_monthly_totals
+        and pooled_totals == expected_pooled_totals
+        and set_native.get("monthly_sign_totals") == expected_monthly_totals
+        and set_native.get("pooled_sign_totals") == expected_pooled_totals
+        and set_native.get("sign_order") == ["positive", "negative", "includes_zero"]
+    )
+    set_boundary = (
+        isinstance(set_interpretation, Mapping)
+        and set_interpretation.get("set_native_score_uses_exact_binary_worst_label") is True
+        and set_interpretation.get("empty_set_is_declared_fail_closed_convention") is True
+        and set_interpretation.get("cartesian_product_joint_coverage_guarantee_established")
+        is False
+        and set_interpretation.get("probabilistic_robustness_claimed") is False
+        and set_interpretation.get("conformal_validity_repair_claimed") is False
+        and set_interpretation.get("selected_result_or_policy") is False
+        and set_interpretation.get("causal_or_prospective_claimed") is False
+        and set_interpretation.get("independent_replications_or_p_value_claimed") is False
+        and set_native.get("selected_result") is None
+        and set_native.get("policy_winner") is None
+    )
+
+    artifacts = evidence.get("paper_artifacts", {})
+    expected_artifacts = {
+        "table/score_equivalence_complete_hull": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS9M_score_equivalence_complete_hull.csv"
+        ),
+        "table/set_native_robust_minus_embedding": (
+            "reports/crpto/tables/crpto_ijds_v4_tableS9N_set_native_robust_minus_embedding.csv"
+        ),
+    }
+    artifact_binding = isinstance(artifacts, Mapping) and all(
+        isinstance(artifacts.get(name), Mapping) and artifacts[name].get("path") == path
+        for name, path in expected_artifacts.items()
+    )
+    checks = (
+        (not score_checks, "complete-hull score-equivalence census changed"),
+        (not score_boundary, "score-equivalence interpretation boundary changed"),
+        (not set_census, "set-native robust-minus-embedding census changed"),
+        (not set_boundary, "set-native interpretation boundary changed"),
+        (not artifact_binding, "decision-representation publication tables are misbound"),
+    )
+    return [message for failed, message in checks if failed]
+
+
 def _check_evidence_decision() -> list[str]:
     evidence = _evidence()
     boundary = evidence["claim_boundary"]
@@ -1037,8 +1203,8 @@ def _check_lineage_sync() -> list[str]:
     scientific_git_lineages = _scientific_git_lineages(registry)
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-30.2",
-            "active source registry schema is not 2026-07-30.2",
+            str(registry.get("schema_version")) != "2026-07-31.1",
+            "active source registry schema is not 2026-07-31.1",
         ),
         (
             len(registry.get("dvc_pointers", [])) != 53,
@@ -1046,7 +1212,7 @@ def _check_lineage_sync() -> list[str]:
         ),
         (
             scientific_git_lineages != EXPECTED_SCIENTIFIC_GIT_LINEAGES,
-            "active source registry does not contain exactly the seven declared "
+            "active source registry does not contain exactly the nine declared "
             "scientific Git-native lineages",
         ),
         (
@@ -1057,8 +1223,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 41,
-            "paper evidence manifest does not contain exactly 41 CSV tables",
+            != 43,
+            "paper evidence manifest does not contain exactly 43 CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,
@@ -1224,6 +1390,7 @@ def check_publication_integrity() -> list[str]:
         ("reviewer anonymity", _check_reviewer_anonymity),
         ("evidence decision contract", _check_evidence_decision),
         ("calibrator-family publication contract", _check_calibrator_publication_payload),
+        ("decision-representation publication contract", _check_decision_representation_payload),
         ("claim ledger", _check_claim_ledger),
         ("lineage synchronization", _check_lineage_sync),
         ("inventory-count synchronization", _check_inventory_count_sync),

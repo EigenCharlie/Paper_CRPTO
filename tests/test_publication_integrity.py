@@ -20,7 +20,7 @@ def test_scientific_git_lineage_count_is_derived_from_registry() -> None:
     registry = yaml.safe_load(SOURCE_REGISTRY_PATH.read_text(encoding="utf-8"))
 
     assert _scientific_git_lineages(registry) == EXPECTED_SCIENTIFIC_GIT_LINEAGES
-    assert len(EXPECTED_SCIENTIFIC_GIT_LINEAGES) == 7
+    assert len(EXPECTED_SCIENTIFIC_GIT_LINEAGES) == 9
 
     missing = deepcopy(registry)
     del missing["lineages"]["diagnostics"]["common_panel_threshold_response"]["artifact_tag"]

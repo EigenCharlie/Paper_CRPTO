@@ -19,26 +19,36 @@ decisión que selecciona un portafolio, y copiar el mismo umbral entre dos score
 no fija la misma oportunidad de inversión.
 
 **Método**: CRPTO audita un universo exhaustivo y status-independent de 640,543
-préstamos a 36 meses, cinco especificaciones predictivas, ocho ventanas
-residuales completas, dos reglas outcome-free de comparación, resultados no
-resueltos mediante bounds sharp, soporte exacto de caps y una sensibilidad
-completa de 36 escenarios de estructura de portafolio.
+préstamos a 36 meses, cinco especificaciones de learner cada una con su propio
+mapa Platt, ocho ventanas residuales completas, una sensibilidad separada de
+cuatro mapas sobre el CatBoost primario, dos rulers outcome-free, resultados no
+resueltos mediante bounds sharp, soporte exacto de caps y grids completas de
+embeddings continuos y de un robust counterpart nativo al set binario.
 
-**Hallazgo**: la cobertura candidata no transporta en las 40 celdas declaradas;
-la geometría residual binaria cambia cerca del umbral de prevalencia; y la
-dirección downstream depende del ruler, la coordenada y el soporte del
-comparador. Cada escenario estructural conserva celdas adversas de default y
-miscoverage, pero ninguno es uniformemente favorable o adverso. No se promueve
-una policy, escenario ni modelo ganador.
+**Hallazgo**: los 40/40 upper bounds por debajo de 0.90 corresponden solo a las
+cinco especificaciones Platt-scaled. En la familia cerrada de cuatro mapas sobre
+CatBoost, quedan por debajo 18/32: Platt 8/8, beta 8/8, isotonic 1/8 e IVAP
+Venn--Abers scalar 1/8. V1d conserva los sets en 80/80 diagnósticos, pero cambia
+la asignación en 9,659/11,520 contrastes no triviales y 77/576 tracks contienen
+ambos signos separados por tolerancia. En la familia empírica V1d del audit
+complete-hull, las únicas equivalentes son las 1,872 filas-control con
+$\theta=0$ o $\gamma=0$: son no equivalentes 3,328/3,328 comparaciones V1d no
+triviales y 6,240/6,240 pares de calibradores. El robust counterpart
+set-native completa 1,248 celdas outcome-free, 720 primarias y 208 taxonomías;
+en sus 1,200 contrastes pooled frente a V1d, payoff/default/miscoverage muestran
+censos de dirección distintos. Son grids finitas con celdas correlacionadas: no
+confieren cobertura conjunta, robustez probabilística, causalidad ni un ganador.
 :::
 
 ::: {#tbl-crpto-overview}
 | Etapa | Entrada y transformación | Salida auditada |
 |---|---|---|
 | 1. Diseño | 2,925,493 filas crudas → 640,543 préstamos elegibles | Universo status-independent y roles temporales. |
-| 2. Predicción | Cinco scores → ocho recetas conformales | Cobertura candidata y geometría binaria. |
-| 3. Decisión | LP mensual → dos rulers y tres coordenadas | Asignaciones congeladas sin policy seleccionada. |
-| 4. Identificación | Endpoint reconstruido → bounds sharp → 36 escenarios | Soporte exacto y límites de claim. |
+| 2. Predicción | Cinco learners Platt-scaled y, por separado, cuatro mapas de CatBoost → ocho ventanas | Estado 40/40 específico de learners y estado 18/32 de calibradores, sin seleccionar modelo ni mapa. |
+| 3. Decisión continua | LP mensual → dos rulers, tres coordenadas y embeddings set-preserving | V1d: sets iguales, asignación y dirección no invariantes en la grid finita. |
+| 4. Invariancia global | 26 menús completos → affine hull y equivalencia positive-affine | GO1 outcome-free: certificado global, no inferencia sobre una solución particular. |
+| 5. Decisión set-native | Peor etiqueta del set no vacío y convención fail-closed para $\varnothing$ → 1,248 LP | Censo completo frente a 25 celdas V1d por comparador, sin robustez probabilística. |
+| 6. Identificación | Endpoint reconstruido → bounds sharp → 36 escenarios | Soporte exacto y límites de claim. |
 
 : Arquitectura activa de la auditoría CRPTO.
 :::
@@ -66,8 +76,8 @@ estimandos, datos y validaciones propios.
 
 | Superficie | Función actual | Evidencia visible |
 |---|---|---|
-| Paper IJDS | Auditoría de identificación en la interfaz ML, conformal y optimización. | Universo status-independent, cobertura completa, mecanismo de geometría binaria, dos rulers y exact support. |
-| Online supplement | Pruebas, censos completos, sensibilidades temporal y estructural, trazabilidad y fronteras de interpretación. | Apéndices A--H, endpoint reconstruido, WOE/IV, monotonicidad, PSI, label lag, 36 escenarios y solver audit. |
+| Paper IJDS | Auditoría de identificación en la interfaz ML, conformal y optimización. | Cinco learners Platt-scaled, familia cerrada de calibradores, mecanismo binario, V1d, GO1, set-native, dos rulers y exact support. |
+| Online supplement | Pruebas, censos completos, sensibilidades temporal, de calibrador, embedding y estructura, trazabilidad y fronteras de interpretación. | Apéndices A--H, endpoint reconstruido, WOE/IV, PSI, 36 escenarios, complete-hull, taxonomía set-native y solver audit. |
 | Libro | Companion pedagógico del manuscrito activo. | Blueprint, claims, teoría, límites y defensa ante reviewers. |
 | Reproducibilidad | Une cada afirmación activa con una fuente verificable. | Registry, DVC, evidence manifest, tests de publicación y TeX generado. |
 
@@ -77,9 +87,16 @@ estimandos, datos y validaciones propios.
 
 1. La PD y los intervalos conformales siguen siendo componentes del sistema,
    pero su validez debe examinarse antes de atribuir propiedades al funded set.
-2. El optimizador sigue siendo central: revela que score, ruler y coordenada
+2. El 40/40 describe cinco learners Platt-scaled; la familia separada 18/32
+   impide convertirlo en una afirmación uniforme sobre calibradores.
+3. El optimizador sigue siendo central: revela que score, ruler y coordenada
    definen conjuntamente el contrafactual.
-3. Un resultado negativo de transporte o de identificación no elimina el
+4. Igualdad de sets o ranking loan-wise no equivale a orden global de
+   portafolios. La no equivalencia de GO1 niega el certificado global, pero no
+   demuestra por sí sola que cambie una solución concreta.
+5. El robust counterpart usa una convención fail-closed sobre sets marginales;
+   el producto de esos sets no tiene cobertura conjunta heredada.
+6. Un resultado negativo de transporte o de identificación no elimina el
    método. Delimita qué puede defenderse y qué requeriría otro diseño.
 
 ## Rutas de lectura
@@ -114,7 +131,12 @@ leerse como evidencia del manuscrito activo.
 | Sí puede afirmarse | No puede afirmarse |
 |---|---|
 | Las 640,543 filas agotan la población elegible bajo el contrato declarado. | Que los 2.9 millones de registros comparten horizonte, esquema o estimand. |
-| Los 40 upper bounds de cobertura candidata están por debajo de 0.90. | Invalidez conformal universal o validez del selected set. |
+| Los 40 upper bounds están por debajo de 0.90 para las cinco especificaciones Platt-scaled declaradas. | Un shortfall robusto a cualquier learner o calibrador. |
+| En la familia cerrada de CatBoost, 18/32 upper endpoints están por debajo: Platt 8/8, beta 8/8, isotonic 1/8 e IVAP 1/8. | Ranking de calibradores, dependencia de la cobertura verdadera o garantía Venn para el scalar IVAP. |
+| V1d conserva 80/80 sets, cambia 9,659/11,520 asignaciones no triviales y tiene ambos signos en 77/576 tracks. | Embedding preferido, reparación de validez o dirección universal. |
+| GO1 certifica 26/26 hulls; en V1d solo pasan las 1,872 filas-control con $\theta=0$ o $\gamma=0$, mientras 3,328/3,328 celdas no triviales y 6,240/6,240 pares de calibradores son no equivalentes. | Cambio necesario de allocation u optimal face en una celda; full-optimizer invariance entre calibradores. |
+| Set-native completa 1,248 celdas, incluidas 720 primarias, y 208 taxonomías sin usar outcomes en Phase A; sus incidencias son 3,003,924 $\{0\}$, 717,965 $\{0,1\}$, 52,311 vacías y 0 $\{1\}$. | Cobertura conjunta del producto de sets o robustez probabilística. |
+| En 1,200 contrastes pooled robust-minus-V1d con sharp completions compartidas, standardized-payoff rate es 1,065/15/120 negativo/positivo/ambiguo; default ponderado 0/1,196/4; miscoverage ponderado 120/1,009/71. | Tests independientes, ganador, efecto causal o dominancia universal. |
 | La geometría residual binaria es sensible a prevalencia y saturación. | Que el cruce observado sea una explicación causal completa. |
 | La dirección del contraste cambia con ruler, coordenada, ventana y soporte. | Un ganador universal, una policy promovida o dominancia económica. |
 | Los bounds sharp exponen incertidumbre por outcomes no resueltos. | Que sean intervalos de confianza o identificación missing-at-random. |

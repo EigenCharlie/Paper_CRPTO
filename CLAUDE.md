@@ -43,6 +43,15 @@ not active evidence.
      taxonomy, complete reporting, and no-optimization boundary.
 19c8a. `docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`
    - endpoint-evaluation lock and P-to-A-to-B-to-C Git transport contract.
+19c9. `docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md`
+   - complete-candidate full-budget affine-hull certificates and exact global
+     score-order-equivalence census.
+19c10. `docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md`
+   - exact worst label for nonempty sets, declared empty-set fail-closure,
+     outcome-free frontier, hash-pinned evaluation, and no-established-joint-
+     coverage-guarantee boundary.
+19c11. `docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`
+   - integrated adversarial theory, literature, run-value, and GO/NO-GO audit.
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -81,11 +90,16 @@ files were not reused by V1d.
 The active calibrator sensitivity uses one four-commit Git chain: protocol P,
 outcome-free source A, endpoint-evaluation lock B, and result C. It reports the
 complete four-map grid without selecting a map and performs no optimization.
+The active complete-hull audit uses one protocol-to-direct-child-artifact chain
+and evaluates the global score certificate on all 26 menus without outcomes or
+optimization. The active set-native counterpart uses the four-state chain
+Phase-A protocol, Phase-A artifact, hash-pinned Phase-B protocol, and Phase-B
+artifact; it is a finite-grid challenger, not a validity repair.
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, 53 DVC pointers, and seven
+lineage identities, artifact descriptors, 53 DVC pointers, and nine
 scientific Git-native artifact lineages. The V4 evidence JSON is the only
-numeric paper-facing manifest; the publication builder emits 41 CSV tables and
+numeric paper-facing manifest; the publication builder emits 43 CSV tables and
 five figure families.
 
 The audited Calibre runtime uses `sys.flags.optimize == 2`, so it removes
@@ -148,6 +162,18 @@ exception; `assert` is test syntax only.
   `1e-10`; pooled direction changes sign across theta in 77/576 fixed tracks at
   tolerance. This is retrospective finite-grid sensitivity, not an embedding
   or policy selection or a validity repair.
+- All 26 complete candidate-menu hulls are certified. The V1d global score
+  certificate passes exactly 1,872 identity controls and fails all 3,328
+  positive-theta, positive-gamma comparisons; all 6,240 closed-calibrator pair
+  comparisons also fail. Failure does not force a fixed-cell allocation change
+  or identify different optimal faces.
+- The set-native worst-label challenger completes 1,248 outcome-free cells and
+  18,000 monthly/1,200 pooled comparisons. Pooled robust-minus-V1d default is
+  positive in 1,196 cells, negative in none, and contains zero in four. This is
+  descriptive finite-grid evidence. The worst-label identity applies to
+  nonempty sets; the empty-set value is declared fail-closed, and only the risk
+  coefficient is set-native. No joint-coverage or probabilistic-robustness
+  guarantee, selected policy, or causal/prospective result is established.
 - Exact decision invariance requires positive-affine score equivalence modulo
   normals of the complete allocation affine hull. The theorem does not certify
   that relation for every active month or turn one unchanged solver output

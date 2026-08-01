@@ -32,6 +32,11 @@ from src.ijds_audit.calibrator_sensitivity_evidence import (
 )
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.config import load_v4_config
+from src.ijds_audit.decision_representation_evidence import (
+    load_decision_representation_evidence,
+    score_equivalence_publication_table,
+    set_native_direction_publication_table,
+)
 from src.ijds_audit.frontier_evidence import load_frontier_evidence
 from src.ijds_audit.grid_contracts import (
     require_exact_grid,
@@ -162,6 +167,12 @@ TABLE_TARGETS = {
     "set_preserving_embedding_direction_census": (
         TABLE_DIR / "crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv"
     ),
+    "score_equivalence_complete_hull": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9M_score_equivalence_complete_hull.csv"
+    ),
+    "set_native_robust_minus_embedding": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9N_set_native_robust_minus_embedding.csv"
+    ),
 }
 FIGURE_STEMS = {
     "coverage": "crpto_ijds_v4_fig1_coverage",
@@ -197,6 +208,39 @@ CALIBRATOR_SOURCE_KEYS = (
     "calibrator_sensitivity_platt_v5_reconciliation",
 )
 CALIBRATOR_METHODS = ("platt", "isotonic", "beta", "venn_abers")
+
+DECISION_REPRESENTATION_SOURCE_KEYS = (
+    "score_equivalence_config",
+    "score_equivalence_protocol",
+    "score_equivalence_runner",
+    "score_equivalence_implementation",
+    "score_equivalence_hulls",
+    "score_equivalence_v1d",
+    "score_equivalence_calibrators",
+    "score_equivalence_controls",
+    "score_equivalence_summary",
+    "score_equivalence_receipt",
+    "set_native_phase_a_config",
+    "set_native_phase_b_config",
+    "set_native_phase_b_blocked_template",
+    "set_native_protocol",
+    "set_native_runner",
+    "set_native_implementation",
+    "set_native_phase_a_solve_records",
+    "set_native_phase_a_allocations",
+    "set_native_phase_a_taxonomy",
+    "set_native_phase_a_solver_audit",
+    "set_native_phase_a_freeze",
+    "set_native_phase_a_summary",
+    "set_native_phase_a_receipt",
+    "set_native_phase_a_manifest",
+    "set_native_evaluated_portfolios",
+    "set_native_monthly_contrasts",
+    "set_native_window_contrasts",
+    "set_native_evaluation_summary",
+    "set_native_evaluation_receipt",
+    "set_native_evaluation_manifest",
+)
 
 CREDIT_LEARNER_ORDER = (
     "catboost_platt",
@@ -3845,6 +3889,25 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     two_ruler_lineage = cast(dict[str, Any], lineages["two_ruler"])
     credit_lineage = cast(dict[str, Any], lineages["credit_controls"])
     diagnostic_lineage = cast(dict[str, Any], lineages["diagnostics"])
+    decision_representation_identities = {
+        "score_equivalence_complete_hull": cast(
+            dict[str, Any], diagnostic_lineage["score_equivalence_complete_hull"]
+        ),
+        "set_native_binary_robust_counterpart": cast(
+            dict[str, Any], diagnostic_lineage["set_native_binary_robust_counterpart"]
+        ),
+    }
+    decision_representation = load_decision_representation_evidence(
+        registered,
+        decision_representation_identities,
+        repo_root=ROOT,
+    )
+    score_equivalence_table = score_equivalence_publication_table(
+        decision_representation.score_equivalence
+    )
+    set_native_direction_table = set_native_direction_publication_table(
+        decision_representation.set_native
+    )
     sensitivities = cast(dict[str, Any], registry["sensitivities"])
     replay_dependencies = cast(dict[str, Any], registry["replay_dependencies"])
     endpoint_lineage = cast(dict[str, Any], sensitivities["endpoint_availability"])
@@ -4379,6 +4442,8 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "set_preserving_embedding_direction_census": (
                 frontiers.set_preserving_embedding.publication_tables["direction_census"]
             ),
+            "score_equivalence_complete_hull": score_equivalence_table,
+            "set_native_robust_minus_embedding": set_native_direction_table,
         },
         coverage=credit_temporal_coverage,
         exchangeability_cells=exchangeability_cells,
@@ -4450,6 +4515,10 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
                     registered[name]
                 )
                 for name in CALIBRATOR_SOURCE_KEYS
+            },
+            **{
+                f"decision_representation/{name}": registered[name]
+                for name in DECISION_REPRESENTATION_SOURCE_KEYS
             },
             "two_ruler/outcome_free/freeze": two_ruler_freeze_path,
             "two_ruler/manifest": two_ruler_manifest_path,
@@ -4634,7 +4703,7 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-30.1",
+        "schema_version": "2026-07-31.1",
         "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
@@ -5007,6 +5076,74 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
                 "p_value_or_confirmatory_claimed": False,
                 "causal_or_prospective_claimed": False,
                 "selected_set_or_funded_set_validity_claimed": False,
+            },
+        },
+        "score_equivalence_complete_hull": {
+            "scope": (
+                "all_twenty_six_complete_candidate_full_budget_affine_hulls_and_"
+                "all_declared_v1d_and_closed_calibrator_score_comparisons"
+            ),
+            "run_tag": decision_representation.score_equivalence.summary["run_tag"],
+            "protocol_tag": decision_representation.score_equivalence.summary["protocol_tag"],
+            "protocol_commit": decision_representation.score_equivalence.summary["protocol_commit"],
+            "artifact_tag": decision_representation_identities["score_equivalence_complete_hull"][
+                "artifact_tag"
+            ],
+            "artifact_commit": decision_representation_identities[
+                "score_equivalence_complete_hull"
+            ]["artifact_commit"],
+            "complete_census_verified": True,
+            **dict(decision_representation.score_equivalence.findings),
+            "rows": score_equivalence_table.to_dict(orient="records"),
+            "interpretation": {
+                "complete_candidate_menu_not_funded_support": True,
+                "outcome_free": True,
+                "optimization_run": False,
+                "failed_certificate_means_fixed_cell_allocation_change": False,
+                "common_solver_output_means_equal_optimal_faces": False,
+                "calibrator_common_objective_established": False,
+                "selected_embedding_or_calibrator": False,
+                "selected_or_funded_set_validity_claimed": False,
+            },
+        },
+        "set_native_binary_robust_counterpart": {
+            "scope": (
+                "complete_nonempty_set_exact_worst_label_with_declared_empty_"
+                "set_fail_closure_frontier_and_all_"
+                "primary_robust_minus_v1d_embedding_comparisons"
+            ),
+            "phase_a_run_tag": decision_representation.set_native.phase_a_summary["run_tag"],
+            "phase_a_protocol": dict(
+                decision_representation.set_native.phase_a_summary["protocol"]
+            ),
+            "phase_a_artifact_tag": decision_representation_identities[
+                "set_native_binary_robust_counterpart"
+            ]["outcome_free"]["artifact_tag"],
+            "phase_a_artifact_commit": decision_representation_identities[
+                "set_native_binary_robust_counterpart"
+            ]["outcome_free"]["artifact_commit"],
+            "evaluation_run_tag": decision_representation.set_native.evaluation_summary["run_tag"],
+            "evaluation_protocol": dict(
+                decision_representation.set_native.evaluation_summary["protocol"]
+            ),
+            "evaluation_artifact_tag": decision_representation_identities[
+                "set_native_binary_robust_counterpart"
+            ]["evaluation"]["artifact_tag"],
+            "evaluation_artifact_commit": decision_representation_identities[
+                "set_native_binary_robust_counterpart"
+            ]["evaluation"]["artifact_commit"],
+            "complete_census_verified": True,
+            **dict(decision_representation.set_native.findings),
+            "direction_rows": set_native_direction_table.to_dict(orient="records"),
+            "interpretation": {
+                "set_native_score_uses_exact_binary_worst_label": True,
+                "empty_set_is_declared_fail_closed_convention": True,
+                "cartesian_product_joint_coverage_guarantee_established": False,
+                "probabilistic_robustness_claimed": False,
+                "conformal_validity_repair_claimed": False,
+                "selected_result_or_policy": False,
+                "causal_or_prospective_claimed": False,
+                "independent_replications_or_p_value_claimed": False,
             },
         },
         "evaluation_endpoint": {

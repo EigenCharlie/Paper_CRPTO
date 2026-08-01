@@ -14,6 +14,7 @@ import pytest
 from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
     CALIBRATOR_SOURCE_KEYS,
     CREDIT_LEARNER_ORDER,
+    DECISION_REPRESENTATION_SOURCE_KEYS,
     FIGURE_STEMS,
     TABLE_TARGETS,
     _calibrator_sensitivity_manifest_payload,
@@ -189,9 +190,9 @@ def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten
 
 
 def test_publication_inventory_is_derived_from_declared_targets() -> None:
-    assert len(TABLE_TARGETS) == 41
+    assert len(TABLE_TARGETS) == 43
     assert len(FIGURE_STEMS) == 5
-    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 51
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 53
     assert {
         "calibrator_fit_diagnostics",
         "calibrator_sensitivity_cells",
@@ -199,6 +200,8 @@ def test_publication_inventory_is_derived_from_declared_targets() -> None:
     }.issubset(TABLE_TARGETS)
     assert len(CALIBRATOR_SOURCE_KEYS) == 21
     assert len(set(CALIBRATOR_SOURCE_KEYS)) == 21
+    assert len(DECISION_REPRESENTATION_SOURCE_KEYS) == 30
+    assert len(set(DECISION_REPRESENTATION_SOURCE_KEYS)) == 30
 
 
 def test_historical_v8_lock_is_verified_at_its_protocol_commit() -> None:
@@ -412,6 +415,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "v4_config_loader",
         "grid_contracts",
         "calibrator_sensitivity/loader",
+        "decision_representation/loader",
         "endpoint_availability_sensitivity/loader",
         "portfolio_structure_sensitivity/loader",
         "robustness_sensitivities/loader",

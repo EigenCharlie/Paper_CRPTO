@@ -277,7 +277,7 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         ROOT / "configs/ijds_active_evidence_sources.yaml",
         repo_root=ROOT,
     )
-    assert payload["schema_version"] == "2026-07-30.2"
+    assert payload["schema_version"] == "2026-07-31.1"
     assert set(sources) == {
         "v4_config",
         "v4_summary",
@@ -403,6 +403,36 @@ def test_active_evidence_registry_verifies_every_source() -> None:
         "calibrator_sensitivity_overall",
         "calibrator_sensitivity_pairwise",
         "calibrator_sensitivity_platt_v5_reconciliation",
+        "score_equivalence_config",
+        "score_equivalence_protocol",
+        "score_equivalence_runner",
+        "score_equivalence_implementation",
+        "score_equivalence_hulls",
+        "score_equivalence_v1d",
+        "score_equivalence_calibrators",
+        "score_equivalence_controls",
+        "score_equivalence_summary",
+        "score_equivalence_receipt",
+        "set_native_phase_a_config",
+        "set_native_phase_b_config",
+        "set_native_phase_b_blocked_template",
+        "set_native_protocol",
+        "set_native_runner",
+        "set_native_implementation",
+        "set_native_phase_a_solve_records",
+        "set_native_phase_a_allocations",
+        "set_native_phase_a_taxonomy",
+        "set_native_phase_a_solver_audit",
+        "set_native_phase_a_freeze",
+        "set_native_phase_a_summary",
+        "set_native_phase_a_receipt",
+        "set_native_phase_a_manifest",
+        "set_native_evaluated_portfolios",
+        "set_native_monthly_contrasts",
+        "set_native_window_contrasts",
+        "set_native_evaluation_summary",
+        "set_native_evaluation_receipt",
+        "set_native_evaluation_manifest",
     }
     assert len(payload["dvc_pointers"]) == 53
     assert payload["lineages"]["binary_geometry"]["evaluation"]["run_tag"].endswith("2026-07-15-v5")

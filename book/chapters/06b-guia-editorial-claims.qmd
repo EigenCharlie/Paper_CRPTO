@@ -22,7 +22,8 @@ estimandos, datos y validaciones propios.
    límites en un contrato ejecutable sobre las superficies editoriales.
 4. `configs/ijds_active_evidence_sources.yaml` decide qué lineages y hashes
    sustentan el manifest.
-5. Body, supplement y TeX generado deben concordar con esas cuatro capas.
+5. Body, supplement, companion book y TeX generado deben concordar con esas
+   cuatro capas.
 
 Un memo, una tabla histórica o un resultado visualmente favorable no puede
 ampliar el claim. Los bundles `pool93`, `compact-v7`, selected-policy y A1--A40
@@ -33,15 +34,24 @@ son procedencia, no evidencia activa.
 | Nivel | Claim defendible | Evidencia | Frontera obligatoria |
 |---:|---|---|---|
 | 1 | El universo activo es status-independent y exhaustivo bajo el contrato declarado. | 640,543 préstamos elegibles de 2,925,493 filas crudas. | No generalizar a otros plazos, esquemas o plataformas. |
-| 2 | La cobertura candidata no transporta en la especificación completa. | Cinco learners × ocho ventanas: 40/40 upper bounds < 0.90. | No afirmar invalidez conformal universal. |
+| 2 | La cobertura candidata no transporta en la familia declarada de learners Platt-scaled. | Cinco learners, cada uno con su propio mapa Platt, por ocho ventanas: 40/40 upper bounds < 0.90. | No exportar el 40/40 a otros learners o calibradores ni afirmar invalidez conformal universal. |
+| 2a | El 40/40 no es uniforme en la familia cerrada de mapas del CatBoost primario. | 18/32 overall upper endpoints < 0.90: Platt 8/8, beta 8/8, isotonic 1/8 e IVAP Venn--Abers scalar 1/8. | No rankear calibradores, inferir que true coverage depende del mapa ni transferir una garantía Venn al scalar IVAP. |
 | 3 | La geometría del intervalo binario es sensible a prevalencia. | Cruce W7--W8 en stratum 2 y resultado de score constante. | Mecanismo, no prueba causal del caso variable-score. |
 | 4 | Copiar un cap o igualar una coordenada no define el mismo contrafactual. | Equivalencia afín, same-cap nesting, C2 y normalized invariance. | La teoría ordena objetos plug-in específicos, no outcomes realizados. |
+| 4a | Preservar cada set binario no preserva allocation ni dirección en V1d. | 80/80 sets iguales; 9,659/11,520 allocations no triviales cambian; 77/576 tracks contienen ambos signos separados por tolerancia. | Grid finita; no embedding ganador, reparación de validez, causalidad ni dirección universal. |
+| 4b | La equivalencia global de score no se certifica para ninguna comparación empírica no trivial de GO1. | 26/26 complete hulls; en V1d solo las 1,872 filas-control con $\theta=0$ o $\gamma=0$ son equivalentes; 3,328/3,328 comparaciones no triviales y 6,240/6,240 pares de calibradores son no equivalentes. | La no equivalencia global no significa cambio necesario de allocation u optimal face; los pares de calibradores tampoco mantienen común el objetivo. |
+| 4c | El robust counterpart set-native es un censo de una convención de decisión sobre sets marginales. | Phase A: 1,248 celdas, 720 primarias y 208 taxonomías; incidencias: 3,003,924 $\{0\}$, 717,965 $\{0,1\}$, 52,311 vacías y 0 $\{1\}$. En 1,200 contrastes pooled robust-minus-V1d con sharp completions compartidas, los censos negativo/positivo/ambiguo son standardized-payoff rate 1,065/15/120, default ponderado 0/1,196/4 y miscoverage ponderado 120/1,009/71. | Celdas correlacionadas y grid finita; no se establece garantía de joint coverage, robustez probabilística, selected-set validity, winner ni causalidad. |
 | 5 | La dirección downstream depende de ruler y coordenada. | Seis tracks, 48 contrastes de ventana y 144 celdas metric-direction. | No seleccionar gamma, ruler, coordenada o signo. |
 | 6 | La incertidumbre de endpoint y comparator support puede acotarse exactamente. | 12,076 outcomes no resueltos; sharp common-outcome bounds; 3,067 caps. | Partial identification, no confidence interval ni frontera universal. |
 | 7 | La dirección sigue siendo condicional al variar estructura de portafolio. | 36 escenarios completos; todos conservan celdas adversas de default y miscoverage; ninguno es uniformemente favorable o adverso. | No seleccionar escenario ni afirmar daño universal. |
 | 8 | El sistema completo es el objeto científico. | Score, intervalo, LP, endpoint y soporte hash-linked. | No separar una cifra favorable de su protocolo. |
 
 : Escalera editorial de claims del CRPTO {#tbl-crpto-claim-ladder}
+
+En el nivel 4c, *negativo* significa upper bound menor que cero, *positivo*
+significa lower bound mayor que cero y *ambiguo* significa que el sharp interval
+contiene cero. Las 1,200 filas comparten ventanas, policies, loans y outcomes:
+son un censo correlacionado, no pruebas independientes.
 
 La contribución más fuerte es negativa y constructiva. El paper no dice que
 conformal prediction o robust optimization fallen en general; muestra qué no
@@ -53,8 +63,9 @@ queda identificado al conectarlos sin fijar transporte, endpoint y comparador.
 |---|---|---|
 | Data science | ¿La incertidumbre predictiva conserva significado downstream? | No automáticamente: se auditan transporte y geometría antes del LP. |
 | Conformal prediction | ¿La cobertura marginal autoriza un claim sobre funded set? | No; candidate coverage y selected-set validity son objetos distintos. |
-| Optimization | ¿Qué significa comparar dos scores con caps diferentes? | El ruler y la coordenada son parte del estimand; exact support revela sensibilidad. |
-| Credit risk | ¿El resultado depende de CatBoost o de señales de pricing? | Cinco controles, incluidos WOE/IV y monotonic CatBoost, rechazan esa explicación simple. |
+| Optimization | ¿Qué significa comparar dos scores con caps diferentes? | El ruler y la coordenada son parte del estimand; exact support revela sensibilidad y un robust counterpart sobre sets marginales no hereda joint coverage. |
+| Credit risk | ¿El resultado depende de CatBoost o de señales de pricing? | CatBoost primario y cuatro controles, cada uno Platt-scaled, rechazan esa explicación simple para el 40/40; la familia de mapas separada impide llamarlo calibrator-robust. |
+| Calibration | ¿Platt es un ganador? | No. Platt es el mapa activo protocol-fixed; la familia completa 18/32 no selecciona ni rankea mapas. |
 | Reproducibilidad | ¿Se eligió una combinación después de ver outcomes? | No se promueve ninguna; grids completas, freezes outcome-free y joins estrictos. |
 | Governance | ¿Puede desplegarse la policy? | No; es una auditoría retrospectiva sin fair-lending ni validación prospectiva. |
 
@@ -69,6 +80,10 @@ Usar:
 - **sharp common-outcome bound**;
 - **partial identification over declared support**;
 - **coverage control**, no model challenger ganador;
+- **five learner specifications, each separately Platt-scaled**, al describir el 40/40;
+- **closed four-map CatBoost sensitivity**, al describir el 18/32;
+- **global score-equivalence certificate**, no igualdad de una solución particular;
+- **set-native finite-grid census**, no robust policy certificate;
 - **standardized payoff**, no cash return o welfare;
 - **risk-aware allocation audit**, no certified robust policy.
 
@@ -76,6 +91,10 @@ Evitar:
 
 - *preregistered*, *confirmatory*, *prospective* o *untouched holdout*;
 - *selected-set conformal guarantee*;
+- *calibrator-robust 40/40* o *best calibrator*;
+- *nonequivalent scores changed every allocation*;
+- *full-optimizer invariance* inferida de pares de calibradores con objetivos distintos;
+- *jointly covered uncertainty set* o *probabilistically robust portfolio* para GO2;
 - *policy winner*, *optimal gamma* o *best ruler*;
 - *universal guardrail benefit*;
 - *causal mechanism* para W7--W8;
@@ -89,6 +108,10 @@ Evitar:
 |---|---|---|
 | `point score` | PD calibrada usada por el LP base. | Probabilidad causal individual. |
 | `upper score` | Endpoint superior del intervalo binario. | Garantía de riesgo del funded set. |
+| `closed calibrator family` | Platt, isotonic, beta `abm` e IVAP scalar sobre el mismo CatBoost y taxonomía común. | Leaderboard, selección o familia universal de calibradores. |
+| `set-preserving embedding` | Coeficiente continuo que conserva $S_i$ al variar $\theta$ en la grid V1d. | Equivalencia global de score o garantía downstream. |
+| `score-equivalence certificate` | Relación positive-affine sobre todas las diferencias factibles del menú, con caps traducidos. | Igualdad bajo el mismo cap numérico o cambio necesario de una solución al fallar. |
+| `set-native risk` | $r(S_i)=0$ solo para $\{0\}$ y uno para $\varnothing$, $\{1\}$ y $\{0,1\}$. | PD individual, upper endpoint continuo o garantía probabilística conjunta. |
 | `coverage bound` | Sharp all-candidate completion bound con outcomes no resueltos. | Intervalo de confianza. |
 | `objective-matched ruler` | Mantiene un floor común de objetivo plug-in. | Igual oportunidad económica realizada. |
 | `normalized-score ruler` | Mantiene una relajación relativa positive-affine-invariant. | Mismo opportunity cost. |
@@ -106,19 +129,23 @@ Evitar:
 
 | Objeción probable | Respuesta gobernada | Evidencia canónica |
 |---|---|---|
-| “El resultado es negativo.” | Sí, y es informativo: localiza dos fallos de inferencia en una cadena decision-focused y ofrece un protocolo para detectarlos. | Body, Discussion y claim registry. |
+| “El resultado es negativo.” | Sí, y es informativo: localiza varios saltos de inferencia en una cadena decision-focused y ofrece protocolos para detectarlos. | Body, Discussion y claim registry. |
 | “Entonces CRPTO ya no conecta ML, CP y optimización.” | Sí los conecta. Precisamente por tratar el sistema completo muestra que las propiedades no se heredan entre capas. | Method + Audit Theory. |
 | “¿Por qué no elegir la mejor ventana o policy?” | Porque los mismos outcomes usados para evaluar no pueden seleccionar el objeto sin otro procedimiento de validez. | Outcome-free freezes y no-selector boundary. |
-| “¿Los cinco modelos forman un leaderboard?” | No. Son controles de cobertura; solo CatBoost primario entra al LP. | Tabla de credit controls. |
+| “¿Los cinco modelos forman un leaderboard?” | No. Son CatBoost primario y cuatro controles de cobertura, cada uno con su mapa Platt; solo CatBoost primario entra al LP. | Tabla de credit controls. |
 | “¿WOE/IV mejora la auditabilidad?” | Aporta una especificación inspeccionable y monotonicidad, pero no es novedad ni ganador. | 45 fits OptBinning óptimos y métricas descriptivas. |
-| “¿Split conformal no garantiza 90%?” | Bajo exchangeability, sí para el objeto correspondiente. Aquí el transporte temporal falla en las 40 celdas evaluadas. | Coverage tables y teoría de shift. |
+| “¿Split conformal no garantiza 90%?” | Bajo exchangeability, sí para el objeto correspondiente. Aquí los 40 upper bounds de las cinco especificaciones Platt-scaled están por debajo; la familia separada de mapas da solo 18/32 y ningún resultado refuta por sí mismo el teorema. | Coverage tables, calibrator sensitivity y teoría de shift. |
+| “¿Entonces el 40/40 vale con cualquier calibrador?” | No. En la familia cerrada de CatBoost, Platt y beta dan 8/8, isotonic 1/8 e IVAP scalar 1/8: 18/32 en total. | Closed calibrator-family table. |
+| “¿Sets iguales implican decisiones iguales?” | No. V1d mantiene 80/80 sets y cambia 9,659/11,520 allocations; 77/576 tracks contienen ambos signos. | Set-preserving V1d census. |
+| “¿GO1 prueba que cada solución cambia?” | No. En V1d solo son equivalentes las 1,872 filas-control con $\theta=0$ o $\gamma=0$; 3,328/3,328 comparaciones no triviales y 6,240/6,240 pares de calibradores fallan el certificado global. Eso permite, pero no obliga, un cambio local. | Complete-hull score-equivalence audit. |
+| “¿Por qué llamar set-native a GO2 no lo hace robusto en probabilidad?” | Porque optimiza el peor label de cada set marginal y su producto no hereda cobertura conjunta. El empty-set value es una convención fail-closed. | GO2 protocol and complete Phase-A/Phase-B censuses. |
 | “¿Por qué conservar outcomes no resueltos?” | Excluirlos reconstruiría retrospectivamente el menú. Los sharp bounds mantienen el universo original. | Endpoint census y common-outcome bounds. |
 | “¿El archivo representa septiembre de 2020?” | No. La observabilidad se reconstruye conservadoramente y 12,076 casos quedan no resueltos. | Raw-data audit y endpoint protocol. |
 | “¿W7--W8 prueba una phase transition causal?” | No. El teorema de score constante da un mecanismo y el stratum observado es evidencia compatible. | Binary geometry proposition + label-lag sensitivity. |
 | “¿El ruler normalizado es el correcto?” | Es scale-invariant, pero no iguala opportunity cost. Se reporta junto al objective-matched ruler sin seleccionar uno. | Two-ruler grid. |
 | “¿Exact support resuelve toda la comparación?” | Solo sobre el soporte de caps declarado; no identifica una frontera conjunta continua. | 3,067 caps y basis-endpoint theorem. |
 | “¿El resultado depende del presupuesto, concentración o LGD?” | Las proporciones cambian, pero cada uno de los 36 escenarios retiene celdas adversas de default y miscoverage; también hay celdas favorables en muchos escenarios. | Structural sensitivity V6, Tables S9D--S9E. |
-| “¿Puede llamarse robusta la policy?” | No se promueve policy. `Risk-aware` describe la entrada de incertidumbre sin atribuir garantía downstream. | Claim boundary. |
+| “¿Puede llamarse robusta la policy?” | No se promueve policy. `Risk-aware` y `robust counterpart` describen construcciones deterministas; sin joint coverage no atribuyen una garantía probabilística downstream. | Claim boundary y GO2 protocol. |
 | “¿El payoff es retorno económico?” | Es un endpoint estandarizado que omite timing, prepago, recoveries, fees y capital. | Method y Limitations. |
 | “¿Hay evidencia externa o fair-lending?” | No para el claim activo. Un archivo histórico de aceptados no identifica esos objetos. | Ethical implications y Limitations. |
 
@@ -129,9 +156,13 @@ Evitar:
 | Material | Destino | Motivo |
 |---|---|---|
 | Universo, roles y endpoint | Body | Sin information boundary no hay estimand defendible. |
-| Cinco-model coverage audit | Body | Establece que el fallo no es exclusivo de CatBoost. |
+| Cinco-learner Platt-scaled coverage audit | Body | Establece que el 40/40 no es exclusivo de CatBoost sin convertir los controles en leaderboard. |
+| Closed calibrator-family sensitivity | Body | Impide presentar el 40/40 como uniforme sobre mapas: 18/32, sin seleccionar calibrador. |
 | Binary geometry W1--W8 | Body | Explica por qué ancho y cobertura pueden cambiar abruptamente. |
 | Two-ruler endpoint tracks | Body | Resultado downstream principal sin seleccionar policy. |
+| Set-preserving V1d | Body y censo en supplement | Separa igualdad de sets de invariancia de allocation y dirección. |
+| Complete-hull GO1 | Resumen en body, censo en supplement | Contrasta la condición global exacta sin optimizar ni leer outcomes. |
+| Set-native GO2 | Body y censo completo en supplement | Evalúa una interfaz nativa al set con límites de marginalidad y dependencia visibles. |
 | Exact statements | Body, con proofs al supplement | Separa resultados matemáticos de outcomes. |
 | WOE/IV, PSI, label lag y endpoint timing | Supplement | Controles y sensibilidades, no contribuciones autónomas. |
 | Structural sensitivity | Body y censo completo en supplement | Evita que el baseline estilizado cargue por sí solo la conclusión downstream. |
@@ -150,8 +181,8 @@ Evitar:
 | Evidence | V4 evidence manifest | Autoridad numérica única. |
 | Claim ledger | Executable claim ledger | Claims cualitativos, alcance y forbidden inferences. |
 | Registry | Active source registry | Identidades, roles, hashes y punteros DVC. |
-| Tables | Eighteen derived tables | Exportaciones derivadas, nunca autoridad independiente. |
-| Figures | Tres objetos en PNG/PDF | Cobertura, geometría y envelopes. |
+| Tables | Familias enumeradas por el manifest generado | Exportaciones derivadas, nunca autoridad independiente; no hard-codear un conteo previo al rebuild. |
+| Figures | Familias enumeradas por el manifest generado, cada una con sus formatos | PNG/PDF no se cuentan como objetos científicos distintos. |
 | Tests | Active claim sync, V4 claim sync, publication integrity | Rechazan drift de texto, grids y fuentes. |
 
 : Material journal-ready activo del CRPTO {#tbl-crpto-journal-ready-package}
@@ -163,10 +194,12 @@ fuente entra por la pregunta que ayuda a delimitar:
 
 | Familia | Uso en CRPTO | Lo que no se importa |
 |---|---|---|
-| Decision quality y cost-aware calibration [@fernandezloria2022causaldecision; @yang2025costaware] | Separa calidad de score y calidad de acción. | Identificación causal para este archivo. |
+| Decision quality, cost-aware y decision calibration [@fernandezloria2022causaldecision; @yang2025costaware; @zhao2021decisioncalibration] | Separa calidad de score, calibración respecto de una familia declarada de decisiones y calidad de acción. | Identificación causal, conformal validity o funded-set validity para este archivo. |
 | Conformal bajo exchangeability y shift [@vovk2005; @angelopoulos2023; @barber2021limits] | Define el objeto de cobertura y sus límites. | Cobertura condicional o temporal automática. |
 | Valid selection y decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @zhou2026creme] | Muestra qué diseño requeriría seleccionar un set o decisión. | Sus garantías con solo 11 menús de desarrollo. |
 | Conformal robust optimization [@johnstone2021; @patel2024] | Sitúa el puente CP--OR. | Selected-set validity para CRPTO. |
+| Decision-focused learning con constraints inciertos [@donti2017; @elmachtoub2022; @im2025spor] | Sitúa SPO-RC como vecino integrado que aprende contra downstream loss con un uncertainty set suministrado. | Fisher consistency, regret guarantee o validez del set upstream para CRPTO. |
+| Conformal risk control y testing [@angelopoulos2024risk; @angelopoulos2026nonmonotonic; @angelopoulos2025ltt] | Delimita diseños prospectivos para riesgo monotónico, algoritmos no monotónicos estables o catálogos finitos. | Garantía activa sin exchangeability, algoritmo simétrico, regla de referencia risk-controlling y remainder de estabilidad válido. |
 | Credit scoring, profit y madurez [@lessmann2015; @ausset2022censoring; @li2023online_loans] | Motiva payoff, censoring y observabilidad. | IRR, survival o cash-flow claims no estimados. |
 | WOE/IV y monotonicidad [@navaspalencia2020] | Construye controles auditables. | Superioridad de scorecard. |
 | AI--OR [@wiberg2025ai_or] | Justifica estudiar el sistema completo. | Novedad separada de ML, CP o LP. |
@@ -187,5 +220,11 @@ la interpretación de evidencia activa.
 5. ¿Conserva outcomes no resueltos o declara el bound usado?
 6. ¿Evita selección por signo, causalidad, prospective language y deployment?
 7. ¿La limitación aparece en la misma sección, no escondida al final?
+8. ¿Toda primera mención de 40/40 dice “cinco learners, cada uno
+   Platt-scaled” y la distingue del 18/32 de calibradores?
+9. ¿Una falla de score equivalence se describe como ausencia de certificado
+   global, no como cambio probado de optimizer?
+10. ¿Todo resultado set-native declara grid finita, celdas correlacionadas y
+    ausencia de una garantía establecida de joint coverage o robustez probabilística?
 
 Si alguna respuesta es no, la frase todavía no está lista para IJDS.

@@ -1,8 +1,8 @@
 {
-  "schema_version": "2026-07-30.1",
+  "schema_version": "2026-07-31.1",
   "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
   "source_registry": {
-    "schema_version": "2026-07-30.2",
+    "schema_version": "2026-07-31.1",
     "status": "active_ijds_paper_evidence_source_registry",
     "sources": [
       "allocation_granularity_freeze",
@@ -95,6 +95,36 @@
       "rolling_origin_summary",
       "rolling_primary_recovery_receipt",
       "rolling_primary_recovery_summary",
+      "score_equivalence_calibrators",
+      "score_equivalence_config",
+      "score_equivalence_controls",
+      "score_equivalence_hulls",
+      "score_equivalence_implementation",
+      "score_equivalence_protocol",
+      "score_equivalence_receipt",
+      "score_equivalence_runner",
+      "score_equivalence_summary",
+      "score_equivalence_v1d",
+      "set_native_evaluated_portfolios",
+      "set_native_evaluation_manifest",
+      "set_native_evaluation_receipt",
+      "set_native_evaluation_summary",
+      "set_native_implementation",
+      "set_native_monthly_contrasts",
+      "set_native_phase_a_allocations",
+      "set_native_phase_a_config",
+      "set_native_phase_a_freeze",
+      "set_native_phase_a_manifest",
+      "set_native_phase_a_receipt",
+      "set_native_phase_a_solve_records",
+      "set_native_phase_a_solver_audit",
+      "set_native_phase_a_summary",
+      "set_native_phase_a_taxonomy",
+      "set_native_phase_b_blocked_template",
+      "set_native_phase_b_config",
+      "set_native_protocol",
+      "set_native_runner",
+      "set_native_window_contrasts",
       "set_preserving_embedding_base_config",
       "set_preserving_embedding_config",
       "set_preserving_embedding_direction_census",
@@ -379,6 +409,70 @@
           "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json",
           "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
         ]
+      },
+      "score_equivalence_complete_hull": {
+        "run_tag": "ijds-score-equivalence-complete-hull-2026-07-31-v1",
+        "protocol_tag": "protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+        "protocol_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+        "scientific_uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367",
+        "paper_role": "complete_outcome_free_complete_candidate_hull_score_equivalence_census",
+        "dvc_tracked": false,
+        "artifact_tag": "artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+        "artifact_commit": "e31310090179ee96893c92adec3aa0bbc54f5a95",
+        "artifact_parent_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+        "artifact_transport": "git_force_tracked_direct_child_commit",
+        "artifact_paths": [
+          "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/calibrator_score_equivalence.parquet",
+          "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/complete_hull_certificates.parquet",
+          "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/runtime_controls.parquet",
+          "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/v1d_embedding_score_equivalence.parquet",
+          "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/execution_receipt.json",
+          "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/score_equivalence_summary.json"
+        ]
+      },
+      "set_native_binary_robust_counterpart": {
+        "outcome_free": {
+          "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+          "protocol_tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+          "protocol_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+          "scientific_uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367",
+          "paper_role": "outcome_free_complete_set_native_frontier_and_solver_audit",
+          "dvc_tracked": false,
+          "artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a",
+          "artifact_commit": "3ef847491e1ecdf55315774ddb295a634e441a54",
+          "artifact_parent_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+          "artifact_transport": "git_force_tracked_direct_child_commit",
+          "artifact_paths": [
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet",
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json"
+          ]
+        },
+        "evaluation": {
+          "run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+          "protocol_tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+          "protocol_commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e",
+          "scientific_uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367",
+          "paper_role": "complete_retrospective_set_native_robust_minus_embedding_census",
+          "dvc_tracked": false,
+          "artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+          "artifact_commit": "b13718008cd23b444d1165d14f0fb78101d9f017",
+          "artifact_parent_commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e",
+          "artifact_transport": "git_force_tracked_direct_child_commit",
+          "artifact_paths": [
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/evaluated_primary_portfolios.parquet",
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/monthly_robust_minus_v1d_contrasts.parquet",
+            "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/window_robust_minus_v1d_contrasts.parquet",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json",
+            "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json"
+          ]
+        }
       }
     }
   },
@@ -26936,6 +27030,1140 @@
       "p_value_or_confirmatory_claimed": false,
       "causal_or_prospective_claimed": false,
       "selected_set_or_funded_set_validity_claimed": false
+    }
+  },
+  "score_equivalence_complete_hull": {
+    "scope": "all_twenty_six_complete_candidate_full_budget_affine_hulls_and_all_declared_v1d_and_closed_calibrator_score_comparisons",
+    "run_tag": "ijds-score-equivalence-complete-hull-2026-07-31-v1",
+    "protocol_tag": "protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+    "protocol_commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c",
+    "artifact_tag": "artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1",
+    "artifact_commit": "e31310090179ee96893c92adec3aa0bbc54f5a95",
+    "complete_census_verified": true,
+    "complete_hulls": 26,
+    "v1d_cells": 5200,
+    "v1d_identity_equivalent_cells": 1872,
+    "v1d_substantive_without_certificate": 3328,
+    "calibrator_cells_without_certificate": 6240,
+    "smallest_v1d_failing_max_coordinate_error": 0.04526086783713035,
+    "smallest_calibrator_failing_max_coordinate_error": 0.0008133501900316614,
+    "relation_tolerance": 1.01e-10,
+    "outcome_columns_passed": [],
+    "optimization_run": false,
+    "rows": [
+      {
+        "family": "v1d_embedding",
+        "cell_group": "theta_zero_self",
+        "cells": 1040,
+        "equivalent_cells": 1040,
+        "without_complete_hull_certificate": 0
+      },
+      {
+        "family": "v1d_embedding",
+        "cell_group": "theta_positive_gamma_zero",
+        "cells": 832,
+        "equivalent_cells": 832,
+        "without_complete_hull_certificate": 0
+      },
+      {
+        "family": "v1d_embedding",
+        "cell_group": "theta_positive_gamma_positive",
+        "cells": 3328,
+        "equivalent_cells": 0,
+        "without_complete_hull_certificate": 3328
+      },
+      {
+        "family": "closed_calibrator_q_gamma",
+        "cell_group": "gamma_zero",
+        "cells": 1248,
+        "equivalent_cells": 0,
+        "without_complete_hull_certificate": 1248
+      },
+      {
+        "family": "closed_calibrator_q_gamma",
+        "cell_group": "gamma_positive",
+        "cells": 4992,
+        "equivalent_cells": 0,
+        "without_complete_hull_certificate": 4992
+      }
+    ],
+    "interpretation": {
+      "complete_candidate_menu_not_funded_support": true,
+      "outcome_free": true,
+      "optimization_run": false,
+      "failed_certificate_means_fixed_cell_allocation_change": false,
+      "common_solver_output_means_equal_optimal_faces": false,
+      "calibrator_common_objective_established": false,
+      "selected_embedding_or_calibrator": false,
+      "selected_or_funded_set_validity_claimed": false
+    }
+  },
+  "set_native_binary_robust_counterpart": {
+    "scope": "complete_nonempty_set_exact_worst_label_with_declared_empty_set_fail_closure_frontier_and_all_primary_robust_minus_v1d_embedding_comparisons",
+    "phase_a_run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+    "phase_a_protocol": {
+      "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1",
+      "tag_object": "cf24ac5acd3ba6cafd8834d99d974d282fcedaac",
+      "commit": "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+    },
+    "phase_a_artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a",
+    "phase_a_artifact_commit": "3ef847491e1ecdf55315774ddb295a634e441a54",
+    "evaluation_run_tag": "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+    "evaluation_protocol": {
+      "tag": "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+      "tag_object": "dd52e3c71549ed08c418e8e7c756e104afe31294",
+      "commit": "e3d91660f5c337b3a45713b02ad2ca6ec303b31e"
+    },
+    "evaluation_artifact_tag": "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b",
+    "evaluation_artifact_commit": "b13718008cd23b444d1165d14f0fb78101d9f017",
+    "complete_census_verified": true,
+    "phase_a_cells": 1248,
+    "primary_cells": 720,
+    "taxonomy_rows": 208,
+    "solver_audit_rows": 1248,
+    "funded_rows": 126686,
+    "set_counts": {
+      "n_empty": 52311,
+      "n_singleton_zero": 3003924,
+      "n_singleton_one": 0,
+      "n_two_label": 717965,
+      "n_risk_zero": 3003924,
+      "n_risk_one": 770276
+    },
+    "evaluated_robust_cells": 720,
+    "monthly_contrasts": 18000,
+    "pooled_contrasts": 1200,
+    "monthly_sign_totals": {
+      "standardized_payoff": [
+        5840,
+        9853,
+        2307
+      ],
+      "funded_default": [
+        13992,
+        2462,
+        1546
+      ],
+      "funded_binary_miscoverage": [
+        11947,
+        4355,
+        1698
+      ]
+    },
+    "pooled_sign_totals": {
+      "standardized_payoff": [
+        15,
+        1065,
+        120
+      ],
+      "funded_default": [
+        1196,
+        0,
+        4
+      ],
+      "funded_binary_miscoverage": [
+        1009,
+        120,
+        71
+      ]
+    },
+    "sign_order": [
+      "positive",
+      "negative",
+      "includes_zero"
+    ],
+    "selected_result": null,
+    "policy_winner": null,
+    "conformal_guarantee_repair": false,
+    "joint_coverage_guarantee_established": false,
+    "probabilistic_robustness_guarantee": false,
+    "causal_interpretation": false,
+    "direction_rows": [
+      {
+        "theta": 0.0,
+        "gamma": 0.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 182,
+        "monthly_negative": 414,
+        "monthly_includes_zero": 124,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 48,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 610,
+        "monthly_negative": 54,
+        "monthly_includes_zero": 56,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 538,
+        "monthly_negative": 103,
+        "monthly_includes_zero": 79,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.25,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 254,
+        "monthly_negative": 390,
+        "monthly_includes_zero": 76,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 43,
+        "pooled_includes_zero": 5
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.25,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 549,
+        "monthly_negative": 98,
+        "monthly_includes_zero": 73,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.25,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 490,
+        "monthly_negative": 163,
+        "monthly_includes_zero": 67,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.5,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 260,
+        "monthly_negative": 374,
+        "monthly_includes_zero": 86,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 39,
+        "pooled_includes_zero": 9
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.5,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 528,
+        "monthly_negative": 124,
+        "monthly_includes_zero": 68,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.5,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 478,
+        "monthly_negative": 174,
+        "monthly_includes_zero": 68,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.75,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 257,
+        "monthly_negative": 371,
+        "monthly_includes_zero": 92,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 34,
+        "pooled_includes_zero": 14
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.75,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 523,
+        "monthly_negative": 135,
+        "monthly_includes_zero": 62,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 0.75,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 464,
+        "monthly_negative": 197,
+        "monthly_includes_zero": 59,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 1.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 249,
+        "monthly_negative": 381,
+        "monthly_includes_zero": 90,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 33,
+        "pooled_includes_zero": 15
+      },
+      {
+        "theta": 0.0,
+        "gamma": 1.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 511,
+        "monthly_negative": 121,
+        "monthly_includes_zero": 88,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.0,
+        "gamma": 1.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 465,
+        "monthly_negative": 189,
+        "monthly_includes_zero": 66,
+        "pooled_cells": 48,
+        "pooled_positive": 47,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 1
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 182,
+        "monthly_negative": 414,
+        "monthly_includes_zero": 124,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 48,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 610,
+        "monthly_negative": 54,
+        "monthly_includes_zero": 56,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 538,
+        "monthly_negative": 103,
+        "monthly_includes_zero": 79,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.25,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 256,
+        "monthly_negative": 393,
+        "monthly_includes_zero": 71,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 47,
+        "pooled_includes_zero": 1
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.25,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 549,
+        "monthly_negative": 86,
+        "monthly_includes_zero": 85,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.25,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 488,
+        "monthly_negative": 169,
+        "monthly_includes_zero": 63,
+        "pooled_cells": 48,
+        "pooled_positive": 42,
+        "pooled_negative": 3,
+        "pooled_includes_zero": 3
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.5,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 252,
+        "monthly_negative": 385,
+        "monthly_includes_zero": 83,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 38,
+        "pooled_includes_zero": 10
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.5,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 544,
+        "monthly_negative": 107,
+        "monthly_includes_zero": 69,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.5,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 468,
+        "monthly_negative": 182,
+        "monthly_includes_zero": 70,
+        "pooled_cells": 48,
+        "pooled_positive": 39,
+        "pooled_negative": 6,
+        "pooled_includes_zero": 3
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.75,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 259,
+        "monthly_negative": 372,
+        "monthly_includes_zero": 89,
+        "pooled_cells": 48,
+        "pooled_positive": 1,
+        "pooled_negative": 37,
+        "pooled_includes_zero": 10
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.75,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 529,
+        "monthly_negative": 129,
+        "monthly_includes_zero": 62,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 0.75,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 461,
+        "monthly_negative": 199,
+        "monthly_includes_zero": 60,
+        "pooled_cells": 48,
+        "pooled_positive": 40,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 1
+      },
+      {
+        "theta": 0.25,
+        "gamma": 1.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 259,
+        "monthly_negative": 371,
+        "monthly_includes_zero": 90,
+        "pooled_cells": 48,
+        "pooled_positive": 3,
+        "pooled_negative": 33,
+        "pooled_includes_zero": 12
+      },
+      {
+        "theta": 0.25,
+        "gamma": 1.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 524,
+        "monthly_negative": 132,
+        "monthly_includes_zero": 64,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.25,
+        "gamma": 1.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 452,
+        "monthly_negative": 211,
+        "monthly_includes_zero": 57,
+        "pooled_cells": 48,
+        "pooled_positive": 37,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 4
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 182,
+        "monthly_negative": 414,
+        "monthly_includes_zero": 124,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 48,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 610,
+        "monthly_negative": 54,
+        "monthly_includes_zero": 56,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 538,
+        "monthly_negative": 103,
+        "monthly_includes_zero": 79,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.25,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 251,
+        "monthly_negative": 391,
+        "monthly_includes_zero": 78,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 48,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.25,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 547,
+        "monthly_negative": 97,
+        "monthly_includes_zero": 76,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.25,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 482,
+        "monthly_negative": 171,
+        "monthly_includes_zero": 67,
+        "pooled_cells": 48,
+        "pooled_positive": 40,
+        "pooled_negative": 6,
+        "pooled_includes_zero": 2
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.5,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 250,
+        "monthly_negative": 395,
+        "monthly_includes_zero": 75,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 42,
+        "pooled_includes_zero": 6
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.5,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 556,
+        "monthly_negative": 100,
+        "monthly_includes_zero": 64,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.5,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 467,
+        "monthly_negative": 197,
+        "monthly_includes_zero": 56,
+        "pooled_cells": 48,
+        "pooled_positive": 35,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 6
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.75,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 249,
+        "monthly_negative": 385,
+        "monthly_includes_zero": 86,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 41,
+        "pooled_includes_zero": 7
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.75,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 557,
+        "monthly_negative": 101,
+        "monthly_includes_zero": 62,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 0.75,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 451,
+        "monthly_negative": 200,
+        "monthly_includes_zero": 69,
+        "pooled_cells": 48,
+        "pooled_positive": 33,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 8
+      },
+      {
+        "theta": 0.5,
+        "gamma": 1.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 243,
+        "monthly_negative": 391,
+        "monthly_includes_zero": 86,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 42,
+        "pooled_includes_zero": 6
+      },
+      {
+        "theta": 0.5,
+        "gamma": 1.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 540,
+        "monthly_negative": 115,
+        "monthly_includes_zero": 65,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.5,
+        "gamma": 1.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 456,
+        "monthly_negative": 197,
+        "monthly_includes_zero": 67,
+        "pooled_cells": 48,
+        "pooled_positive": 33,
+        "pooled_negative": 8,
+        "pooled_includes_zero": 7
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 182,
+        "monthly_negative": 414,
+        "monthly_includes_zero": 124,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 48,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 610,
+        "monthly_negative": 54,
+        "monthly_includes_zero": 56,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 538,
+        "monthly_negative": 103,
+        "monthly_includes_zero": 79,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.25,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 251,
+        "monthly_negative": 384,
+        "monthly_includes_zero": 85,
+        "pooled_cells": 48,
+        "pooled_positive": 1,
+        "pooled_negative": 43,
+        "pooled_includes_zero": 4
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.25,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 569,
+        "monthly_negative": 90,
+        "monthly_includes_zero": 61,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.25,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 445,
+        "monthly_negative": 189,
+        "monthly_includes_zero": 86,
+        "pooled_cells": 48,
+        "pooled_positive": 41,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.5,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 253,
+        "monthly_negative": 391,
+        "monthly_includes_zero": 76,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 41,
+        "pooled_includes_zero": 7
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.5,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 540,
+        "monthly_negative": 108,
+        "monthly_includes_zero": 72,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.5,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 454,
+        "monthly_negative": 205,
+        "monthly_includes_zero": 61,
+        "pooled_cells": 48,
+        "pooled_positive": 34,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 7
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.75,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 247,
+        "monthly_negative": 400,
+        "monthly_includes_zero": 73,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 44,
+        "pooled_includes_zero": 4
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.75,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 565,
+        "monthly_negative": 93,
+        "monthly_includes_zero": 62,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 0.75,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 452,
+        "monthly_negative": 205,
+        "monthly_includes_zero": 63,
+        "pooled_cells": 48,
+        "pooled_positive": 32,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 9
+      },
+      {
+        "theta": 0.75,
+        "gamma": 1.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 233,
+        "monthly_negative": 402,
+        "monthly_includes_zero": 85,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 44,
+        "pooled_includes_zero": 4
+      },
+      {
+        "theta": 0.75,
+        "gamma": 1.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 572,
+        "monthly_negative": 85,
+        "monthly_includes_zero": 63,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 0.75,
+        "gamma": 1.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 449,
+        "monthly_negative": 210,
+        "monthly_includes_zero": 61,
+        "pooled_cells": 48,
+        "pooled_positive": 32,
+        "pooled_negative": 11,
+        "pooled_includes_zero": 5
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 182,
+        "monthly_negative": 414,
+        "monthly_includes_zero": 124,
+        "pooled_cells": 48,
+        "pooled_positive": 0,
+        "pooled_negative": 48,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 610,
+        "monthly_negative": 54,
+        "monthly_includes_zero": 56,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 538,
+        "monthly_negative": 103,
+        "monthly_includes_zero": 79,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.25,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 202,
+        "monthly_negative": 417,
+        "monthly_includes_zero": 101,
+        "pooled_cells": 48,
+        "pooled_positive": 3,
+        "pooled_negative": 43,
+        "pooled_includes_zero": 2
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.25,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 577,
+        "monthly_negative": 101,
+        "monthly_includes_zero": 42,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.25,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 496,
+        "monthly_negative": 165,
+        "monthly_includes_zero": 59,
+        "pooled_cells": 48,
+        "pooled_positive": 39,
+        "pooled_negative": 7,
+        "pooled_includes_zero": 2
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.5,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 234,
+        "monthly_negative": 392,
+        "monthly_includes_zero": 94,
+        "pooled_cells": 48,
+        "pooled_positive": 1,
+        "pooled_negative": 44,
+        "pooled_includes_zero": 3
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.5,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 557,
+        "monthly_negative": 119,
+        "monthly_includes_zero": 44,
+        "pooled_cells": 48,
+        "pooled_positive": 48,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.5,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 460,
+        "monthly_negative": 185,
+        "monthly_includes_zero": 75,
+        "pooled_cells": 48,
+        "pooled_positive": 34,
+        "pooled_negative": 9,
+        "pooled_includes_zero": 5
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.75,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 234,
+        "monthly_negative": 401,
+        "monthly_includes_zero": 85,
+        "pooled_cells": 48,
+        "pooled_positive": 3,
+        "pooled_negative": 45,
+        "pooled_includes_zero": 0
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.75,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 562,
+        "monthly_negative": 120,
+        "monthly_includes_zero": 38,
+        "pooled_cells": 48,
+        "pooled_positive": 47,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 1
+      },
+      {
+        "theta": 1.0,
+        "gamma": 0.75,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 446,
+        "monthly_negative": 214,
+        "monthly_includes_zero": 60,
+        "pooled_cells": 48,
+        "pooled_positive": 34,
+        "pooled_negative": 10,
+        "pooled_includes_zero": 4
+      },
+      {
+        "theta": 1.0,
+        "gamma": 1.0,
+        "metric": "standardized_payoff",
+        "monthly_cells": 720,
+        "monthly_positive": 237,
+        "monthly_negative": 397,
+        "monthly_includes_zero": 86,
+        "pooled_cells": 48,
+        "pooled_positive": 3,
+        "pooled_negative": 44,
+        "pooled_includes_zero": 1
+      },
+      {
+        "theta": 1.0,
+        "gamma": 1.0,
+        "metric": "funded_default",
+        "monthly_cells": 720,
+        "monthly_positive": 543,
+        "monthly_negative": 131,
+        "monthly_includes_zero": 46,
+        "pooled_cells": 48,
+        "pooled_positive": 45,
+        "pooled_negative": 0,
+        "pooled_includes_zero": 3
+      },
+      {
+        "theta": 1.0,
+        "gamma": 1.0,
+        "metric": "funded_binary_miscoverage",
+        "monthly_cells": 720,
+        "monthly_positive": 433,
+        "monthly_negative": 218,
+        "monthly_includes_zero": 69,
+        "pooled_cells": 48,
+        "pooled_positive": 33,
+        "pooled_negative": 11,
+        "pooled_includes_zero": 4
+      }
+    ],
+    "interpretation": {
+      "set_native_score_uses_exact_binary_worst_label": true,
+      "empty_set_is_declared_fail_closed_convention": true,
+      "cartesian_product_joint_coverage_guarantee_established": false,
+      "probabilistic_robustness_claimed": false,
+      "conformal_validity_repair_claimed": false,
+      "selected_result_or_policy": false,
+      "causal_or_prospective_claimed": false,
+      "independent_replications_or_p_value_claimed": false
     }
   },
   "evaluation_endpoint": {
@@ -74765,23 +75993,23 @@
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
-      "bytes": 63647,
-      "sha256": "d28b287acd1bf48478069503229157691b29dc8232da822ab9fca23da70f5fb4"
+      "bytes": 76308,
+      "sha256": "e9a6720bdd55e4469e705b47c58c835f648834280d44f4e44274acb129cbf120"
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 29375,
-      "sha256": "83dc7af0dc5868505881b5293bb0f025a05f28a8b8ca04c221c97160c6a48153"
+      "bytes": 32243,
+      "sha256": "04c9723d22cc7cabd7cca70b02ddaaafaa23300fa4e41161870615bddaac2dbb"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 24249,
-      "sha256": "096a5fccb7ce779202f10d755d06e40c0c6886a4c797c85cafab64390077c76f"
+      "bytes": 24423,
+      "sha256": "d3db2008cc27650e0afa1d2f41b97c87a3ee2c8ce9e7cc030d90ba66ad851433"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 266018,
-      "sha256": "3ee13389ec428cf5dbcf9d07045eab44647b64786c532f6b2ac6f33b3e2ff95f"
+      "bytes": 272406,
+      "sha256": "a0e490561a67116616884b51f51b47e9c3d5e0bd7643908fb2d4ef8d7f4b8568"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
@@ -74790,18 +76018,18 @@
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 51930,
-      "sha256": "df5beef0ae819e099dac8afa07c570e5384cd91b605b9147588d2817dba90352"
+      "bytes": 59535,
+      "sha256": "e67ee2863abd8a32b773b09d83aec03332278d6c5699414f2eeddc1cc37b1588"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
-      "bytes": 13233,
-      "sha256": "dce3c00b1506c37900c75c44af2b5f41fcd9aa1e5c00a6f8c489245dd1571352"
+      "bytes": 13349,
+      "sha256": "482634156e98c1a10cec298133acb98c1556f6bf4f61bedf6210766b7e672945"
     },
     "publication_generation_helper": {
       "path": "src/ijds_audit/publication_generation.py",
-      "bytes": 11656,
-      "sha256": "347a97e9fc121eeb55da1b296bf5d7d59ce0708eb05467f558fa2f2cda5e6d94"
+      "bytes": 11750,
+      "sha256": "9ec91fafa1aef8f3db295ba077397c5e2606350b5c5b1c890ac53e2691111a3e"
     },
     "publication_table_schemas": {
       "path": "src/ijds_audit/publication_schemas.py",
@@ -74842,6 +76070,11 @@
       "path": "src/ijds_audit/frontier_evidence.py",
       "bytes": 65004,
       "sha256": "c5f4873faee50f63491cf0189213ba07377c43cde8c026134af99b0b720d10f8"
+    },
+    "decision_representation/loader": {
+      "path": "src/ijds_audit/decision_representation_evidence.py",
+      "bytes": 79379,
+      "sha256": "095d3a4834c03ad6ffc885496cae4feab64fd1f4a6777672b24ac3e5cd0e55d6"
     },
     "claim_ledger_loader": {
       "path": "src/ijds_audit/claim_ledger.py",
@@ -74992,6 +76225,156 @@
       "path": "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/platt_v5_reconciliation.parquet",
       "bytes": 25875,
       "sha256": "05505ebd952e260f8f35eb50c69de75ce6c2e7d85bbafcb7890a164bb4b6bffd"
+    },
+    "decision_representation/score_equivalence_config": {
+      "path": "configs/experiments/ijds_score_equivalence_complete_hull_2026-07-31_v1.yaml",
+      "bytes": 7653,
+      "sha256": "dd3b5bf72639e525724009613f660c55126c64ed8162296360505cc1b771a72c"
+    },
+    "decision_representation/score_equivalence_protocol": {
+      "path": "docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md",
+      "bytes": 9682,
+      "sha256": "ca44af60d819706d8f51f3c30414a883cbb4201508cf2cf5a739ea2a3839665b"
+    },
+    "decision_representation/score_equivalence_runner": {
+      "path": "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py",
+      "bytes": 50521,
+      "sha256": "2aedbff0292fa44e5077984263cf1921d43b4094d44b3d68fd804b1b47a19f58"
+    },
+    "decision_representation/score_equivalence_implementation": {
+      "path": "src/ijds_audit/score_equivalence_complete_hull.py",
+      "bytes": 12913,
+      "sha256": "fec5b64094030d988002e744fed91b011a950b3d9386f13edf895f2c64922f73"
+    },
+    "decision_representation/score_equivalence_hulls": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/complete_hull_certificates.parquet",
+      "bytes": 11628,
+      "sha256": "af0b67c3926172d2ba11e715b9bc6c94a95671312e9ab1b6016d0008d300382b"
+    },
+    "decision_representation/score_equivalence_v1d": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/v1d_embedding_score_equivalence.parquet",
+      "bytes": 220017,
+      "sha256": "820867bf4ce5a44313e1e79fcabd1b823975d271a914f904bb80569e53e75772"
+    },
+    "decision_representation/score_equivalence_calibrators": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/calibrator_score_equivalence.parquet",
+      "bytes": 296947,
+      "sha256": "07acb2f8c58b0b4bdfd39c3f944273328361adc7e86e8179b93dd777f4f963dc"
+    },
+    "decision_representation/score_equivalence_controls": {
+      "path": "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/runtime_controls.parquet",
+      "bytes": 14623,
+      "sha256": "badbe454b676d2cebeadd1d582500adb27e6e5eb79ebeab528505123b69b0ada"
+    },
+    "decision_representation/score_equivalence_summary": {
+      "path": "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/score_equivalence_summary.json",
+      "bytes": 10817,
+      "sha256": "3817e26ab22ae2ed2860a20e57746a99a18f8e36f1bbdf5f422eec0c3ef80455"
+    },
+    "decision_representation/score_equivalence_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/execution_receipt.json",
+      "bytes": 891,
+      "sha256": "e70f0c076258122254b17a79fab9a3cb47ceeeb66c079580335618e25d62d68f"
+    },
+    "decision_representation/set_native_phase_a_config": {
+      "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml",
+      "bytes": 6967,
+      "sha256": "45e3e2ba40c7731792a16f7c643f0214e2cd29c26415904b846beed09e541ef6"
+    },
+    "decision_representation/set_native_phase_b_config": {
+      "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b.yaml",
+      "bytes": 5075,
+      "sha256": "4dec700ac5a64f65f561934c0d6681720c21f17cbe0cdcfd8961b3a221e03540"
+    },
+    "decision_representation/set_native_phase_b_blocked_template": {
+      "path": "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b_blocked.yaml",
+      "bytes": 3190,
+      "sha256": "f1dfb7820c0e59b17c6b3edb98ff14d0a69024639464ec1992f922e00f8a4283"
+    },
+    "decision_representation/set_native_protocol": {
+      "path": "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md",
+      "bytes": 6412,
+      "sha256": "a9ab4ba250e00a6940576dcd7957c149a561802cb342651c85fc3e4dd66aace8"
+    },
+    "decision_representation/set_native_runner": {
+      "path": "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+      "bytes": 52695,
+      "sha256": "fad794542ef57f1bf47ee0c8adc3030d4005fb574d58b6d8c0538e47d5c2644a"
+    },
+    "decision_representation/set_native_implementation": {
+      "path": "src/ijds_challengers/set_native_binary_robust.py",
+      "bytes": 43905,
+      "sha256": "d3bc2d0252c33ecb70572ef2a0adc821849f84b96cdee5525ee96793c61a8c32"
+    },
+    "decision_representation/set_native_phase_a_solve_records": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet",
+      "bytes": 99078,
+      "sha256": "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+    },
+    "decision_representation/set_native_phase_a_allocations": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet",
+      "bytes": 1460830,
+      "sha256": "580468cbd2429a316aee3022a512db0f030f11543e84c2fbfb7b9687b47c6497"
+    },
+    "decision_representation/set_native_phase_a_taxonomy": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet",
+      "bytes": 12686,
+      "sha256": "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+    },
+    "decision_representation/set_native_phase_a_solver_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet",
+      "bytes": 23406,
+      "sha256": "3758d0308f81d073f380fe4dcadb7bca2585cbd002e35bcab85ef07ca6b6e3be"
+    },
+    "decision_representation/set_native_phase_a_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json",
+      "bytes": 16742,
+      "sha256": "a280af5eecea24d8e3e0796f72dc33a46e1ca9c655374b451cfbfc2ce202e0f5"
+    },
+    "decision_representation/set_native_phase_a_summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json",
+      "bytes": 1429,
+      "sha256": "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+    },
+    "decision_representation/set_native_phase_a_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json",
+      "bytes": 693,
+      "sha256": "b3ccb78aaefb24e39e1a4d9eaac4e9ba006373692883224f2ef22b37160121b6"
+    },
+    "decision_representation/set_native_phase_a_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json",
+      "bytes": 234143,
+      "sha256": "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+    },
+    "decision_representation/set_native_evaluated_portfolios": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/evaluated_primary_portfolios.parquet",
+      "bytes": 103415,
+      "sha256": "10d2bb7bffd2c5855f9ef77a923d91bee20f1a62efd1ca8b7c0d77e166a45fb2"
+    },
+    "decision_representation/set_native_monthly_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/monthly_robust_minus_v1d_contrasts.parquet",
+      "bytes": 988824,
+      "sha256": "c0f73e2babcd6729079c94f855933e739ac636b8930c0a7779de6e699a0b78fc"
+    },
+    "decision_representation/set_native_window_contrasts": {
+      "path": "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/window_robust_minus_v1d_contrasts.parquet",
+      "bytes": 125332,
+      "sha256": "18b28a83103e0a492e81e8a08cc3f3659672168780738cb8b3ebc3a0b7746080"
+    },
+    "decision_representation/set_native_evaluation_summary": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json",
+      "bytes": 865,
+      "sha256": "f3fc80c7a70e4c7da4b6866cff1d5460eb69fc29c406165ca8d4e365439da8f1"
+    },
+    "decision_representation/set_native_evaluation_receipt": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json",
+      "bytes": 4181,
+      "sha256": "05ccc671fc861d0eef89d93fd9cb3b2c5e779112b4a8e419dbeed5925d62f26d"
+    },
+    "decision_representation/set_native_evaluation_manifest": {
+      "path": "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json",
+      "bytes": 13783,
+      "sha256": "a2438e5f6363b7f2480634450d5bfa7ad5c19da01f4a4dd643c05bcdd25b2f00"
     },
     "two_ruler/outcome_free/freeze": {
       "path": "models/experiments/ijds_audit/ijds-normalized-objective-frontier-2026-07-13-v1c/protocol_freeze.json",
@@ -76405,6 +77788,16 @@
       "bytes": 535,
       "sha256": "d8dc6b50192f97a4c927a2129dd0d21cfeacdbe531b26961ccd4a4a3d79db1af"
     },
+    "table/score_equivalence_complete_hull": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9M_score_equivalence_complete_hull.csv",
+      "bytes": 325,
+      "sha256": "10d8cca5995ae4f37b83b30f2b0350aa9ffbf2d6f2b51d50bf1a6f8d61226762"
+    },
+    "table/set_native_robust_minus_embedding": {
+      "path": "reports/crpto/tables/crpto_ijds_v4_tableS9N_set_native_robust_minus_embedding.csv",
+      "bytes": 4218,
+      "sha256": "8888cf4a92db70a64c4e300ab09d52be920e10dc664e7d392a2ccb4995ac1777"
+    },
     "figure/coverage/png": {
       "path": "reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png",
       "bytes": 320332,
@@ -76459,13 +77852,13 @@
   "protected_stages_run": [],
   "protected_artifacts_written": [],
   "claim_ledger": {
-    "schema_version": "2026-07-30.2",
+    "schema_version": "2026-07-31.1",
     "status": "active_ijds_claim_contract",
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 29375,
-      "sha256": "83dc7af0dc5868505881b5293bb0f025a05f28a8b8ca04c221c97160c6a48153"
+      "bytes": 32243,
+      "sha256": "04c9723d22cc7cabd7cca70b02ddaaafaa23300fa4e41161870615bddaac2dbb"
     },
     "claims": [
       {
@@ -76950,7 +78343,7 @@
         "lineages": [
           "binary_geometry.outcome_free"
         ],
-        "scope": "exact_endpoint_equivalence_classes_of_bounded_continuous_intervals_under_intersection_with_the_binary_label_space",
+        "scope": "exact_endpoint_and_coefficient_fibres_of_bounded_continuous_intervals_containing_the_score_under_intersection_with_the_binary_label_space_including_rectangular_worst_fibre_suprema",
         "rule": "documented",
         "result_pointer": null,
         "result": null,
@@ -76959,7 +78352,10 @@
           "calibrated_upper_endpoint_magnitude",
           "optimizer_or_policy_direction",
           "allocation_change_without_experiment",
-          "selected_or_funded_set_validity"
+          "selected_or_funded_set_validity",
+          "jointly_covered_cartesian_product",
+          "nonidentification_requires_decision_change",
+          "normative_robust_policy"
         ],
         "surfaces": {
           "required": [
@@ -76985,7 +78381,7 @@
           "two_ruler.outcome_free",
           "set_preserving_embedding"
         ],
-        "scope": "nonempty_convex_allocation_set_exact_weak_order_equivalence_on_the_span_of_feasible_allocation_differences_with_translated_caps_common_objective_floors_and_a_common_normalized_ruler_anchor",
+        "scope": "nonempty_convex_allocation_set_exact_weak_order_equivalence_on_the_span_of_feasible_allocation_differences_with_translated_caps_common_objective_floors_a_common_normalized_ruler_anchor_and_standard_local_normal_cone_cooptimality_conditions",
         "rule": "documented",
         "result_pointer": null,
         "result": null,
@@ -76999,7 +78395,46 @@
           "solver_output_identity",
           "preferred_embedding",
           "selected_or_funded_set_validity",
-          "policy_direction_or_dominance"
+          "policy_direction_or_dominance",
+          "additive_full_budget_offset_invariance_with_zero_score_cash"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "decision.complete_hull_score_equivalence_census",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "score_equivalence_complete_hull"
+        ],
+        "scope": "complete_candidate_monthly_full_budget_affine_hulls_for_all_twenty_six_role_period_menus_with_all_five_thousand_two_hundred_v1d_embedding_and_six_thousand_two_hundred_forty_calibrator_pair_score_comparisons",
+        "rule": "equals",
+        "result_pointer": "/score_equivalence_complete_hull/complete_census_verified",
+        "result": true,
+        "forbidden_inference": [
+          "nonequivalence_implies_fixed_cell_allocation_change",
+          "nonequivalence_implies_different_optimal_face",
+          "common_solver_output_implies_equal_optimal_face",
+          "optimizer_uniqueness",
+          "selected_embedding",
+          "selected_calibrator",
+          "calibrator_full_optimizer_equivalence_or_nonequivalence",
+          "portfolio_performance",
+          "selected_or_funded_set_validity",
+          "prospective_generalization"
         ],
         "surfaces": {
           "required": [
@@ -77082,6 +78517,57 @@
           "independent_replications",
           "conformal_validity_repair",
           "joint_attainability_across_overlapping_tracks"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "decision.set_native_robust_counterpart_complete_census",
+        "status": "active",
+        "kind": "empirical",
+        "lineages": [
+          "set_native_binary_robust_counterpart.outcome_free",
+          "set_native_binary_robust_counterpart.evaluation",
+          "set_preserving_embedding"
+        ],
+        "scope": "complete_outcome_free_set_native_binary_nonempty_set_exact_worst_label_with_declared_empty_set_fail_closure_frontier_over_one_thousand_two_hundred_forty_eight_cells_and_complete_primary_oot_comparison_of_seven_hundred_twenty_robust_cells_against_all_twenty_five_v1d_embedding_cells_with_loanwise_shared_binary_completion",
+        "rule": "equals",
+        "result_pointer": "/set_native_binary_robust_counterpart/complete_census_verified",
+        "result": true,
+        "forbidden_inference": [
+          "conformal_validity_repair",
+          "joint_coverage_of_product_sets",
+          "probabilistic_robustness_guarantee",
+          "selected_set_validity",
+          "funded_set_validity",
+          "preferred_robust_counterpart",
+          "preferred_embedding",
+          "preferred_theta",
+          "preferred_gamma",
+          "preferred_ruler",
+          "preferred_coordinate",
+          "preferred_window",
+          "selected_policy",
+          "policy_winner",
+          "universal_favorable_direction",
+          "universal_adverse_direction",
+          "causal_mechanism",
+          "prospective_validation",
+          "independent_replications",
+          "p_value",
+          "joint_attainability_across_grid_cells"
         ],
         "surfaces": {
           "required": [
@@ -77655,7 +79141,7 @@
         "lineages": [
           "funded_selection_estimands"
         ],
-        "scope": "exposure_weighted_minus_count_weighted_miscoverage_equivalently_count_minus_exposure_coverage_on_one_fixed_positive_support",
+        "scope": "exposure_weighted_minus_unweighted_panel_miscoverage_equivalently_unweighted_minus_exposure_coverage_on_one_fixed_nonempty_panel_with_nonnegative_exposures_and_positive_total_exposure_including_candidate_and_selected_support_special_cases",
         "rule": "documented",
         "result_pointer": null,
         "result": null,

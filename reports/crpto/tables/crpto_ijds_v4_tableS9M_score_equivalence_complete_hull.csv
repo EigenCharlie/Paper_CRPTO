@@ -1,0 +1,6 @@
+family,cell_group,cells,equivalent_cells,without_complete_hull_certificate
+v1d_embedding,theta_zero_self,1040,1040,0
+v1d_embedding,theta_positive_gamma_zero,832,832,0
+v1d_embedding,theta_positive_gamma_positive,3328,0,3328
+closed_calibrator_q_gamma,gamma_zero,1248,0,1248
+closed_calibrator_q_gamma,gamma_positive,4992,0,4992

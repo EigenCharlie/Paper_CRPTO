@@ -78,6 +78,16 @@ def test_active_abstract_satisfies_ijds_length_and_paragraph_contract() -> None:
     assert "\n\n" not in abstract
 
 
+def test_abstract_loader_only_treats_standalone_lines_as_yaml_delimiters(tmp_path) -> None:
+    manuscript = tmp_path / "manuscript.qmd"
+    manuscript.write_text(
+        "---\ntitle: Test\nabstract: |\n  An internal---dash stays in the abstract.\n---\nBody.\n",
+        encoding="utf-8",
+    )
+
+    assert _load_abstract(manuscript) == "An internal---dash stays in the abstract."
+
+
 def test_normalized_word_stream_ignores_layout_and_punctuation() -> None:
     assert normalized_word_stream("Beta--Binomial\n90%-target") == "betabinomial90target"
 

@@ -1,4 +1,4 @@
-version: "2026-07-30"
+version: "2026-07-31"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -212,6 +212,8 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS9J_funded_selection_gamma_contrasts.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9M_score_equivalence_complete_hull.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9N_set_native_robust_minus_embedding.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf

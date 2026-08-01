@@ -15,7 +15,9 @@ CRPTO estudia una cadena integrada de aprendizaje, incertidumbre conformal y
 asignación. Su aporte no es una policy ganadora. Es una auditoría de
 identificación que muestra cuándo una propiedad del score no transporta al
 periodo OOT y cuándo la comparación downstream depende del ruler que define
-stringency común.
+stringency común. También separa igualdad del set binario, orden global de
+portafolios y robustez del problema de decisión: ninguno de esos objetos se
+hereda automáticamente de otro.
 
 ::: {.callout-warning title="Frontera de estimando"}
 La cobertura de $Y$ binario observado no se transporta por sí sola a un
@@ -41,31 +43,55 @@ ni un holdout intacto.
 > conformal intervals, and constrained monthly allocation. From a 2,925,493-row
 > Lending Club archive, a status-independent protocol retains all 640,543
 > eligible 36-month loans and evaluates 376,890 primary OOT candidates. Five
-> calibrated score specifications and all eight eligible six-month residual
-> windows place the sharp all-candidate coverage upper bound below 0.90. A
+> learner specifications, each separately Platt-scaled, and all eight eligible
+> six-month residual windows place the sharp all-candidate coverage upper bound
+> below 0.90 in 40/40 cells. A separate four-map primary-CatBoost sensitivity
+> retains that state in only 18/32 cells: 8/8 Platt, 8/8 beta, 1/8 isotonic, and
+> 1/8 IVAP Venn--Abers scalar. A
 > prevalence crossing in one fixed score stratum coincides with a discontinuous
 > change in binary absolute-residual geometry. Downstream, objective-matched and
 > normalized-score rulers produce different realized contrast directions, and
 > exact common-outcome envelopes expose unresolved endpoints and comparator
-> support. Across a complete 36-scenario budget--concentration--LGD grid, every
+> support. A set-preserving grid keeps all 80 binary-set diagnostics fixed while
+> 9,659/11,520 nontrivial monthly allocations change; 77/576 fixed tracks contain
+> both tolerance-separated signs. Complete-hull diagnostics certify all 26
+> monthly allocation hulls. Within the empirical V1d family, only the 1,872
+> $\theta=0$ or $\gamma=0$ identity-control rows are score-equivalent:
+> 3,328/3,328 nontrivial embedding comparisons and 6,240/6,240 calibrator-pair
+> comparisons are non-equivalent. A set-native robust counterpart completes
+> 1,248 outcome-free cells, including 720 primary cells and 208 set taxonomies.
+> Across those taxonomy rows, set-membership incidences are 3,003,924
+> singleton-$\{0\}$, 717,965 two-label, 52,311 empty, and zero
+> singleton-$\{1\}$.
+> Across 1,200 pooled robust-minus-V1d contrasts, the negative/positive/ambiguous
+> sharp-interval counts are 1,065/15/120 for standardized-payoff rate,
+> 0/1,196/4 for default, and 120/1,009/71 for miscoverage. Across a complete
+> 36-scenario budget--concentration--LGD grid, every
 > scenario retains adverse default and miscoverage cells, but none is uniformly
-> favorable or adverse. No model, gamma, ruler, coordinate, scenario, or policy is selected. CRPTO's
+> favorable or adverse. The finite-grid cells are correlated; marginal sets do
+> not establish a joint-coverage or probabilistic robust-optimization guarantee.
+> No model, calibrator, embedding, gamma, ruler, coordinate, scenario, or policy
+> is selected. CRPTO's
 > contribution is a reproducible identification audit of the
 > machine-learning--conformal--optimization handoff.
 
 ### Claims editoriales activos
 
-Los identificadores I1--I8 son claves de escritura, no hipótesis independientes
-ni nombres de comparadores.
+Los identificadores I1--I8 y sus subclaims I2a e I4a--I4c son claves de
+escritura, no hipótesis independientes ni nombres de comparadores.
 
 ::: {#tbl-crpto-numbered-claims}
 
 | Clave | Formulación defendible | Evidencia primaria | Límite |
 |---|---|---|---|
 | I1 | El diseño usa toda la población elegible bajo fechas, plazo, esquema y observabilidad declarados. | 2,925,493 filas crudas; 640,543 elegibles; sampling `none`. | No todos los registros comparten target u horizonte. |
-| I2 | La cobertura candidata no transporta bajo las cinco especificaciones y ocho ventanas declaradas. | 40/40 upper bounds por debajo de 0.90. | No prueba invalidez conformal universal ni selected-set coverage. |
-| I3 | La geometría del residual absoluto binario es sensible a prevalencia. | En CatBoost stratum 2, W7--W8 cambia prevalencia 0.101703→0.097147 y cuantil 0.888435→0.111801. | Es un mecanismo compatible con el dato, no atribución causal completa. |
+| I2 | La cobertura candidata no transporta bajo las cinco especificaciones Platt-scaled y ocho ventanas declaradas. | 40/40 upper bounds por debajo de 0.90. | Es específico de esos cinco learners y no prueba invalidez conformal universal ni selected-set coverage. |
+| I2a | El estado 40/40 no es uniforme sobre la familia cerrada de calibradores de CatBoost. | 18/32 upper endpoints por debajo: Platt 8/8, beta 8/8, isotonic 1/8 e IVAP 1/8. | No rankea mapas, no identifica dependencia de true coverage ni transfiere una garantía Venn al scalar IVAP. |
+| I3 | La geometría del residual absoluto binario es sensible a prevalencia. | En CatBoost stratum 2, W7--W8 cambia prevalencia 0.101703→0.097147 y cuantil 0.888435→0.111801. | Es un mecanismo compatible con el dato, no atribución causal completa; el cruce tampoco es completion-invariant. |
 | I4 | Score, ruler y coordenada definen conjuntamente la comparación de portafolios. | Dos rulers, tres coordenadas interiores, ocho ventanas y 48 contrastes de ventana. | Ningún ruler es neutral ni seleccionado por outcomes. |
+| I4a | Igualdad de sets binarios no preserva asignación ni dirección en la grid V1d. | 80/80 sets iguales; 9,659/11,520 asignaciones cambian; 77/576 tracks contienen ambos signos. | No selecciona embedding, repara validez ni identifica una dirección universal. |
+| I4b | La equivalencia global de score no se certifica en ninguna comparación empírica no trivial de GO1. | 26/26 hulls; en V1d solo las 1,872 filas-control con $\theta=0$ o $\gamma=0$ son equivalentes; 3,328/3,328 V1d no triviales y 6,240/6,240 pares de calibradores son no equivalentes. | La falla niega un certificado global con caps traducidos; no demuestra cambio de allocation u optimal face en una celda y los calibradores no comparten objetivo. |
+| I4c | El robust counterpart set-native produce un censo completo, no una garantía robusta probabilística. | Phase A: 1,248 celdas, 720 primarias y 208 taxonomías; incidencias $\{0\}$/$\{0,1\}$/$\varnothing$/$\{1\}$: 3,003,924/717,965/52,311/0. En 1,200 contrastes pooled con sharp completions compartidas, negativo/positivo/ambiguo es standardized-payoff rate 1,065/15/120, default ponderado 0/1,196/4 y miscoverage ponderado 120/1,009/71. | Celdas correlacionadas; sin garantía establecida de joint coverage, selected-set validity, ganador, causalidad ni dominancia universal. |
 | I5 | El endpoint reconstruido cambia la interpretación de direcciones previamente aparentes. | 376,890 candidatos; 364,814 resueltos y 12,076 no resueltos. | El archivo no es un snapshot administrativo verificado. |
 | I6 | Los bounds sharp y el exact support cuantifican identificación parcial sobre outcomes y caps declarados. | 216 broad-support envelopes cruzan cero; terminal default cruza cero en 72/72 celdas de development support. | No son intervalos de confianza ni una frontera continua universal. |
 | I7 | La ausencia de dirección universal sobrevive una sensibilidad estructural completa. | 36/36 escenarios; mínimo 17 celdas de default y 21 de miscoverage adversas por escenario; 0 escenarios uniformemente favorables o adversos. | No identifica un escenario ganador ni prueba daño universal. |
@@ -74,18 +100,23 @@ ni nombres de comparadores.
 : Claims editoriales del manuscrito activo.
 :::
 
+En I4c, *negativo* significa upper bound menor que cero, *positivo* significa
+lower bound mayor que cero y *ambiguo* significa que el sharp interval contiene
+cero. Las 1,200 filas comparten ventanas, policies, loans y outcomes; son un
+censo correlacionado de la grid, no 1,200 pruebas independientes.
+
 ### Arquitectura argumental
 
 ::: {#tbl-crpto-paper-outline}
 
 | Sección | Pregunta que resuelve | Material esencial |
 |---|---|---|
-| 1. Introduction | ¿Qué se rompe al inferir una policy a partir de cobertura candidata? | Gap, contribuciones I1--I8 y límites. |
+| 1. Introduction | ¿Qué se rompe al inferir una policy a partir de cobertura candidata? | Gap, contribuciones I1--I8, subclaims I2a/I4a--I4c y límites. |
 | 2. Related Work | ¿Qué aportan y qué no transfieren los vecinos más cercanos? | Decision quality, CP bajo shift, conformal RO, crédito y madurez. |
 | 3. Data and Locked Evaluation Design | ¿Cuál era la información físicamente disponible? | Universo status-independent, roles temporales, outcome isolation y endpoint. |
-| 4. Method | ¿Cómo se construyen scores, intervalos, payoff y LP? | CatBoost primario, cuatro controles, Mondrian binario y asignación mensual. |
-| 5. Audit Theory and Estimands | ¿Qué puede ordenarse sin observar outcomes? | Equivalencia afín, nesting, C2, geometría binaria y bounds sharp. |
-| 6. Results | ¿Transporta cobertura y es invariante la dirección downstream? | 40 celdas, W7--W8, two-ruler, estructura y exact support. |
+| 4. Method | ¿Cómo se construyen scores, intervalos, payoff y LP? | CatBoost primario y cuatro controles, cada uno Platt-scaled; familia separada de cuatro mapas; embeddings y contraparte set-native. |
+| 5. Audit Theory and Estimands | ¿Qué puede ordenarse sin observar outcomes? | Fibre compatible, equivalencia sobre feasible differences, nesting, C2, geometría binaria y bounds sharp. |
+| 6. Results | ¿Transporta cobertura y es invariante la dirección downstream? | 40 celdas learner, 32 calibrator, V1d, GO1, GO2, W7--W8, two-ruler, estructura y exact support. |
 | 7. Discussion | ¿Qué aprende un sistema decision-focused de este fallo de transporte? | Estimand, información y separación de claims. |
 | 8. Limitations | ¿Qué diseño sería necesario para afirmar más? | Snapshot, censura, selected set, cash flows y validez externa. |
 | 9. Reproducibility | ¿Cómo se reconstruye cada cifra? | Registry, DVC, evidence manifest, tablas, figuras y tests. |
@@ -94,27 +125,13 @@ ni nombres de comparadores.
 : Arquitectura del paper IJDS.
 :::
 
-### Page-budget de trabajo
+### Extensión editorial durante el desarrollo
 
-No hay freeze de submission. Este ledger es una restricción editorial móvil,
-útil para evitar que provenance y pruebas largas desplacen el argumento.
-
-::: {#tbl-crpto-page-budget}
-
-| Bloque | Páginas objetivo | Regla |
-|---|---:|---|
-| Introduction | 2.0 | Pregunta, gap, contribuciones y resultado principal. |
-| Related Work | 2.5 | Solo vecinos que cambian el límite de claim. |
-| Data and Design | 3.0 | Dar espacio a madurez, endpoint e information boundary. |
-| Method | 4.0 | Una notación, un payoff y un LP. |
-| Theory | 3.0 | Enunciados en body; pruebas completas al supplement. |
-| Results | 5.0 | Cobertura, mecanismo, rulers y support. |
-| Discussion + Limitations | 3.0 | Implicación y frontera, sin repetir resultados. |
-| Reproducibility | 1.0 | Contrato ejecutable, no inventario de archivos. |
-| Buffer | 1.0 | Figuras, tablas y transiciones. |
-
-: Page-budget de trabajo previo al freeze.
-:::
+No existe freeze ni restricción activa de páginas. En esta fase se conserva
+todo material válido que mejore identificación, teoría, trazabilidad,
+posicionamiento o interpretación. La compresión se decidirá mediante un
+protocolo editorial separado cuando exista un formato de submission concreto;
+no se elimina evidencia útil para cumplir un presupuesto hipotético.
 
 ### Figuras y tablas
 
@@ -124,8 +141,12 @@ No hay freeze de submission. Este ledger es una restricción editorial móvil,
 |---|---|---|---|
 | Figura 1 | Body | Cobertura resuelta y sharp bounds por ventana. | Manifest: coverage figure. |
 | Figura 2 | Body | Prevalencia y cuantil de stratum 2 en W1--W8. | Manifest: phase-transition figure. |
-| Tabla de controles | Body | Cinco modelos como coverage controls, no leaderboard. | Manifest: credit-controls table. |
+| Tabla de controles | Body | CatBoost primario y cuatro coverage controls, cada uno Platt-scaled; no leaderboard. | Manifest: credit-controls table. |
+| Tabla calibrator-family | Body | Estado completo 18/32 y desglose 8/8, 8/8, 1/8, 1/8 sin ranking. | Manifest: calibrator-sensitivity table. |
 | Tabla two-ruler | Body | Seis tracks y sus hulls endpoint-corrected. | Manifest: two-ruler table. |
+| Tabla V1d | Body, censo en supplement | Sets preservados, cambios de asignación y dirección. | Manifest: set-preserving tables. |
+| Tabla complete-hull | Supplement, resumen en body | Equivalencia exacta en 26 menús y censos completos GO1. | Tagged GO1 summary and tables. |
+| Tabla set-native | Body, censo en supplement | Taxonomía, 1,248/720 celdas y 1,200 contrastes pooled GO2. | Tagged GO2 summaries and tables. |
 | Figura 3 | Supplement | Dirección de envelopes sobre development support. | Manifest: development-envelopes figure. |
 | Tabla endpoint timing | Supplement | Sensibilidad separada del fit-label lag. | Manifest: endpoint-sensitivity table. |
 | Tabla structural sensitivity | Supplement, resumen en body | Censo no selectivo de los 36 escenarios. | Manifest: structure-sensitivity table. |
@@ -133,8 +154,9 @@ No hay freeze de submission. Este ledger es una restricción editorial móvil,
 : Selección activa de figuras y tablas.
 :::
 
-El paquete activo contiene tres figuras, cada una en PNG y PDF. Decir “seis
-figuras” confunde formatos con objetos visuales.
+El conteo de tablas y familias de figuras se toma del manifest generado después
+de cada promoción. PNG y PDF son formatos de una misma figura, no objetos
+científicos distintos.
 
 ### Arquitectura del online supplement
 
@@ -143,11 +165,11 @@ figuras” confunde formatos con objetos visuales.
 | Apéndice | Contenido | Razón para separarlo |
 |---|---|---|
 | A | Universo, cronología, endpoint y information boundary. | Auditoría completa del dato. |
-| B | Cinco learners, WOE/IV, monotonicidad, PSI, ventanas y label lag. | Censo técnico de cobertura y geometría. |
-| C | Payoff, LP, rulers y named comparators. | Definición exacta del contrafactual. |
-| D | Enunciados y pruebas. | Mantiene legible el body. |
-| E | Censo two-ruler, endpoint recovery, estructura y exact support. | Reporte completo sin elegir celdas o escenarios. |
-| F | Lineage, ejecución en dos fases y replay. | Procedencia reproducible. |
+| B | Cinco learners Platt-scaled, familia de cuatro calibradores, WOE/IV, monotonicidad, PSI, ventanas y label lag. | Censos técnicos de cobertura y geometría sin seleccionar modelo o mapa. |
+| C | Payoff, LP, rulers, embeddings, score set-native y named comparators. | Definición exacta de cada contrafactual y de la convención fail-closed. |
+| D | Enunciados, fibre compatible, equivalencia sobre feasible differences y pruebas. | Mantiene legible el body y separa teorema de diagnóstico numérico. |
+| E | Censos two-ruler, V1d, GO1, GO2, endpoint recovery, estructura y exact support. | Reporte completo sin elegir celdas, mapas, embeddings o escenarios. |
+| F | Lineages, ejecuciones outcome-free/evaluation, tags y replay. | Procedencia reproducible de calibrator-family, V1d, GO1 y GO2. |
 | G | Claim boundary y limitaciones. | Evita que una tabla favorable amplíe el claim. |
 | H | Closest-work positioning. | Delimita novedad sin afirmar que cada ingrediente es nuevo. |
 
@@ -166,8 +188,12 @@ figuras” confunde formatos con objetos visuales.
 | Manifest numérico | V4 evidence manifest | Única autoridad paper-facing de números. |
 | Data contract | Registry: raw-data audit | Población, esquema y madurez. |
 | Credit controls | Registry: credit summary | Cinco modelos, calibración, IV y PSI. |
+| Closed calibrator family | Registry: calibrator source and evaluation summaries | 18/32 completo y ausencia de selector. |
 | Binary geometry | Registry: V4 summary | Cobertura, fase, support y solver. |
 | Two-ruler | Registry: two-ruler manifest | Contrastes y sharp hulls. |
+| Set-preserving V1d | Registry: source and verified evaluation summaries | 80/80, 9,659/11,520 y 77/576 con completions compartidas. |
+| Complete-hull GO1 | Tagged score-equivalence summary | 26 hulls y censos de equivalencia sin optimización ni outcomes. |
+| Set-native GO2 | Tagged Phase-A and Phase-B summaries | 1,248 celdas, taxonomía completa y 1,200 contrastes pooled. |
 | Endpoint sensitivity | Registry: endpoint summary | Timing del endpoint, separado de fit labels. |
 | Structural sensitivity | Registry: structure freeze and summary | 36 escenarios completos, baseline reconciliado y ningún selector. |
 
@@ -179,6 +205,9 @@ Las claves estables correspondientes son:
 - `lineages.credit_controls.evaluation`;
 - `lineages.binary_geometry.{outcome_free,evaluation}`;
 - `lineages.two_ruler.{outcome_free,evaluation}`;
+- las entradas exactas del registry para `calibrator_family` y
+  `set_preserving_embedding`;
+- las autoridades Git-native promovidas para GO1 y GO2;
 - `sources.credit_summary`;
 - `sources.v4_summary`; y
 - `sources.two_ruler_manifest`.
@@ -192,9 +221,12 @@ Las claves estables correspondientes son:
 | $Y_i$ | Default terminal observado o no resuelto al cutoff. | No llamarlo PD latente. |
 | $s_i$ | Score point-PD calibrado. | Solo CatBoost primario entra al LP. |
 | $u_i$ | Upper score conformal binario. | No implica validez del funded set. |
+| $S_i$ | Set binario candidato. | No es un intervalo para PD latente ni establece una garantía de cobertura conjunta entre loans. |
+| $r(S_i)$ | Riesgo set-native: cero solo para $\{0\}$ y uno para los demás sets, incluido el vacío. | La regla del set vacío es una convención fail-closed, no un teorema conformal. |
 | $a_i$ | Fracción financiada. | Se decide dentro de un menú mensual. |
 | $b$ | Cap del score ponderado. | Su escala depende del score. |
 | $\gamma$ | Mezcla guardrail--point en el diagnóstico two-ruler. | No se selecciona ni se promueve. |
+| $\theta$ | Contracción continua set-preserving de V1d. | No es nivel de confianza ni calibrador. |
 | $\rho$ | Coordenada común del ruler. | Debe nombrarse junto con el ruler. |
 | $\Delta$ | Guardrail menos point para un endpoint. | Se reporta como sharp hull si hay outcomes no resueltos. |
 
@@ -203,20 +235,32 @@ Las claves estables correspondientes son:
 
 ### Núcleo teórico
 
-El body necesita nueve afirmaciones exactas y sus fronteras:
+El body necesita las siguientes afirmaciones exactas y sus fronteras:
 
-1. equivalencia de caps bajo transformaciones globales positive-affine;
-2. invariancia del ruler normalizado a esas transformaciones;
-3. nesting mecánico cuando se copia el mismo cap;
-4. dominancia del objetivo plug-in bajo el comparador C2;
-5. discontinuidad del cuantil residual binario en el modelo de score constante;
-6. identidad loan-wise de miscoverage binario;
-7. bounds sharp con una asignación común de outcomes no resueltos;
-8. suficiencia de endpoints de bases LP sobre el soporte declarado;
-9. interpretación del envelope como partial identification, no como intervalo de confianza.
+1. fibre exacta de coeficientes continuos compatibles con cada set binario;
+2. equivalencia global
+   $t=\kappa s+h$, $\kappa>0$,
+   $h\in\operatorname{span}(\mathcal A-\mathcal A)^\perp$, y traducción de
+   caps bajo esa relación;
+3. invariancia del ruler normalizado a transformaciones permitidas;
+4. nesting mecánico cuando se copia el mismo cap;
+5. dominancia del objetivo plug-in bajo el comparador C2;
+6. discontinuidad del cuantil residual binario en el modelo de score constante;
+7. identidad loan-wise de miscoverage binario;
+8. bounds sharp con una asignación común de outcomes no resueltos;
+9. suficiencia de endpoints de bases LP sobre el soporte declarado;
+10. interpretación del envelope como partial identification, no como intervalo de confianza.
 
 Ninguna de estas propiedades ordena por sí sola payoff realizado, default,
 miscoverage o bienestar.
+
+GO1 verifica numéricamente la condición 2 sobre 26 menús completos: en V1d
+solo pasan las 1,872 filas-control con $\theta=0$ o $\gamma=0$, mientras las
+3,328/3,328 comparaciones no triviales y las
+6,240/6,240 comparaciones por pares de calibradores son no equivalentes. Fallar
+ese certificado permite, pero no obliga, un cambio en una celda concreta. GO2
+evalúa otro objeto: una regla set-native marginal cuya grid finita no hereda
+cobertura conjunta ni robustez probabilística.
 
 ### Regla de decisión editorial
 

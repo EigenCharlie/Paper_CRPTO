@@ -1,4 +1,4 @@
-schema_version: "2026-07-30.2"
+schema_version: "2026-07-31.1"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -221,6 +221,63 @@ lineages:
         - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/evaluation_summary.json"
         - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/join_identity.json"
         - "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
+    score_equivalence_complete_hull:
+      run_tag: "ijds-score-equivalence-complete-hull-2026-07-31-v1"
+      protocol_tag: "protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1"
+      protocol_commit: "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+      scientific_uv_lock_sha256: "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      paper_role: "complete_outcome_free_complete_candidate_hull_score_equivalence_census"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1"
+      artifact_commit: "e31310090179ee96893c92adec3aa0bbc54f5a95"
+      artifact_parent_commit: "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/calibrator_score_equivalence.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/complete_hull_certificates.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/runtime_controls.parquet"
+        - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/v1d_embedding_score_equivalence.parquet"
+        - "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/score_equivalence_summary.json"
+    set_native_binary_robust_counterpart:
+      outcome_free:
+        run_tag: "ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+        protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+        protocol_commit: "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+        scientific_uv_lock_sha256: "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+        paper_role: "outcome_free_complete_set_native_frontier_and_solver_audit"
+        dvc_tracked: false
+        artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a"
+        artifact_commit: "3ef847491e1ecdf55315774ddb295a634e441a54"
+        artifact_parent_commit: "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+        artifact_transport: "git_force_tracked_direct_child_commit"
+        artifact_paths:
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet"
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet"
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet"
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json"
+      evaluation:
+        run_tag: "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+        protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+        protocol_commit: "e3d91660f5c337b3a45713b02ad2ca6ec303b31e"
+        scientific_uv_lock_sha256: "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+        paper_role: "complete_retrospective_set_native_robust_minus_embedding_census"
+        dvc_tracked: false
+        artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+        artifact_commit: "b13718008cd23b444d1165d14f0fb78101d9f017"
+        artifact_parent_commit: "e3d91660f5c337b3a45713b02ad2ca6ec303b31e"
+        artifact_transport: "git_force_tracked_direct_child_commit"
+        artifact_paths:
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/evaluated_primary_portfolios.parquet"
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/monthly_robust_minus_v1d_contrasts.parquet"
+          - "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/window_robust_minus_v1d_contrasts.parquet"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json"
+          - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json"
 
 sensitivities:
   endpoint_availability:
@@ -933,3 +990,123 @@ sources:
     path: "data/processed/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1/evaluation/platt_v5_reconciliation.parquet"
     bytes: 25875
     sha256: "05505ebd952e260f8f35eb50c69de75ce6c2e7d85bbafcb7890a164bb4b6bffd"
+  score_equivalence_config:
+    path: "configs/experiments/ijds_score_equivalence_complete_hull_2026-07-31_v1.yaml"
+    bytes: 7653
+    sha256: "dd3b5bf72639e525724009613f660c55126c64ed8162296360505cc1b771a72c"
+  score_equivalence_protocol:
+    path: "docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md"
+    bytes: 9682
+    sha256: "ca44af60d819706d8f51f3c30414a883cbb4201508cf2cf5a739ea2a3839665b"
+  score_equivalence_runner:
+    path: "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py"
+    bytes: 50521
+    sha256: "2aedbff0292fa44e5077984263cf1921d43b4094d44b3d68fd804b1b47a19f58"
+  score_equivalence_implementation:
+    path: "src/ijds_audit/score_equivalence_complete_hull.py"
+    bytes: 12913
+    sha256: "fec5b64094030d988002e744fed91b011a950b3d9386f13edf895f2c64922f73"
+  score_equivalence_hulls:
+    path: "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/complete_hull_certificates.parquet"
+    bytes: 11628
+    sha256: "af0b67c3926172d2ba11e715b9bc6c94a95671312e9ab1b6016d0008d300382b"
+  score_equivalence_v1d:
+    path: "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/v1d_embedding_score_equivalence.parquet"
+    bytes: 220017
+    sha256: "820867bf4ce5a44313e1e79fcabd1b823975d271a914f904bb80569e53e75772"
+  score_equivalence_calibrators:
+    path: "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/calibrator_score_equivalence.parquet"
+    bytes: 296947
+    sha256: "07acb2f8c58b0b4bdfd39c3f944273328361adc7e86e8179b93dd777f4f963dc"
+  score_equivalence_controls:
+    path: "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/runtime_controls.parquet"
+    bytes: 14623
+    sha256: "badbe454b676d2cebeadd1d582500adb27e6e5eb79ebeab528505123b69b0ada"
+  score_equivalence_summary:
+    path: "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/score_equivalence_summary.json"
+    bytes: 10817
+    sha256: "3817e26ab22ae2ed2860a20e57746a99a18f8e36f1bbdf5f422eec0c3ef80455"
+  score_equivalence_receipt:
+    path: "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/execution_receipt.json"
+    bytes: 891
+    sha256: "e70f0c076258122254b17a79fab9a3cb47ceeeb66c079580335618e25d62d68f"
+  set_native_phase_a_config:
+    path: "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml"
+    bytes: 6967
+    sha256: "45e3e2ba40c7731792a16f7c643f0214e2cd29c26415904b846beed09e541ef6"
+  set_native_phase_b_config:
+    path: "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b.yaml"
+    bytes: 5075
+    sha256: "4dec700ac5a64f65f561934c0d6681720c21f17cbe0cdcfd8961b3a221e03540"
+  set_native_phase_b_blocked_template:
+    path: "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1_phase_b_blocked.yaml"
+    bytes: 3190
+    sha256: "f1dfb7820c0e59b17c6b3edb98ff14d0a69024639464ec1992f922e00f8a4283"
+  set_native_protocol:
+    path: "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md"
+    bytes: 6412
+    sha256: "a9ab4ba250e00a6940576dcd7957c149a561802cb342651c85fc3e4dd66aace8"
+  set_native_runner:
+    path: "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py"
+    bytes: 52695
+    sha256: "fad794542ef57f1bf47ee0c8adc3030d4005fb574d58b6d8c0538e47d5c2644a"
+  set_native_implementation:
+    path: "src/ijds_challengers/set_native_binary_robust.py"
+    bytes: 43905
+    sha256: "d3bc2d0252c33ecb70572ef2a0adc821849f84b96cdee5525ee96793c61a8c32"
+  set_native_phase_a_solve_records:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet"
+    bytes: 99078
+    sha256: "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+  set_native_phase_a_allocations:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_funded_allocations.parquet"
+    bytes: 1460830
+    sha256: "580468cbd2429a316aee3022a512db0f030f11543e84c2fbfb7b9687b47c6497"
+  set_native_phase_a_taxonomy:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet"
+    bytes: 12686
+    sha256: "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+  set_native_phase_a_solver_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/solver_audit.parquet"
+    bytes: 23406
+    sha256: "3758d0308f81d073f380fe4dcadb7bca2585cbd002e35bcab85ef07ca6b6e3be"
+  set_native_phase_a_freeze:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/protocol_freeze.json"
+    bytes: 16742
+    sha256: "a280af5eecea24d8e3e0796f72dc33a46e1ca9c655374b451cfbfc2ce202e0f5"
+  set_native_phase_a_summary:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json"
+    bytes: 1429
+    sha256: "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+  set_native_phase_a_receipt:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_execution_receipt.json"
+    bytes: 693
+    sha256: "b3ccb78aaefb24e39e1a4d9eaac4e9ba006373692883224f2ef22b37160121b6"
+  set_native_phase_a_manifest:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json"
+    bytes: 234143
+    sha256: "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+  set_native_evaluated_portfolios:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/evaluated_primary_portfolios.parquet"
+    bytes: 103415
+    sha256: "10d2bb7bffd2c5855f9ef77a923d91bee20f1a62efd1ca8b7c0d77e166a45fb2"
+  set_native_monthly_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/monthly_robust_minus_v1d_contrasts.parquet"
+    bytes: 988824
+    sha256: "c0f73e2babcd6729079c94f855933e739ac636b8930c0a7779de6e699a0b78fc"
+  set_native_window_contrasts:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation/window_robust_minus_v1d_contrasts.parquet"
+    bytes: 125332
+    sha256: "18b28a83103e0a492e81e8a08cc3f3659672168780738cb8b3ebc3a0b7746080"
+  set_native_evaluation_summary:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json"
+    bytes: 865
+    sha256: "f3fc80c7a70e4c7da4b6866cff1d5460eb69fc29c406165ca8d4e365439da8f1"
+  set_native_evaluation_receipt:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json"
+    bytes: 4181
+    sha256: "05ccc671fc861d0eef89d93fd9cb3b2c5e779112b4a8e419dbeed5925d62f26d"
+  set_native_evaluation_manifest:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json"
+    bytes: 13783
+    sha256: "a2438e5f6363b7f2480634450d5bfa7ad5c19da01f4a4dd643c05bcdd25b2f00"

@@ -193,9 +193,10 @@ def find_reference_start_page(page_texts: list[str]) -> int | None:
 
 def _load_abstract(path: Path = BODY_QMD) -> str:
     raw = path.read_text(encoding="utf-8")
-    if not raw.startswith("---\n"):
+    delimiters = tuple(re.finditer(r"^---[ \t]*$", raw, flags=re.MULTILINE))
+    if len(delimiters) < 2 or delimiters[0].start() != 0:
         raise ValueError(f"Missing YAML front matter in {path.relative_to(ROOT)}")
-    front_matter = raw.split("---", maxsplit=2)[1]
+    front_matter = raw[delimiters[0].end() : delimiters[1].start()]
     payload: object = yaml.safe_load(front_matter)
     if not isinstance(payload, Mapping):
         raise ValueError(f"Missing abstract in {path.relative_to(ROOT)}")

@@ -2444,6 +2444,95 @@ retrospective, post-inspection, and non-confirmatory; no $\theta$, $\gamma$,
 ruler, coordinate, window, or policy is selected, and cellwise sharp endpoints
 are not asserted jointly attainable across overlapping tracks.
 
+### E.4.4 Complete-candidate-hull score equivalence
+
+<!-- claim:decision.complete_hull_score_equivalence_census -->
+
+The global theorem in Appendix B.5.3 is evaluated on the complete candidate
+menu, not on one funded support. For each of the 26 development or primary
+months, the audit verifies the affine-hull identity
+$\operatorname{aff}(A)=\{a:\mathbf 1^\top a=B\}$ by constructing feasible
+difference witnesses under the registered loan and purpose caps. All 26 menus
+pass with dimension $n-1$ for $n=6{,}011$--$28{,}106$. Candidate identities,
+the 80 set-preservation rows, and closed-calibrator vector hashes replay
+exactly. Twenty-six synthetic positive-affine controls pass and 26 deliberately
+non-affine controls fail. No outcome or optimizer is read.
+
+| Family and exact subset | Comparisons | Globally equivalent | Not certified equivalent |
+|---|---:|---:|---:|
+| V1d, $\theta=0$ | 1,040 | 1,040 | 0 |
+| V1d, $\theta>0,\gamma=0$ | 832 | 832 | 0 |
+| V1d, $\theta>0,\gamma>0$ | 3,328 | 0 | 3,328 |
+| Closed calibrator pairs, $\gamma=0$ | 1,248 | 0 | 1,248 |
+| Closed calibrator pairs, $\gamma>0$ | 4,992 | 0 | 4,992 |
+
+**Table S9M.** Complete full-menu score-equivalence partition. The V1d
+equivalences are exactly the identity controls. The minimum failed maximum-
+coordinate residual is 0.045261 for V1d and 0.000813 for the calibrator family,
+well above their scale-aware numerical tolerances. The cells are a deterministic
+overlapping grid rather than independent replications. A failed global
+certificate permits but does not force a different allocation at one fixed cap;
+it does not identify different optimal faces or optimizer uniqueness. Because
+calibrator maps also change the payoff coefficient, their score-only rows do not
+establish full optimizer equivalence or non-equivalence.
+
+### E.4.5 Set-native binary robust counterpart
+
+<!-- claim:decision.set_native_robust_counterpart_complete_census -->
+
+The set-native score is zero only for the exact singleton nondefault set and one
+for the empty, singleton-default, and two-label sets. Empty sets are assigned one
+as an explicit fail-closed convention. Across the 208 repeated
+window--role-month menus, the exact taxonomy counts are 52,311 empty,
+3,003,924 singleton nondefault, zero singleton default, and 717,965 two-label
+memberships. Thus 3,003,924 candidate-window memberships receive score zero and
+770,276 receive score one. These counts describe the frozen marginal sets; they
+do not establish or inherit a joint-coverage guarantee for their Cartesian
+product.
+
+Phase A completes 1,248 outcome-free frontier and solver-audit cells. Its 720
+primary portfolios have 78--116 positive exposures (median 92) and exhaust each
+USD 1 million budget. Median unresolved exposure share is 0.0070 (maximum
+0.1502), median set-risk exposure is 0.0333, and median retained plug-in
+objective fraction is 0.6375. Across cells, the sharp standardized-payoff range
+has medians -10,286.66 and 10,294.62; the funded-default endpoint medians are
+0.349275 and 0.374225; and funded-miscoverage endpoint medians are 0.331350 and
+0.359075. These are descriptive portfolio summaries, not probability bounds
+induced by the marginal set coverage theorem.
+
+Phase B compares every robust cell to all 25 V1d embedding cells at the same
+window, month, ruler, and coordinate. One unresolved binary assignment is shared
+loan by loan within each funded-union contrast. The complete direction
+partitions are:
+
+| Resolution | Metric | Positive | Negative | Contains zero | Total |
+|---|---|---:|---:|---:|---:|
+| Monthly | Standardized payoff | 5,840 | 9,853 | 2,307 | 18,000 |
+| Monthly | Funded default | 13,992 | 2,462 | 1,546 | 18,000 |
+| Monthly | Funded binary miscoverage | 11,947 | 4,355 | 1,698 | 18,000 |
+| Pooled window | Standardized payoff | 15 | 1,065 | 120 | 1,200 |
+| Pooled window | Funded default | 1,196 | 0 | 4 | 1,200 |
+| Pooled window | Funded binary miscoverage | 1,009 | 120 | 71 | 1,200 |
+
+**Table S9N (summary view).** The machine-readable 75-row table retains every
+$\theta$--$\gamma$ cell and all three metrics, with monthly partitions over 720
+comparisons and pooled partitions over 48 comparisons in each row. Positive
+payoff is favorable, whereas positive default or miscoverage is adverse. The
+pooled default comparison is positive in 45--48 of 48 cells at every fixed
+$\theta$--$\gamma$ combination and never negative. No p-value is attached to
+these correlated cells, and their sharp endpoints are not jointly attainable
+across the grid.
+
+The coarse score cannot distinguish loans within the dominant singleton-
+nondefault class, so the plug-in payoff objective and remaining constraints
+determine choices within risk-score ties. The nearly
+uniform pooled default result coexists with that geometry but does not prove it
+as a causal mechanism. The set-native risk coefficient removes one arbitrary
+continuous lifting. It provides no evidence of temporal exchangeability and
+establishes no joint product-set, selected- or funded-set, or probabilistic
+robustness guarantee. No ruler, coordinate, window, embedding, policy, or result is
+selected.
+
 ## E.5 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
@@ -2594,12 +2683,13 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 41 tables, five figure families in PNG and PDF,
+cardinalities before producing 43 tables, five figure families in PNG and PDF,
 and one paper-facing manifest. Additional outcome-isolated families cover joint
 fit-label completion, deterministic allocation granularity, marginal score and
 residual-distribution diagnostics, complete-catalog transport, and funded
 estimand dependence, plus the set-preserving continuous-embedding and closed
-CatBoost calibrator-family sensitivities.
+CatBoost calibrator-family sensitivities, the complete-hull score certificate,
+and the set-native binary counterpart with declared empty-set fail-closure.
 
 ## F.2 Replay contract
 
@@ -2617,6 +2707,13 @@ A, and C of B. The source registry and editor-only reproducibility crosswalk
 bind the exact tags and commits; those identifiers are provenance gates, not
 empirical claims.
 
+The complete-hull lineage uses an annotated protocol commit followed by one
+direct-child six-output artifact commit. The set-native lineage uses the stricter
+four-state chain Phase-A protocol $P_1\rightarrow$ outcome-free artifact
+$A_1\rightarrow$ hash-pinned Phase-B protocol $P_2\rightarrow$ evaluated
+artifact $B_1$, with every arrow a single-parent direct-child relationship.
+Neither lineage changes a protected historical artifact.
+
 The shared contract requires:
 
 1. a lineage-specific environment locked by `uv`;
@@ -2625,13 +2722,14 @@ The shared contract requires:
    endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
    label-Mondrian, and policy-support optimal-face/RHS-recovery families; plus
-   seven hash-described scientific Git artifact lineages: five direct-child
+   nine hash-described scientific Git artifact lineages: five direct-child
    bundles for the V8 common-panel response, V3I marginal gap,
    residual-distribution frontier, decision catalog, and funded-estimand audit,
    plus the set-preserving embedding's protocol-to-source-to-evaluation
    direct-child chain and the calibrator sensitivity's
-   protocol-to-source-to-evaluation-lock-to-result chain, each verified against
-   its exact registered path set;
+   protocol-to-source-to-evaluation-lock-to-result chain, the complete-hull
+   direct-child certificate, and the set-native four-stage phase chain, each
+   verified against its exact registered path set;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -2669,6 +2767,8 @@ instructions be released under the journal's data and code policy.
 <!-- claim:sensitivity.label_mondrian_common_completion_gap -->
 <!-- claim:allocation.set_preserving_embedding_changes_allocations -->
 <!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
+<!-- claim:decision.complete_hull_score_equivalence_census -->
+<!-- claim:decision.set_native_robust_counterpart_complete_census -->
 <!-- claim:calibration.closed_family_complete_state -->
 
 | Evidence object | Permitted conclusion | Not established |
@@ -2696,8 +2796,10 @@ instructions be released under the journal's data and code policy.
 | Two rulers and three interior coordinates | Endpoint direction is not ruler- or coordinate-invariant on the declared grid | A continuous-frontier ordering or preferred gamma/ruler/coordinate |
 | Continuous interval embedding | Binary-outcome coverage of the embedding equals coverage of its induced binary set | A set-native optimizer, a calibrated probability magnitude for $u_i$, or an ordering of $u_i$ among loans with the same binary set |
 | Feasible-difference score equivalence | Positive-affine equivalence modulo normals of the allocation affine hull is necessary and sufficient for preserving every feasible portfolio ordering | Binary-set equality or loan ranking as sufficient; mandatory change under non-equivalence; equality of optimal faces or uniqueness from one common solver output |
+| Complete-hull score-equivalence census | All 26 full-budget menu hulls are certified; exactly the 1,040 theta-zero and 832 nonzero-theta gamma-zero V1d identities pass, while 0/3,328 informative V1d and 0/6,240 calibrator-pair comparisons pass | A mandatory allocation change at a fixed cap, different optimal faces, a full calibrator-optimizer comparison, optimizer uniqueness, or a selected score map |
 | Set-preserving embedding allocation census | All 80 set diagnostics are unchanged; 9,659/11,520 positive-$\gamma$ monthly $\theta$ contrasts change allocation beyond $10^{-10}$. All 2,880 monthly $\gamma=0$ allocation contrasts are zero; the corresponding 2,880 monthly and 192 pooled objective/outcome contrasts are also zero | A preferred embedding, $\theta$, ruler, coordinate, or policy; allocation change inferred from the theorem alone; set-native optimization; validity repair; generalization beyond the declared finite grid |
 | Set-preserving embedding direction census | Among 576 fixed four-$\theta$ tracks, 324 change tolerance category and 77 contain both separated signs; the complete metric counts appear in Table S9L | A universal favorable or adverse direction, causal or prospective effects, confirmation, independent replications, or joint attainability across overlapping tracks |
+| Set-native binary robust counterpart | All 1,248 outcome-free cells and all 18,000 monthly/1,200 pooled robust-minus-V1d contrasts are retained; pooled default is positive/negative/contains-zero in 1,196/0/4 cells | Joint coverage of marginal-set products, conformal-validity repair, probabilistic robustness, preferred policy or embedding, causal mechanism, p-value, or prospective validation |
 | Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
 | USD 25 floor-with-cash diagnostic | Rate perturbations are at most 0.001284 percentage points in the complete baseline family | Integer optimality, discrete reoptimization, or another lot rule |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Status-indexed payoff, default, or miscoverage dominance |
@@ -2865,6 +2967,8 @@ methods.
 | Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Stability for selection among conformal sets (Hegazy et al.), conformal-risk model selection in CRO (Bao et al.), optimized-certainty-equivalent/tail-risk training (Yeh et al.), and expected miscoverage--regret assessment with split recalibration after selection (Zhou and Zhu) | Uses ruler sensitivity as a diagnostic; its coupled chronological contexts lack an independent selection/recalibration split, complete decision outcomes, and a compatible iid/exchangeability contract |
 | Decision calibration [@zhao2021decisioncalibration; @shekhar2026decision_calibrated_pacing] | Makes predictions indistinguishable to a declared decision class, or calibrates policy impacts uniformly over a finite catalog under its own block assumptions | Probability, conformal, and risk calibration in CRPTO are different objects; no decision-indistinguishability or catalog-uniform certificate is inherited |
 | Decision-focused learning with uncertain constraints [@donti2017; @elmachtoub2022; @liu2021riskbounds; @schutte2024robust; @im2025spor; @mandi2024] | Trains predictions or robust surrogates against downstream decision loss; SPO-RC adds feasibility-sensitive learning with contextual uncertainty sets for uncertain constraints | Preserves the predictor for governance and audits a post-hoc decision layer; it claims neither regret/Fisher consistency nor the SPO-RC constraint guarantee |
+| Decision-value attribution [@ziliaskopoulos2026dva] | Uses Shapley games to attribute realized or predicted downstream decision value to information sources, operational design parameters, and their interactions in a fixed prediction--optimization system | CRPTO does not attribute value to features; it certifies score-order equivalence, comparator support, and sharp outcome direction for declared pipeline variants |
+| Smart PtRO and learned predictive ambiguity sets [@caunhye2026smartptro; @guo2026lpas] | Recent preprints learn against covariate perturbations or produce contextual scenario distributions and Wasserstein radii using decision loss and calibration objectives | These are prospective algorithmic redesigns under different perturbation/data contracts; CRPTO's nonempty-set worst-label rule with declared empty-set fail-closure is a retrospective marginal-set audit and inherits neither certificate nor reported performance |
 | CRPTO comparator-design principle | Holding the decision problem fixed while changing one ingredient | Shows that a shared numeric cap does not hold decision stringency fixed |
 
 **Table S13B.** Closest-work boundary for decision-oriented neighboring methods

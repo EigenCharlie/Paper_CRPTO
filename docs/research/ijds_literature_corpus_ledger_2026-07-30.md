@@ -6,29 +6,36 @@ source and not an entry in the active-evidence registry.
 ## Scope and authority
 
 This is the cumulative receipt for the five last-mile literature objects
-materialized on 2026-07-30 and the six-object frontier intake audited on
-2026-07-31. The latter consists of five newly materialized PDFs plus the
-already-local non-monotonic conformal-risk-control preprint. It closes the
-byte-level gaps recorded in
+materialized on 2026-07-30 and two distinct intakes audited on 2026-07-31: the
+six-object frontier intake and the 23-active-citation gap intake. The frontier
+intake consists of five newly materialized PDFs plus the already-local
+non-monotonic conformal-risk-control preprint. The active-citation gap intake
+materialized 19 PDFs from primary or official open-access surfaces and left
+four works as metadata-only citations because no suitable primary/open full
+text was verified. Together these receipts close the byte-level gaps recorded
+in
 `conformal_decision_sota_lastmile_2026-07-26.md` and
 `conformal_optimization_v3_corpus_addendum_2026-07-26.md`. The earlier audits
 remain the authority for theorem interpretation; this ledger is the authority
 for local PDF version, byte identity, parser route, visual QA, citation key, and
 paper-facing disposition.
 
-The canonical local corpus is
-`C:\Users\carlos\Documents\Paper_CRPTO\Papers_tesis\supplement`. PDF objects are
-ignored by Git. No PDF was overwritten, `EXTRACTION_MANIFEST.json` was not
-modified, and no protected DVC stage was invoked.
+The canonical local corpus is the repository-relative
+`Papers_tesis/supplement`. PDF objects are ignored by Git. No pre-existing PDF
+was overwritten, `EXTRACTION_MANIFEST.json` was not modified, and no protected
+DVC stage was invoked.
 
 After the 2026-07-31 intake, `Papers_tesis` contains 132 PDF objects and 4,924
 pages, versus 122 objects and 4,673 pages at the 2026-07-21 checksum. A
 full-file inventory found 132 distinct full SHA-1 values and no duplicate PDF
-object; the receipts below additionally use SHA-256. The current dynamic
-inventory is
-`.tmp_pdf_intake_benchmark/literature-frontier-20260731/corpus_inventory_post_intake.jsonl`.
-The complete repository inventory has 134 PDFs because it also includes the
-current body and supplement PDFs outside `Papers_tesis`.
+object; the receipts below additionally use SHA-256. That dated SHA-1 result is
+retained here as a historical receipt; no `.tmp_pdf_intake_benchmark` object is
+required to reconstruct or validate the current inventory.
+
+After the 2026-07-31 active-citation gap intake, `Papers_tesis` contains 151 PDF
+objects, 5,408 pages, and 310,330,945 bytes. A full strict-parser and SHA-256
+pass found 151 distinct hashes, no duplicate object, no encrypted object, and
+no parse error. The 19 new objects contribute 484 pages and 23,444,014 bytes.
 
 ## Exact-object ledger
 
@@ -42,9 +49,57 @@ current body and supplement PDFs outside `Papers_tesis`.
 | Zhao et al., *Calibrating Predictions to Decisions: A Novel Approach to Multi-Class Calibration*, NeurIPS 2021 | `Papers_tesis/supplement/Zhao et al 2021 - Calibrating Predictions to Decisions.pdf` | 957,387 | 12 | `59be9b445e086fe149ec5b44c6102e76a62068ef8d889a0935637823d6dec90c` | NeurIPS proceedings object; no open license asserted in the local PDF, so retained only as a local research copy | `zhao2021decisioncalibration` | Body and supplement | **A.** Retain as the foundational loss-family-relative decision-calibration reference. It is probability recalibration for declared decision classes, not conformal coverage, temporal transport, or funded-set validity. | 2026-07-31 |
 | Im, Benslimane, and Grigas, *Smart Surrogate Losses for Contextual Stochastic Linear Optimization with Robust Constraints*, NeurIPS 2025 | `Papers_tesis/supplement/Im Benslimane Grigas 2025 - Smart Surrogate Losses with Robust Constraints.pdf` | 4,842,032 | 26 | `4018d40a45c30ff0f4b6106179d194b5212fe397878e72a20d7aabeedc3c7f37` | CC BY 4.0 on the primary arXiv record; local bytes are the NeurIPS proceedings version | `im2025spor` | Body and supplement | **A.** Retain as the closest integrated SPO treatment of uncertain robust constraints. Its conformal uncertainty set is an upstream module, its Fisher-consistency assumptions are explicit, and it supplies no post-selection or temporal guarantee for CRPTO. | 2026-07-31 |
 | Angelopoulos, *Conformal Risk Control for Non-Monotonic Losses*, arXiv:2602.20151v1 | `Papers_tesis/supplement/Angelopoulos et al 2026 - Conformal Risk Control for Non-Monotonic Losses.pdf` | 1,039,161 | 22 | `099ff363853ea8150dfafb2b23e17a5137c4b5dbdb911db9b1e193b9de4d42dd` | arXiv non-exclusive distribution license; local research copy, not redistributed by Git | `angelopoulos2026nonmonotonic` | Prospective-design boundary | **B.** Retain for the stability-based route to non-monotonic or multidimensional risk control. The theorem requires exchangeability, a symmetric algorithm, a risk-controlling full-data reference rule, and a verified stability remainder; none is supplied by the active CRPTO archive. | 2026-07-31 |
-| Caunhye, Lu, and Martin-Barragan, *Smart predict-then-robustly-optimize*, arXiv:2607.21773v1 | `Papers_tesis/supplement/Caunhye Lu Martin-Barragan 2026 - Smart Predict Then Robustly Optimize - arXiv 2607.21773v1.pdf` | 2,248,235 | 40 | `cb4b3e9478367d5bc44a9133b87dd043e07a6e017a8ed00c352d62b64058018a` | CC BY 4.0 | `caunhye2026smartptro` | Watchlist only | **C.** Keep as a current feature-perturbation/SPO neighbor. It robustifies covariates and surrogate loss under sub-Gaussian and structural assumptions; it is not a conformal-calibration or selected-set construction. | 2026-07-31 |
-| Guo, *Learning Predictive Ambiguity Sets for Decision-Focused Distributionally Robust Optimization*, arXiv:2607.09820v1 | `Papers_tesis/supplement/Guo 2026 - Learning Predictive Ambiguity Sets - arXiv 2607.09820v1.pdf` | 779,683 | 7 | `b4614c3306274d97b8bf740c93f1cf36b3a673c68e3ee3e4cb9b977e59808168` | CC BY 4.0 | `guo2026lpas` | Watchlist only | **C.** Keep as a learned-radius DRO idea, not affirmative support. The v1 has no coverage theorem, uses one rolling split over 20 assets, and reports that decision-aware tuning leaves empirical coverage below nominal and would require conformal post-calibration. | 2026-07-31 |
-| Ziliaskopoulos, Vinel, and Smith, *Decision-Value Attribution in Predict-then-Optimize Systems*, arXiv:2606.29878v1 | `Papers_tesis/supplement/Ziliaskopoulos Vinel Smith 2026 - Decision Value Attribution - arXiv 2606.29878v1.pdf` | 4,408,295 | 27 | `b5447fe2e8804701b688eb75717dceaac993a93be2f21843f48d5bd8f7f73fe5` | arXiv non-exclusive distribution license; local research copy, not redistributed by Git | `ziliaskopoulos2026dva` | Watchlist / conceptual context | **B.** Retain as an adjacent explanation framework for when predictive changes do or do not matter downstream. Its Shapley attributions depend on the background and player grouping, can be computationally approximate, are noncausal, and provide no calibration or conformal guarantee. | 2026-07-31 |
+| Caunhye, Lu, and Martin-Barragan, *Smart predict-then-robustly-optimize*, arXiv:2607.21773v1 | `Papers_tesis/supplement/Caunhye Lu Martin-Barragan 2026 - Smart Predict Then Robustly Optimize - arXiv 2607.21773v1.pdf` | 2,248,235 | 40 | `cb4b3e9478367d5bc44a9133b87dd043e07a6e017a8ed00c352d62b64058018a` | CC BY 4.0 | `caunhye2026smartptro` | Body and supplement; watchlist context only | **C.** Keep as a current feature-perturbation/SPO neighbor. It robustifies covariates and surrogate loss under sub-Gaussian and structural assumptions; it is not a conformal-calibration or selected-set construction. | 2026-07-31 |
+| Guo, *Learning Predictive Ambiguity Sets for Decision-Focused Distributionally Robust Optimization*, arXiv:2607.09820v1 | `Papers_tesis/supplement/Guo 2026 - Learning Predictive Ambiguity Sets - arXiv 2607.09820v1.pdf` | 779,683 | 7 | `b4614c3306274d97b8bf740c93f1cf36b3a673c68e3ee3e4cb9b977e59808168` | CC BY 4.0 | `guo2026lpas` | Body and supplement; watchlist context only | **C.** Keep as a learned-radius DRO idea, not affirmative support. The v1 has no coverage theorem, uses one rolling split over 20 assets, and reports that decision-aware tuning leaves empirical coverage below nominal and would require conformal post-calibration. | 2026-07-31 |
+| Ziliaskopoulos, Vinel, and Smith, *Decision-Value Attribution in Predict-then-Optimize Systems*, arXiv:2606.29878v1 | `Papers_tesis/supplement/Ziliaskopoulos Vinel Smith 2026 - Decision Value Attribution - arXiv 2606.29878v1.pdf` | 4,408,295 | 27 | `b5447fe2e8804701b688eb75717dceaac993a93be2f21843f48d5bd8f7f73fe5` | arXiv non-exclusive distribution license; local research copy, not redistributed by Git | `ziliaskopoulos2026dva` | Body and supplement; conceptual context only | **B.** Retain as an adjacent explanation framework for when predictive changes do or do not matter downstream. Its Shapley attributions depend on the background and player grouping, can be computationally approximate, are noncausal, and provide no calibration or conformal guarantee. | 2026-07-31 |
+
+## Active-citation PDF gap intake — 2026-07-31
+
+The starting gap contained 23 works already cited on active manuscript or
+supplement surfaces but lacking a local PDF. Nineteen exact objects were
+obtained from primary, official, or author/institutional open-access surfaces.
+Public downloadability is not treated as a general redistribution license:
+objects without an explicit open license remain local research copies and are
+ignored by Git.
+
+| BibTeX key | Canonical local PDF | Primary/official provenance and access boundary | Bytes | Pages | SHA-256 |
+|---|---|---|---:|---:|---|
+| `bao2024fcr_conformal` | `Papers_tesis/supplement/Bao et al 2024 - Selective Conformal Inference with False Coverage-Statement Rate Control - arXiv 2301.00584v5.pdf` | [arXiv v5](https://arxiv.org/abs/2301.00584); arXiv distribution license, local research copy | 1,050,169 | 54 | `e285bef33b4d3285ff9db6da3e5989c82757a76863264514b50c702c3cc38bf7` |
+| `benjamini2005fcr` | `Papers_tesis/supplement/Benjamini and Yekutieli 2005 - False Discovery Rate-Adjusted Multiple Confidence Intervals for Selected Parameters.pdf` | [author-hosted version of record](https://www.math.tau.ac.il/~yekutiel/papers/JASA%20FCR%20prints.pdf); local research copy, no systematic redistribution | 351,048 | 12 | `eca6eb8937296c0ee95f6dfc5890603677d433d5c2a38ba0a01eb503176499fd` |
+| `bian2023training_conditional` | `Papers_tesis/supplement/Bian and Barber 2023 - Training-Conditional Coverage for Distribution-Free Predictive Inference - arXiv 2205.03647v2.pdf` | [arXiv v2](https://arxiv.org/abs/2205.03647); arXiv distribution license, local research copy | 1,263,346 | 24 | `36810566c4c33d45e21d63ebd6da339e3ac5b9afc38417d02b77f243649fc601` |
+| `gazin2024transductive` | `Papers_tesis/supplement/Gazin et al 2024 - Transductive Conformal Inference with Adaptive Scores.pdf` | [PMLR version of record](https://proceedings.mlr.press/v238/gazin24a.html); CC BY 4.0 | 1,055,392 | 26 | `49d977b97dcc2b4dd66041f38a63e701c053204738a5901c2dd466eed8a294f2` |
+| `guerdan2024policy_comparison` | `Papers_tesis/supplement/Guerdan et al 2024 - Predictive Performance Comparison of Decision Policies Under Confounding.pdf` | [PMLR version of record](https://proceedings.mlr.press/v235/guerdan24a.html); CC BY 4.0 | 967,362 | 33 | `17501eab8e79278ceaab82433e4bcba638a80fc937717ba9bee7359e4b73d710` |
+| `huangfu_parallelizing_2018` | `Papers_tesis/supplement/Huangfu and Hall 2018 - Parallelizing the Dual Revised Simplex Method.pdf` | [Edinburgh version-of-record record](https://www.research.ed.ac.uk/en/publications/parallelizing-the-dual-revised-simplex-method/); CC BY | 4,172,331 | 26 | `b0b2b389657a944f4c1d91f6d9e8af7af8c774683b5b799ddb5261fc5c55db9d` |
+| `kleinberg2018human` | `Papers_tesis/supplement/Kleinberg et al 2018 - Human Decisions and Machine Predictions.pdf` | [Stanford author-hosted QJE version](https://cs.stanford.edu/~jure/pubs/bail-qje17.pdf); local research copy | 1,584,795 | 53 | `29328df7b3d704676f8cda75969b55aaa73f3cf644f9357d997a09220d53a60f` |
+| `kull2017` | `Papers_tesis/supplement/Kull Silva Filho Flach 2017 - Beta Calibration.pdf` | [PMLR version of record](https://proceedings.mlr.press/v54/kull17a.html); CC BY 4.0 | 389,366 | 9 | `3d3de5ee33d442c415c689c59b490ef09f310dc0c0e4bde47fb92a8c6f5f0e1a` |
+| `lakkaraju2017selective` | `Papers_tesis/supplement/Lakkaraju et al 2017 - The Selective Labels Problem.pdf` | [author-hosted KDD paper](https://www.cs.cornell.edu/info/people/kleinber/kdd17-selective.pdf); public author manuscript, no general CC license asserted | 1,507,709 | 10 | `ccc62a45799ce768e07799ae9a3c990d3ba5960b0a1d3afc884280e739b51a90` |
+| `lessmann2015` | `Papers_tesis/supplement/Lessmann et al 2015 - Benchmarking State-of-the-Art Classification Algorithms for Credit Scoring - Accepted Manuscript.pdf` | [Southampton accepted manuscript](https://eprints.soton.ac.uk/377196/); CC BY-NC-ND | 1,398,930 | 33 | `67d74f428effcb3d30716c6a0dfe42c17cbe7312fe9dc6034bb29f1d1e824f6f` |
+| `li2023online_loans` | `Papers_tesis/supplement/Li et al 2023 - The Profitability of Online Loans - A Competing Risks Analysis on Default and Prepayment.pdf` | [author publication record](https://ag-bellotti.owlstown.net/publications); author-hosted version of record, all rights reserved/local only | 2,617,746 | 18 | `9837c75719d50fb880c5e591ac27267eb47fb1df25e16655da00d9eaa7bd3b3e` |
+| `maiapolo2024partial_id_eval` | `Papers_tesis/supplement/Maia Polo et al 2024 - Weak Supervision Performance Evaluation via Partial Identification.pdf` | [NeurIPS proceedings version](https://proceedings.neurips.cc/paper_files/paper/2024/hash/f4c6bec746b0aeca8c2cd15096f1ad1f-Abstract-Conference.html); official open proceedings, no general CC license asserted | 2,554,735 | 37 | `5812210a239a0ea3ba36aae47a2d944cf9737940ff978b16c9d7abab282bdbc9` |
+| `navaspalencia2020` | `Papers_tesis/supplement/Navas-Palencia 2020 - Optimal Binning - arXiv 2001.08025v3.pdf` | [arXiv v3](https://arxiv.org/abs/2001.08025); arXiv distribution license, local research copy | 493,806 | 22 | `0b915405d5306c64af4900ba0fe201992d8c051ae0d1f557f40163f0f80e55bf` |
+| `sadinle2019lac` | `Papers_tesis/supplement/Sadinle Lei Wasserman 2019 - Least Ambiguous Set-Valued Classifiers - arXiv 1609.00451v2.pdf` | [arXiv v2](https://arxiv.org/abs/1609.00451); author manuscript, local research copy | 830,218 | 44 | `b790160a3feaaf9c05987840c17d983ee22ae23fa0a50fc9f5f7e9c6741d9be1` |
+| `vovk2012conditional` | `Papers_tesis/supplement/Vovk 2012 - Conditional Validity of Inductive Conformal Predictors.pdf` | [PMLR version of record](https://proceedings.mlr.press/v25/vovk12.html); official open proceedings | 419,379 | 16 | `7687a3be5702c52074e1b48e7317f1e068e9581ff832c65f7efca659c665ed3a` |
+| `vovk2003mondrian` | `Papers_tesis/supplement/Vovk Lindsay Nouretdinov Gammerman 2003 - Mondrian Confidence Machine.pdf` | [ALRW working paper](https://alrw.net/old/old.html); author-maintained public copy, no general CC license asserted | 282,572 | 24 | `cce239ecea71ef7287d73071cec56056fdf6866c9d633897596c30b8aa52c130` |
+| `vovk2014` | `Papers_tesis/supplement/Vovk Petej 2014 - Venn-Abers Predictors - UAI.pdf` | [official UAI proceedings](https://www.auai.org/uai2014/acceptedPapers.shtml); public proceedings copy, no general CC license asserted | 247,596 | 10 | `551d296c86bc1317e22b6cbb8ab8dcfad79286778071564ca68cd7d517f271c9` |
+| `zadrozny2002` | `Papers_tesis/supplement/Zadrozny Elkan 2002 - Transforming Classifier Scores into Accurate Multiclass Probability Estimates.pdf` | [official ACM Digital Library](https://dl.acm.org/doi/10.1145/775047.775151); publicly accessible, no retroactive CC license asserted | 690,254 | 6 | `e1437da5c0b28f4052302706daa45bba27b2c47cc85bbd5592d824f38681b5b0` |
+| `zaffran2023missing` | `Papers_tesis/supplement/Zaffran et al 2023 - Conformal Prediction with Missing Values.pdf` | [PMLR version of record](https://proceedings.mlr.press/v202/zaffran23a.html); CC BY 4.0 | 1,567,260 | 27 | `80d2a6482a415d424e8cc77f4bcac0da0a4e45413cf77c2d60f00e858e0d5a15` |
+
+Four active citations remain deliberately metadata-only:
+
+| BibTeX key | Official landing | Why no local PDF was accepted | Safe next route |
+|---|---|---|---|
+| `holm1979` | [JSTOR](https://www.jstor.org/stable/4615733) | No primary/open PDF with sufficiently clear provenance and reuse terms was verified; an unlicensed university mirror was rejected. | Obtain through an institutional JSTOR entitlement or the rights holder. |
+| `manski2003partial` | [Springer](https://link.springer.com/book/10.1007/b97478) | Subscription book; no official OA full text was found. | Library/licensed acquisition or author permission. |
+| `platt2000` | [MIT Press book landing](https://mitpress.mit.edu/9780262194488/advances-in-large-margin-classifiers/) | No stable official OA full chapter was found. | Library/licensed acquisition or author permission. |
+| `vovk2005` | [Springer](https://link.springer.com/book/10.1007/b106715) | Subscription book; the authors' site points to the book rather than an OA full text. | Library/licensed acquisition or author permission. |
+
+All 19 accepted objects begin with a real PDF header, pass strict PyPDF parsing,
+are unencrypted, and have zero pages with an empty extracted-text layer. There
+are no duplicate SHA-256 values either within the intake or against the prior
+132-object corpus. Huangfu--Hall has two pages below 200 extracted characters;
+both are cover/license pages rather than missing OCR. The intake closes a
+documentary provenance gap only: it activates no theorem, empirical result,
+policy, or manuscript claim.
 
 ## Parser and text-layer QA
 
@@ -59,8 +114,9 @@ Docling was the primary parser with OCR and enrichment disabled. The requested
 export because Docling did not create its referenced-image artifact directory.
 A clean fallback run used `placeholder` image export while retaining Markdown
 and JSON layout, table, formula, and hierarchy extraction. Parser outputs and
-both logs are under
-`.tmp_pdf_intake_benchmark/literature-materialization-20260730/`.
+both logs were historical, noncanonical scratch under
+`.tmp_pdf_intake_benchmark/literature-materialization-20260730/`; they are not
+required by the current corpus inventory or any claim.
 
 The successful five-document run processed 139 pages in approximately 267
 seconds (1.92 seconds per page, measured from process start to final output
@@ -77,8 +133,9 @@ timestamp). Its output scorecard is:
 ## Manual visual QA
 
 Poppler 26.05.0 renders were compared with the all-page extracted text. The
-rendered contact sheets are under
-`.tmp_pdf_intake_benchmark/literature-materialization-20260730/visual`.
+rendered contact sheets were historical, noncanonical scratch under
+`.tmp_pdf_intake_benchmark/literature-materialization-20260730/visual`; they are
+not required by the current corpus inventory or any claim.
 
 | Object | Pages visually checked | Objects checked | Result |
 |---|---|---|---|

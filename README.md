@@ -80,8 +80,8 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities, 53 DVC pointers, and seven
-scientific Git-native artifact lineages. The evidence builder emits 41
+The source registry owns lineage identities, 53 DVC pointers, and nine
+scientific Git-native artifact lineages. The evidence builder emits 43
 paper-facing CSV tables and five figure families. The evidence manifest is the
 only numeric paper-facing manifest. The body QMD is the only editable source
 for the official submission TeX.

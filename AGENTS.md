@@ -65,6 +65,12 @@ order before changing scientific code or paper claims:
      uncalibrated-probability taxonomy, and no-optimization boundary.
 16c8a. [`docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`](docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md)
    - endpoint lock and four-commit Git transport contract.
+16c9. [`docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md`](docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md)
+   - active complete-candidate hull and global score-equivalence certificate.
+16c10. [`docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md`](docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md)
+   - active nonempty-set worst-label frontier with declared empty-set fail-closure and hash-pinned evaluation.
+16c11. [`docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`](docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md)
+   - adversarial theory, state-of-the-art, long-run, and GO/NO-GO synthesis.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -94,7 +100,7 @@ order before changing scientific code or paper claims:
 28. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
-Theory precedence note (2026-07-30): the exact statements in the active claim
+Theory precedence note (2026-07-31): the exact statements in the active claim
 registry and exact-theory notes override any older summary in
 the CRPTO skill. In particular, do not infer continuity, a common-maxima unit
 crossing, universal low score bins, or a miscoverage floor from `l>0` alone.
@@ -116,6 +122,14 @@ The calibrator-family result is
 are below 0.90. It neither selects a map nor establishes that true coverage
 depends on the calibrator, transfers a Venn guarantee to the IVAP scalar, or
 supports a portfolio claim.
+The complete-hull audit certifies all 26 declared full-budget affine hulls. Its
+failed global score comparisons permit but do not force fixed-cell allocation
+changes or unequal optimal faces, and the calibrator rows are not full optimizer
+comparisons because payoff coefficients also change. The set-native worst-label
+counterpart is embedding-invariant in its risk coefficient, with a declared
+fail-closed empty-set value, but establishes neither a joint Cartesian-product
+coverage nor probabilistic-robustness guarantee; its adverse finite-grid default
+census does not select a policy or establish a causal/prospective effect.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
 non-active candidates in quarantine. Their protocols/configurations were not
@@ -141,6 +155,9 @@ Minimum rules:
 - The four CatBoost calibrator maps are a complete retrospective sensitivity
   under one common `q_raw` taxonomy; no calibrator winner or alternative-map
   optimization is active.
+- The complete-hull and set-native lineages are active only through their exact
+  annotated direct-child phase chains. Neither authorizes selection, validity
+  repair, joint-set coverage, or a universal robust-policy claim.
 - Historical V1--V3, structural-sensitivity V1--V5, selected-policy,
   compact-v7, pool93, and A1--A40 materials are provenance, not evidence for
   the active manuscript.

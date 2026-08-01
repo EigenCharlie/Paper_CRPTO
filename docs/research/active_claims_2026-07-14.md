@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-30
+# CRPTO Active IJDS Claim Registry - 2026-07-31
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -37,6 +37,23 @@ pre-endpoint-correction evaluations are provenance only.
   set cells unchanged yet changes 9,659/11,520 positive-gamma monthly
   allocations beyond the declared tolerance. Its pooled theta-direction census
   contains both signs and selects no embedding or policy.
+- The complete-hull audit certifies the full-budget affine hull on all 26
+  role--month candidate menus. In the V1d family, exactly 1,872/5,200 score
+  comparisons pass global feasible-order equivalence---the 1,040 theta-zero
+  identities and 832 nonzero-theta gamma-zero identities---while none of the
+  3,328 positive-theta, positive-gamma comparisons passes. None of 6,240
+  pairwise closed-calibrator score comparisons passes. Failure means that the
+  global certificate is absent, not that a fixed optimizer must change; the
+  calibrator comparison also does not hold the payoff objective fixed.
+- A separate set-native challenger assigns binary worst-label score zero only
+  to the exact singleton `{0}` and one to empty, singleton-default, or two-label
+  sets. Its outcome-free 1,248-cell frontier passes deterministic, order-
+  reversal, independent-solver, and full-budget gates. In the complete 720 by
+  25 primary comparison, pooled robust-minus-V1d default bounds are positive in
+  1,196/1,200 cells and never negative, while payoff is negative in 1,065,
+  positive in 15, and contains zero in 120. This is an adverse descriptive
+  finite-grid result, not a conformal-validity repair, product-set coverage
+  theorem, selected policy, or probabilistic robustness guarantee.
 - The V2--V3H marginal mean-score--outcome-gap lineages remain historical
   provenance. V3H was transport-blocked by its mandatory clean-clone DVC pull.
   The separately frozen V3I reran the full calculation in a clean tagged clone
@@ -347,6 +364,61 @@ pre-endpoint-correction evaluations are provenance only.
   universal direction, causal effect, prospective result, confirmation,
   validity repair, or joint sharpness across overlapping tracks.
 
+### Complete-hull score-equivalence audit
+
+- Protocol tag
+  `protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1` resolves to
+  `2066363ab0d09e25dade0f582a0c36c6aa7bee5c`; its annotated direct-child
+  artifact tag `artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1`
+  resolves to `e31310090179ee96893c92adec3aa0bbc54f5a95` and contains exactly
+  the six registered outputs.
+- All 26 complete monthly candidate menus have the certified full-budget
+  affine hull, with 6,011--28,106 loans per menu. Synthetic positive and
+  negative controls, candidate identity, all 80 V1d set-preservation rows, and
+  closed-calibrator vector replay pass exactly. No outcome column or optimizer
+  enters this run.
+- V1d passes 1,872/5,200 comparisons: all 1,040 theta-zero identities and all
+  832 nonzero-theta gamma-zero identities. It passes 0/3,328 comparisons with
+  both theta and gamma positive. The four-map calibrator family passes 0/6,240
+  pairwise score comparisons, including 0/1,248 at gamma zero and 0/4,992 at
+  positive gamma. These are overlapping deterministic grid cells, not
+  independent replications.
+- A failed global certificate permits but does not force allocation change in
+  a fixed constrained problem. For the calibrator family, the audit changes
+  both risk scores and payoff coefficients, so score-only non-equivalence does
+  not establish full optimizer non-equivalence or a policy ranking.
+
+### Set-native binary robust counterpart
+
+- Phase-A protocol tag
+  `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1` resolves
+  to `2066363ab0d09e25dade0f582a0c36c6aa7bee5c`; its direct-child artifact
+  `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a`
+  resolves to `3ef847491e1ecdf55315774ddb295a634e441a54`. The subsequent direct-child
+  Phase-B protocol tag resolves to
+  `e3d91660f5c337b3a45713b02ad2ca6ec303b31e`, and its direct-child artifact
+  tag resolves to `b13718008cd23b444d1165d14f0fb78101d9f017`.
+- Phase A reports all 1,248 outcome-free ruler--coordinate--window cells, 720
+  primary cells, 126,686 funded rows, 208 taxonomy rows, and 1,248 solver-audit
+  rows. All budgets are exhausted. Same-order replay is exact; maximum reversed-
+  order objective difference is `1.75e-10`, and independent-solver objective-
+  rate difference is at most `2.04e-16`.
+- Phase B compares every robust primary cell with all 25 V1d theta--gamma cells
+  on the same window, month, ruler, and coordinate, using one sharp binary
+  completion per funded union. It retains 18,000 monthly and 1,200 pooled
+  comparisons. Pooled payoff is positive/negative/contains-zero in
+  15/1,065/120 cells; default is 1,196/0/4; miscoverage is 1,009/120/71.
+  Monthly partitions are respectively 5,840/9,853/2,307,
+  13,992/2,462/1,546, and 11,947/4,355/1,698.
+- The construction is set-native only in its coefficient semantics. Marginal
+  binary prediction sets do not establish or inherit a joint-coverage guarantee
+  for their Cartesian product, and the temporal archive does not establish the
+  exchangeability needed for a conformal robustness theorem. The plug-in payoff
+  objective and remaining optimization components still depend on the point
+  score. No policy, ruler, coordinate, window,
+  embedding, or result is selected; there is no p-value, causal mechanism,
+  independent replication, or prospective claim.
+
 ### Closed CatBoost calibrator-family sensitivity
 
 - The active Git-native authority is the exact annotated four-state chain
@@ -509,6 +581,7 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:theory.outcome_free_binary_set_bounds -->
 <!-- claim:theory.binary_set_embedding_nonidentification -->
 <!-- claim:theory.feasible_difference_score_order_equivalence -->
+<!-- claim:decision.complete_hull_score_equivalence_census -->
 <!-- claim:theory.sharp_common_outcome_bounds -->
 <!-- claim:theory.sharp_directional_residual_frontier -->
 <!-- claim:theory.selection_weight_covariance_identity -->
@@ -772,6 +845,8 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:allocation.count_vs_dollar_coverage_gap_all_tracks -->
 <!-- claim:allocation.set_preserving_embedding_changes_allocations -->
 <!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
+<!-- claim:decision.complete_hull_score_equivalence_census -->
+<!-- claim:decision.set_native_robust_counterpart_complete_census -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a
@@ -868,6 +943,18 @@ The complete endpoint-availability sensitivity is:
   completion per contrast, not an embedding or policy selection, universal
   direction, causal effect, prospective validation, confirmation, or joint
   attainability across tracks.
+- The complete-hull audit certifies all 26 full-budget menu hulls. Exact V1d
+  score-order equivalence is confined to 1,040 theta-zero and 832 nonzero-theta
+  gamma-zero identities; it fails in all 3,328 positive-theta, positive-gamma
+  cells. No pair among the closed calibrator family passes in any of 6,240
+  comparisons. This is a global score certificate, not proof that every fixed
+  cell changes allocation or that calibrator-specific optimal faces differ.
+- The set-native worst-label challenger completes all 1,248 outcome-free cells
+  and all 18,000 monthly/1,200 pooled robust-minus-V1d comparisons. At pooled
+  level, its default interval is positive in 1,196 cells and never negative;
+  payoff is negative in 1,065 and positive in 15; miscoverage is positive in
+  1,009 and negative in 120. These finite-grid signs do not confer conformal,
+  joint-set, selected-set, or probabilistic robust validity.
 
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
@@ -959,6 +1046,14 @@ The complete endpoint-availability sensitivity is:
   preserve allocations or descriptive outcome direction on the complete
   declared grid. This neither selects an embedding nor repairs selected- or
   funded-set validity.
+- The complete candidate-hull audit identifies exactly where the declared V1d
+  score family has the global positive-affine equivalence certificate; absence
+  of that certificate is not a fixed-cell allocation-change theorem.
+- The set-native score uses the exact worst label for nonempty sets and a
+  declared fail-closed empty-set value. It is implementable and solver-verified,
+  but its complete retrospective comparison establishes no validity repair or
+  uniform endpoint dominance and is descriptively adverse for default in nearly
+  every pooled cell.
 - Global score-order invariance on a declared convex allocation set is
   characterized by positive-affine equivalence modulo normals of its affine
   hull; it is not inferred from binary-set preservation or loan-level ranking.
@@ -1013,6 +1108,12 @@ The complete endpoint-availability sensitivity is:
   invariance; non-affinity described as proof that every fixed cell changes; or
   one shared solver allocation described as equality of optimal faces or
   optimizer uniqueness.
+- A global score nonequivalence described as proof of different optimizer
+  faces, or the calibrator score census described as a full optimizer comparison.
+- A Cartesian product of marginal binary sets described as jointly covered; a
+  set-native worst-label LP described as conformally or probabilistically
+  robust; or its finite-grid adverse signs described as a universal or causal
+  effect.
 
 ## Pre-Freeze Boundary
 

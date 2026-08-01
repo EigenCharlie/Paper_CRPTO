@@ -123,12 +123,14 @@ result.
 
 ### Git-transported publication lineages
 
-Five publication lineages use one protocol-to-artifact direct-child edge. The
+Six publication lineages use one protocol-to-artifact direct-child edge. The
 set-preserving-embedding lineage instead uses the registered two-stage
 `P2 -> A2 -> B2` chain because its outcome-free source bytes and evaluated
 outputs have separate authority. The calibrator lineage uses the four-stage
 `P -> A -> B -> C` chain because the endpoint lock is committed after the
-outcome-free source and before evaluation. Together these are seven scientific
+outcome-free source and before evaluation. The set-native lineage likewise uses
+`P1 -> A1 -> P2 -> B1` so Phase B is hash-pinned only after Phase A exists.
+Together these are nine scientific
 Git-native lineages. Every tag below is annotated, every listed child has one
 parent, and the source registry verifies the exact added-path census and file
 hashes.
@@ -142,6 +144,8 @@ hashes.
 | Funded estimands V1 | `protocol/ijds-funded-selection-estimand-audit-2026-07-29-v1` / `9c4b082ce68eb88bf60666b4cb794348bf57a40d` | -- | `artifacts/ijds-funded-selection-estimand-audit-2026-07-29-v1` / `0d26e0247d41ae4ff1c9ad8ca230b0a627303190` |
 | Set-preserving embedding V1d | `protocol/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` / `174c4e3d894829473a787e6d34bfc3bbab2f8ef2` | `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d` / `95e39f05bb990429025d0115a0e55c53b1fb1ea8` | `artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d` / `276a5db8772262aad2edd8936dbe226926e412b5` |
 | Calibrator sensitivity V1 | `protocol/ijds-calibrator-sensitivity-2026-07-30-v1` / `808827926eff5030b3cb28d2b89a87a0e6210b2e` | `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source` / `ea3e7326afc38ccc1b99b09de30792986640e3c3` | `protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1` / `753305e81e27f793acdea80b684b42e7eff2201d` -> `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1` / `6552524eae5a22ce66b50689900383d16df1ff13` |
+| Complete-hull score equivalence V1 | `protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1` / `2066363ab0d09e25dade0f582a0c36c6aa7bee5c` | -- | `artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1` / `e31310090179ee96893c92adec3aa0bbc54f5a95` |
+| Set-native binary robust counterpart V1 | `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1` / `2066363ab0d09e25dade0f582a0c36c6aa7bee5c` | `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a` / `3ef847491e1ecdf55315774ddb295a634e441a54` | `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b` / `e3d91660f5c337b3a45713b02ad2ca6ec303b31e` -> `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b` / `b13718008cd23b444d1165d14f0fb78101d9f017` |
 
 V1d is retrospective and post-inspection. V1c failed its persistence contract
 before any evaluation commit or tag; its local Phase-B files are non-evidence
@@ -167,11 +171,12 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 41 CSV
+The registered evidence builder emits one paper-facing manifest, 43 CSV
 tables, and five figure families in both PDF and PNG. Calibrator Table S2C
 contains the four same-sample fit rows, S6O contains all 192
 method--window--scope rows, and S6P contains all 288 unordered-pair
-shared-completion rows.
+shared-completion rows. Table S9M contains the five complete-hull certificate
+partitions and S9N contains all 75 set-native theta--gamma--metric partitions.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never
 committed.

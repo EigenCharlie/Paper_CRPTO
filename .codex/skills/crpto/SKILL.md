@@ -8,6 +8,16 @@ description: Audit, build, and verify the active CRPTO IJDS manuscript, exact bi
 Use this skill from the CRPTO repository root. CRPTO is one single-author IJDS
 paper and reproducibility bundle, not a production service.
 
+## Authority Snapshot
+
+Research authority is current through 2026-07-31. The active claim registry
+remains the sole paper-facing claim authority; exact theory overrides a
+conflicting summary. The complete-hull score-equivalence and set-native binary
+robust-counterpart lineages are sealed Git-native July-31 audits. Artifact
+existence alone does not promote them into the manuscript: verify that the
+current source registry, claim ledger, and publication builder explicitly
+register a lineage before using it as paper-facing evidence.
+
 ## Active Contract
 
 Read first:
@@ -41,15 +51,21 @@ Read first:
 27. `docs/research/ijds_decision_catalog_transport_v1_protocol_2026-07-29.md`
 28. `docs/research/ijds_funded_selection_estimand_audit_v1_protocol_2026-07-29.md`
 29. `docs/research/ijds_set_preserving_embedding_sensitivity_v1d_protocol_2026-07-30.md`
-30. `docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md`
-31. `docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`
-32. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-33. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-34. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-35. `docs/ACADEMIC_CONTEXT.md`
-36. `docs/SCOPE_AND_GOVERNANCE.md`
-37. `CONTRIBUTING.md`
-38. `EXTRACTION_MANIFEST.md`
+30. `docs/research/ijds_decision_invariance_theory_2026-07-30.md`
+31. `docs/research/ijds_calibrator_sensitivity_v1_protocol_2026-07-30.md`
+32. `docs/research/ijds_calibrator_sensitivity_v1_evaluation_lock_2026-07-30.md`
+33. `docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md`
+34. `docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md`
+35. `docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`
+36. `docs/research/ijds_predict_calibrate_optimize_sota_audit_2026-07-31.md`
+37. `docs/research/ijds_long_run_observability_contract_2026-07-30.md`
+38. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+39. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+40. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+41. `docs/ACADEMIC_CONTEXT.md`
+42. `docs/SCOPE_AND_GOVERNANCE.md`
+43. `CONTRIBUTING.md`
+44. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -116,6 +132,21 @@ Active evidence:
   isotonic, beta `abm`, and the IVAP Venn--Abers scalar over all eight windows,
   `ALL` plus five common `q_raw` strata, and all six unordered method pairs. It
   selects no map and performs no optimization.
+- The sealed complete-hull score-equivalence audit uses protocol tag
+  `protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1` at
+  `2066363` and direct-child artifact tag
+  `artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1` at
+  `e313100`. It is outcome-free, runs no optimizer, and audits complete
+  candidate vectors rather than funded supports.
+- The sealed set-native binary robust-counterpart audit uses Phase-A protocol
+  tag `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1` at
+  `2066363`, Phase-A artifact tag
+  `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a`
+  at `3ef8474`, Phase-B protocol tag
+  `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b`
+  at `e3d9166`, and Phase-B artifact tag
+  `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b`
+  at `b137180`. It selects no ruler, coordinate, window, policy, or comparison.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.
@@ -174,6 +205,27 @@ Headline evidence:
   change allocation beyond `1e-10`; `77/576` fixed pooled tracks contain both
   tolerance-separated outcome signs across theta. This is finite-grid
   noninvariance, not a preferred embedding or validity repair;
+- the complete-hull audit certifies all 26 monthly full-budget affine hulls.
+  Exactly `1,872/5,200` V1d comparisons are equivalent, and they are precisely
+  theta-zero self controls or gamma-zero identities; all `3,328/3,328` cells
+  with both theta and gamma positive fail global positive-affine equivalence.
+  All `6,240/6,240` frozen calibrator-pair score comparisons also fail that
+  certificate. Failure means only that global invariance is not certified; it
+  does not force an allocation change at a fixed cell, and the calibrator rows
+  do not hold the payoff objective fixed;
+- the set-native Phase-A census contains 1,248 complete cells, including 720
+  primary cells. Its score is the exact worst label only for nonempty sets;
+  `r(empty)=1` is a declared fail-closed convention. Only the risk coefficient
+  is set-native: the plug-in payoff objective and other optimization components
+  retain the point score. Phase B reports all 18,000 monthly and 1,200 pooled
+  robust-minus-V1d contrasts. At pooled scale, standardized-payoff direction is
+  `1,065/15/120` negative/positive/crossing, default is `0/1,196/4`, and binary
+  miscoverage is `120/1,009/71`; all 600 objective-matched comparisons have
+  lower payoff and higher default and miscoverage for the set-native rule.
+  These are overlapping retrospective finite-grid contrasts. They establish no
+  joint product-set or probabilistic-robustness guarantee, selected policy,
+  universal endpoint dominance, causal effect, or conformal-valid robust
+  optimization claim;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
 - all 216 endpoint envelopes over the finite registered cap values spanning
   `[0.05,0.12]` include zero; this does not compute continuous-support extrema;
@@ -241,6 +293,16 @@ Preserve these distinctions:
 - four declared fit-label scenarios versus a sharp nonlinear region
   over all `2^215` assignments.
 - deterministic floor-with-cash granularity versus reoptimized integer lending.
+- failure of complete-vector positive-affine score equivalence versus an
+  observed allocation change, different optimal face, or optimizer
+  nonuniqueness; even a passing score relation requires a translated cap, and
+  calibrator-to-calibrator optimizer equivalence additionally requires a
+  common objective audit.
+- a binary-set-native nonempty-set worst-label plus empty-set fail-closure
+  convention versus a calibrated individual probability, an established
+  joint-coverage guarantee for the Cartesian product, selected/funded-
+  set guarantee, distributionally robust ambiguity set, or unique normative
+  robust counterpart.
 - set-equivalent binary coverage versus invariance of the unidentified
   continuous endpoint, allocation, or descriptive outcome direction.
 
@@ -253,6 +315,41 @@ post-selection FWER, an identified shift mechanism from a flag, or label-Mondria
 repair/equalized coverage. Do not claim a calibrator winner, transfer a Venn
 multiprobability guarantee to the scalar, or infer portfolio robustness from
 the no-optimization calibrator sensitivity.
+
+## Pre-freeze Editorial Mode
+
+There is no temporary manuscript page limit before an actual submission
+freeze. Preserve valid, nonredundant theory, evidence, caveats, and literature
+even when the working paper is long. Remove or compress material when it is
+invalid, duplicated, incoherent, purely iterative, or editorially weaker--not
+merely because it occupies pages. Final page compression, anonymity packaging,
+and final DVC/reproducibility presentation are freeze-stage tasks; they must not
+block present scientific improvement or relax current provenance and claim
+gates.
+
+## Long-run Execution Contract
+
+Any new run expected to exceed 30 minutes must declare its progress denominator
+and atomic unit before execution. Checkpoints and heartbeat state must live
+outside the repository, protected-read roots, official artifact roots, and the
+DVC evidence cache, normally under a run-tagged `%LOCALAPPDATA%/CRPTO/runtime`
+directory or an explicit external scratch root with adequate free space.
+
+Every resumable checkpoint must be atomically materialized and bind the run,
+protocol, commit, config, source, implementation, runtime, solver, exact key,
+schema, dtypes, row/key census, and content digest. Status is result-blind:
+scientific scores, directions, objectives, exposures, coverage, payoff, or
+winners never enter a heartbeat. Predeclare wall deadline, per-solve limit,
+heartbeat/no-progress thresholds, cooperative safe cancellation, and resume
+rules. One monitor reports only transitions or material progress. CPU, RAM,
+empty logs, or absence of final files alone is neither a stop nor continuation
+rule.
+
+The historical 7.5-hour embedding run was useful CPU-bound computation but had
+no observable scientific units. The July-31 set-native Phase A demonstrates the
+successor pattern with 1,248 verified external atomic cell checkpoints and one
+canonical complete-grid consolidation. Do not retrofit checkpoints into
+byte-pinned historical runners; implement them in a new tagged successor.
 
 ## Evidence Workflow
 
@@ -278,13 +375,19 @@ joint-block rank reference, common-panel V8, individual-age follow-up,
 label-Mondrian, fit-label completion, and allocation-granularity
 manifests/freezes, the set-preserving-embedding two-stage Git lineage, the
 calibrator-sensitivity four-commit Git lineage, and every artifact descriptor.
-The active capsule contains 53 DVC pointers and seven scientific Git artifact
-lineages. It emits 41
+The active capsule contains 53 DVC pointers and nine scientific Git artifact
+lineages. It emits 43
 paper-facing CSV tables and five figure families
 in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be
 byte-identical. The canonical body is `paper/CRPTO_ijds.qmd`; generate official
 TeX with `scripts/build_ijds_submission_tex.py` and never edit it by hand.
+
+GO1/GO2 artifact tags do not become paper-facing merely because they resolve.
+Before manuscript use, confirm that the current claim registry, source
+registry, builder, paper tables, and tests all name the exact July-31 tags and
+boundaries. If that integration is absent, report them only in research-audit
+surfaces and do not manually copy their numbers into the paper.
 
 The executable registry and its tests own the pointer census. The active count
 is 53; it supersedes any stale 51-pointer count in environment-level PDF-intake
@@ -306,3 +409,7 @@ stages are `crpto.pd.champion`, `crpto.conformal.intervals`,
 
 Earlier studies are preserved in Git history and `D:\crpto_legacy`. The active
 paper explains the final method and evidence, not discarded-version chronology.
+All pre-existing files under `docs/research/foundations/` are
+`EXTRACTION_MANIFEST.json` compatibility snapshots. Use the non-protected
+`docs/research/foundations/README.md` as their status router; do not rewrite a
+protected foundation to remove stale champion or promoted-policy language.
