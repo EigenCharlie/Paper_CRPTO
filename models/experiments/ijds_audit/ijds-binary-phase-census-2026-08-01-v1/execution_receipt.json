@@ -1,0 +1,146 @@
+{
+  "schema_version": "2026-08-01.1",
+  "status": "complete_protocol_tagged_execution_receipt",
+  "run_tag": "ijds-binary-phase-census-2026-08-01-v1",
+  "started_at_utc": "2026-08-01T16:18:24.123202+00:00",
+  "completed_at_utc": "2026-08-01T16:18:28.977232+00:00",
+  "runtime_seconds": 4.853831299988087,
+  "protocol_tag": "protocol/ijds-binary-phase-census-2026-08-01-v1",
+  "protocol_commit": "8f3219ee2591f63a0bbf17af49b004e4cec7351f",
+  "planned_artifact_tag": "artifacts/ijds-binary-phase-census-2026-08-01-v1",
+  "protocol": {
+    "path": "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md",
+    "bytes": 8827,
+    "sha256": "ea5805a275daf25edf1da9d1858e77f8ab015d52e8b651e50c7e74a872ac7ea6"
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_binary_phase_census_2026-08-01_v1.yaml": {
+        "path": "configs/experiments/ijds_binary_phase_census_2026-08-01_v1.yaml",
+        "bytes": 3603,
+        "sha256": "f67a3c29ccb8ddadbcd5995d09b9a13f268c562335a92505ef631a39dd90c430"
+      },
+      "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md": {
+        "path": "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md",
+        "bytes": 8827,
+        "sha256": "ea5805a275daf25edf1da9d1858e77f8ab015d52e8b651e50c7e74a872ac7ea6"
+      },
+      "src/ijds_audit/binary_phase_census.py": {
+        "path": "src/ijds_audit/binary_phase_census.py",
+        "bytes": 27519,
+        "sha256": "e98311793093afaa97666fab0fc053e0316fc7404da78a7b58c9491b25a6133d"
+      },
+      "scripts/experiments/run_ijds_binary_phase_census_v1.py": {
+        "path": "scripts/experiments/run_ijds_binary_phase_census_v1.py",
+        "bytes": 17390,
+        "sha256": "5378c69d30da2bfd9670dfed286cb0a9bdbf7ed7e9ccf4381466272bc3c0707b"
+      },
+      "tests/test_ijds_audit/test_binary_phase_census.py": {
+        "path": "tests/test_ijds_audit/test_binary_phase_census.py",
+        "bytes": 15471,
+        "sha256": "c3d7e212011e2bb03fece962a0bfb5c83ae151e3a2367788e123cf8e64d8e613"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10678,
+        "sha256": "95ba8e332038897c2bc3a1612fdfc5ce2ad52f79701d309e37226ff9ed7d5e09"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430177,
+        "sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "sources": {
+    "credit_control_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35",
+      "role": "provenance_witness_unparsed"
+    },
+    "residual_fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet",
+      "bytes": 45955332,
+      "sha256": "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353",
+      "role": "scientific_table_allowlisted_columns"
+    },
+    "exchangeability_summary": {
+      "path": "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json",
+      "bytes": 9078,
+      "sha256": "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6",
+      "role": "provenance_witness_unparsed"
+    },
+    "exchangeability_strata": {
+      "path": "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet",
+      "bytes": 90676,
+      "sha256": "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3",
+      "role": "scientific_table_allowlisted_columns"
+    }
+  },
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census_summary.json",
+    "bytes": 13253,
+    "sha256": "a0f668c100f0dcf6b5500fa537428b9984682255182ffe85075513a81061d032"
+  },
+  "artifacts": {
+    "complete_cell_table": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census.csv",
+      "bytes": 87367,
+      "sha256": "49551463b3073eb4938d4e51129ef3707400922a94ce941b71c396f4d707bc38"
+    }
+  },
+  "initial_git": {
+    "commit": "8f3219ee2591f63a0bbf17af49b004e4cec7351f",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "final_git": {
+    "commit": "8f3219ee2591f63a0bbf17af49b004e4cec7351f",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+  },
+  "promotion_boundary": "Retrospective calibration-geometry census only. One direct-child artifact commit and annotated artifact tag remain pending; paper and active-claim promotion require a separate adversarial audit.",
+  "protected_stages_run": [],
+  "protected_artifacts_read": [],
+  "protected_artifacts_written": []
+}

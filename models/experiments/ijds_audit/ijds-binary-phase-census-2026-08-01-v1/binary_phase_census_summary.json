@@ -1,0 +1,333 @@
+{
+  "schema_version": "2026-08-01.1",
+  "status": "complete_hash_bound_binary_phase_census",
+  "run_tag": "ijds-binary-phase-census-2026-08-01-v1",
+  "protocol_tag": "protocol/ijds-binary-phase-census-2026-08-01-v1",
+  "protocol_commit": "8f3219ee2591f63a0bbf17af49b004e4cec7351f",
+  "planned_artifact_tag": "artifacts/ijds-binary-phase-census-2026-08-01-v1",
+  "protocol": {
+    "path": "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md",
+    "bytes": 8827,
+    "sha256": "ea5805a275daf25edf1da9d1858e77f8ab015d52e8b651e50c7e74a872ac7ea6"
+  },
+  "source_artifacts": {
+    "credit_control_freeze": {
+      "path": "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json",
+      "bytes": 25908,
+      "sha256": "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35",
+      "role": "provenance_witness_unparsed"
+    },
+    "residual_fit_audit": {
+      "path": "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet",
+      "bytes": 45955332,
+      "sha256": "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353",
+      "role": "scientific_table_allowlisted_columns"
+    },
+    "exchangeability_summary": {
+      "path": "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json",
+      "bytes": 9078,
+      "sha256": "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6",
+      "role": "provenance_witness_unparsed"
+    },
+    "exchangeability_strata": {
+      "path": "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet",
+      "bytes": 90676,
+      "sha256": "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3",
+      "role": "scientific_table_allowlisted_columns"
+    }
+  },
+  "source_read_contract": {
+    "hash_bound_source_count": 4,
+    "unparsed_provenance_witness_count": 2,
+    "allowlisted_scientific_table_count": 2,
+    "evaluation_endpoint_tables_read": 0
+  },
+  "results": {
+    "status": "complete_outcome_free_binary_phase_census",
+    "design_cardinalities": {
+      "learner_count": 5,
+      "window_count": 8,
+      "stratum_count_per_learner_window": 5,
+      "expected_cells": 200,
+      "observed_cells": 200
+    },
+    "global_counts": {
+      "cells_both_classes_nonempty": 200,
+      "cells_with_uncapped_rank": 200,
+      "cells_threshold_below_half": 87,
+      "cells_threshold_at_or_above_half": 113,
+      "cells_phase_margin_nonpositive": 87,
+      "cells_phase_margin_positive": 113,
+      "cells_exact_half_criterion_pass": 200,
+      "cells_max_score_below_half_condition": 184,
+      "cells_phase_margin_half_check_pass_when_applicable": 184,
+      "cells_no_interleaving_condition": 188,
+      "cells_phase_margin_source_check_pass_when_applicable": 188,
+      "cells_nondefault_mirror_source_under_condition": 87,
+      "cells_default_mirror_source_under_condition": 101,
+      "cells_reconciled": 200
+    },
+    "complete_ordered_stratum_summary": [
+      {
+        "conformal_group": 0,
+        "expected_cells": 40,
+        "observed_cells": 40,
+        "cells_both_classes_nonempty": 40,
+        "cells_with_uncapped_rank": 40,
+        "cells_threshold_below_half": 40,
+        "cells_phase_margin_nonpositive": 40,
+        "cells_exact_half_criterion_pass": 40,
+        "cells_max_score_below_half_condition": 40,
+        "cells_phase_margin_half_check_pass_when_applicable": 40,
+        "cells_no_interleaving_condition": 40,
+        "cells_phase_margin_source_check_pass_when_applicable": 40,
+        "cells_reconciled": 40
+      },
+      {
+        "conformal_group": 1,
+        "expected_cells": 40,
+        "observed_cells": 40,
+        "cells_both_classes_nonempty": 40,
+        "cells_with_uncapped_rank": 40,
+        "cells_threshold_below_half": 40,
+        "cells_phase_margin_nonpositive": 40,
+        "cells_exact_half_criterion_pass": 40,
+        "cells_max_score_below_half_condition": 40,
+        "cells_phase_margin_half_check_pass_when_applicable": 40,
+        "cells_no_interleaving_condition": 40,
+        "cells_phase_margin_source_check_pass_when_applicable": 40,
+        "cells_reconciled": 40
+      },
+      {
+        "conformal_group": 2,
+        "expected_cells": 40,
+        "observed_cells": 40,
+        "cells_both_classes_nonempty": 40,
+        "cells_with_uncapped_rank": 40,
+        "cells_threshold_below_half": 7,
+        "cells_phase_margin_nonpositive": 7,
+        "cells_exact_half_criterion_pass": 40,
+        "cells_max_score_below_half_condition": 40,
+        "cells_phase_margin_half_check_pass_when_applicable": 40,
+        "cells_no_interleaving_condition": 40,
+        "cells_phase_margin_source_check_pass_when_applicable": 40,
+        "cells_reconciled": 40
+      },
+      {
+        "conformal_group": 3,
+        "expected_cells": 40,
+        "observed_cells": 40,
+        "cells_both_classes_nonempty": 40,
+        "cells_with_uncapped_rank": 40,
+        "cells_threshold_below_half": 0,
+        "cells_phase_margin_nonpositive": 0,
+        "cells_exact_half_criterion_pass": 40,
+        "cells_max_score_below_half_condition": 40,
+        "cells_phase_margin_half_check_pass_when_applicable": 40,
+        "cells_no_interleaving_condition": 40,
+        "cells_phase_margin_source_check_pass_when_applicable": 40,
+        "cells_reconciled": 40
+      },
+      {
+        "conformal_group": 4,
+        "expected_cells": 40,
+        "observed_cells": 40,
+        "cells_both_classes_nonempty": 40,
+        "cells_with_uncapped_rank": 40,
+        "cells_threshold_below_half": 0,
+        "cells_phase_margin_nonpositive": 0,
+        "cells_exact_half_criterion_pass": 40,
+        "cells_max_score_below_half_condition": 24,
+        "cells_phase_margin_half_check_pass_when_applicable": 24,
+        "cells_no_interleaving_condition": 28,
+        "cells_phase_margin_source_check_pass_when_applicable": 28,
+        "cells_reconciled": 40
+      }
+    ],
+    "global_checks": {
+      "complete_grid": true,
+      "all_cells_both_classes_nonempty": true,
+      "all_ranks_uncapped": true,
+      "boundary_identity_all_cells": true,
+      "exact_half_criterion_all_cells": true,
+      "all_applicable_condition_checks_pass": true,
+      "all_cells_reconcile": true
+    },
+    "reporting_contract": {
+      "complete_identifier_bearing_cell_table": true,
+      "learner_window_summary_permutation_symmetric": true,
+      "complete_ordered_stratum_summary": true,
+      "all_strata_reported_without_selection": true,
+      "learner_window_identifier_breakdowns": false,
+      "learner_window_identifier_values_in_summary": false,
+      "cell_extrema_in_summary": false
+    }
+  },
+  "cell_table_schema": {
+    "rows": 200,
+    "columns": 53,
+    "dtypes": {
+      "learner": "str",
+      "window_id": "str",
+      "taxonomy_groups": "int64",
+      "conformal_group": "int64",
+      "alpha": "float64",
+      "fit_rows": "int64",
+      "fit_defaults": "int64",
+      "fit_nondefaults": "int64",
+      "fit_default_prevalence": "float64",
+      "finite_sample_rank": "int64",
+      "boundary_count": "int64",
+      "boundary_closed_form": "int64",
+      "phase_margin": "int64",
+      "frozen_fit_rows": "int64",
+      "frozen_finite_sample_rank": "int64",
+      "frozen_threshold": "float64",
+      "recomputed_threshold": "float64",
+      "threshold_gap": "float64",
+      "threshold_below_half": "bool",
+      "recomputed_residual_below_threshold": "int64",
+      "recomputed_residual_equal_threshold": "int64",
+      "recomputed_residual_above_threshold": "int64",
+      "frozen_residual_below_threshold": "int64",
+      "frozen_residual_equal_threshold": "int64",
+      "frozen_residual_above_threshold": "int64",
+      "recomputed_score_min": "float64",
+      "recomputed_score_max": "float64",
+      "frozen_score_min": "float64",
+      "frozen_score_max": "float64",
+      "fit_score_max_nondefault": "float64",
+      "fit_score_max_default": "float64",
+      "both_classes_nonempty": "bool",
+      "count_nondefault_score_below_half": "int64",
+      "count_default_score_above_half": "int64",
+      "exact_half_criterion_expected": "bool",
+      "exact_half_criterion_observed": "bool",
+      "exact_half_criterion_pass": "bool",
+      "max_score_below_half_condition": "bool",
+      "phase_margin_half_check_applicable": "bool",
+      "phase_margin_half_check_pass": "bool",
+      "no_interleaving_condition": "bool",
+      "expected_threshold_source_branch": "str",
+      "threshold_source_branch": "str",
+      "phase_margin_source_check_applicable": "bool",
+      "phase_margin_source_check_pass": "bool",
+      "boundary_identity_reconciles": "bool",
+      "rows_reconcile": "bool",
+      "rank_reconciles": "bool",
+      "threshold_reconciles": "bool",
+      "tie_counts_reconcile": "bool",
+      "score_extrema_reconcile": "bool",
+      "rank_bracket_reconciles": "bool",
+      "cell_reconciles": "bool"
+    }
+  },
+  "artifacts": {
+    "complete_cell_table": {
+      "path": "data/processed/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census.csv",
+      "bytes": 87367,
+      "sha256": "49551463b3073eb4938d4e51129ef3707400922a94ce941b71c396f4d707bc38"
+    }
+  },
+  "claim_boundary": {
+    "retrospective": true,
+    "preregistered": false,
+    "confirmatory": false,
+    "complete_grid_only": true,
+    "complete_ordered_stratum_summary": true,
+    "learner_window_permutation_symmetric_summary": true,
+    "no_stratum_omission_or_selection": true,
+    "no_named_path_or_winner": true,
+    "no_evaluation_endpoint_or_target_join": true,
+    "no_coverage_transport_or_validity_claim": true,
+    "no_optimization_policy_or_funded_set_claim": true,
+    "no_unconditional_phase_margin_interpretation": true,
+    "no_automatic_paper_or_claim_promotion": true
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_binary_phase_census_2026-08-01_v1.yaml": {
+        "path": "configs/experiments/ijds_binary_phase_census_2026-08-01_v1.yaml",
+        "bytes": 3603,
+        "sha256": "f67a3c29ccb8ddadbcd5995d09b9a13f268c562335a92505ef631a39dd90c430"
+      },
+      "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md": {
+        "path": "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md",
+        "bytes": 8827,
+        "sha256": "ea5805a275daf25edf1da9d1858e77f8ab015d52e8b651e50c7e74a872ac7ea6"
+      },
+      "src/ijds_audit/binary_phase_census.py": {
+        "path": "src/ijds_audit/binary_phase_census.py",
+        "bytes": 27519,
+        "sha256": "e98311793093afaa97666fab0fc053e0316fc7404da78a7b58c9491b25a6133d"
+      },
+      "scripts/experiments/run_ijds_binary_phase_census_v1.py": {
+        "path": "scripts/experiments/run_ijds_binary_phase_census_v1.py",
+        "bytes": 17390,
+        "sha256": "5378c69d30da2bfd9670dfed286cb0a9bdbf7ed7e9ccf4381466272bc3c0707b"
+      },
+      "tests/test_ijds_audit/test_binary_phase_census.py": {
+        "path": "tests/test_ijds_audit/test_binary_phase_census.py",
+        "bytes": 15471,
+        "sha256": "c3d7e212011e2bb03fece962a0bfb5c83ae151e3a2367788e123cf8e64d8e613"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10678,
+        "sha256": "95ba8e332038897c2bc3a1612fdfc5ce2ad52f79701d309e37226ff9ed7d5e09"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430177,
+        "sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+  },
+  "initial_git": {
+    "commit": "8f3219ee2591f63a0bbf17af49b004e4cec7351f",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "artifact_commit_status": "pending_single_direct_child_commit_and_annotated_tag",
+  "protected_stages_run": [],
+  "protected_artifacts_read": [],
+  "protected_artifacts_written": []
+}
