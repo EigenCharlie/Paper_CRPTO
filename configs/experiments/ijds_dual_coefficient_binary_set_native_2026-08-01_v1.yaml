@@ -1,0 +1,159 @@
+schema_version: "2026-08-01.v1.1"
+protocol_status: "locked_candidate_outcome_free_before_execution"
+protocol_tag: "protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+run_tag: "ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+
+hypothesis: >-
+  The predecessor's exact-budget zero-minimum-score certificate is sufficient,
+  under its hash-locked constraint and payoff contracts, to prove that every
+  exact worst-completed-label maximin optimizer funds only singleton-zero sets
+  and that the complete risk-cap frontier is constant on [0,1].
+
+predecessor:
+  run_tag: "ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+  protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+  protocol_commit: "2066363ab0d09e25dade0f582a0c36c6aa7bee5c"
+  artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a"
+  artifact_commit: "3ef847491e1ecdf55315774ddb295a634e441a54"
+  solve_records:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/frontier_solve_records.parquet"
+    bytes: 99078
+    sha256: "52ff6db4cf4f1d0ee24b486b547300e1fe2e9071e3ea5805b55b31162066d4fb"
+  taxonomy:
+    path: "data/processed/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/frontier/set_taxonomy_diagnostics.parquet"
+    bytes: 12686
+    sha256: "35f2bcf84791165e3b6c70d6da98f683fe35c9e82f58e6fd47d7e5daa15ab5aa"
+  summary:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/outcome_free_summary.json"
+    bytes: 1429
+    sha256: "716c93a7115548f6695636b9e52b76e5ad7ead83ca1189d7440a6cacd3c65459"
+  manifest:
+    path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1/verified_phase_a_manifest.json"
+    bytes: 234143
+    sha256: "5d65fa7f89c290b4241e06d1662b0518c7c91ca83c6e10a96ff699e439ff49ce"
+  implementation_sources:
+    config:
+      path: "configs/experiments/ijds_set_native_binary_robust_counterpart_2026-07-31_v1.yaml"
+      bytes: 6967
+      sha256: "45e3e2ba40c7731792a16f7c643f0214e2cd29c26415904b846beed09e541ef6"
+    protocol:
+      path: "docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md"
+      bytes: 6412
+      sha256: "a9ab4ba250e00a6940576dcd7957c149a561802cb342651c85fc3e4dd66aace8"
+    runner:
+      path: "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py"
+      bytes: 52695
+      sha256: "fad794542ef57f1bf47ee0c8adc3030d4005fb574d58b6d8c0538e47d5c2644a"
+    implementation:
+      path: "src/ijds_challengers/set_native_binary_robust.py"
+      bytes: 43905
+      sha256: "d3bc2d0252c33ecb70572ef2a0adc821849f84b96cdee5525ee96793c61a8c32"
+    source_loader:
+      path: "src/ijds_challengers/archive.py"
+      bytes: 5120
+      sha256: "758e3db891597e4567dba9dec3b55d44179e194655aed96862059cecb2fd47a7"
+    lp:
+      path: "src/ijds_audit/portfolio.py"
+      bytes: 13054
+      sha256: "65f1032856f498376b37f2623e0b2edd7ed4040fed1652c25becae100808850e"
+    payoff:
+      path: "src/evaluation/standardized_credit_payoff.py"
+      bytes: 3589
+      sha256: "5993fd9f5899a08090cd26ddb9120618e8ae77d0200944be7c41479652fef98c"
+    conformal_sets:
+      path: "src/models/binary_conformal_guardrail.py"
+      bytes: 6629
+      sha256: "ce4b32ce27202d5cd8b2b58792aa31b6693f0da9f11b22fbbdceb7240324a0cb"
+    parent_config:
+      path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+      bytes: 4136
+      sha256: "fc340e75df0db016a7caf857baa236e559ef5ef34f5dc212fa1b0ab0b842c953"
+    parent_base_config:
+      path: "configs/experiments/ijds_fixed_taxonomy_c2_2026-07-11.yaml"
+      bytes: 6541
+      sha256: "5e2ee58760cfdec94a003525f2aafc186e3241fad23ef62442a19ca8c58cf378"
+    config_loader:
+      path: "src/ijds_audit/config.py"
+      bytes: 25008
+      sha256: "a13cadec6a16267cfe80c3bfce986e6d6bbd6461b61d605036d3a917c4308f8e"
+
+inherited_contract:
+  budget_rule: "exact_equality"
+  budget_dollars: 1000000.0
+  cash_variable_present: false
+  loan_bounds: "zero_to_requested_amount"
+  purpose_partition: "one_exhaustive_disjoint_group_per_candidate"
+  purpose_constraints: "upper_only"
+  maximum_concentration_by_purpose: 0.25
+  contractual_rate_domain: [0.0, 1.0]
+  lgd: 0.45
+  exact_set_score: "zero_iff_singleton_zero_else_one"
+  empty_set_semantics: "declared_fail_closed_completion_to_both_labels"
+
+conditional_theorem:
+  name: "singleton_zero_substitution_and_continuous_frontier_collapse"
+  payoff_definition: >-
+    minimum standardized credit payoff over each completed nonempty binary set;
+    the empty set is first completed to both labels by the declared fail-closed
+    decision convention
+  singleton_zero_payoff: "contractual_rate"
+  non_singleton_zero_payoff: "negative_lgd"
+  existence_certificate: >-
+    minimum_score_zero under exact budget, no cash, binary score zero iff
+    singleton-zero, and the inherited upper-only disjoint-purpose polytope
+  strict_gain_floor_per_replaced_dollar: "lgd"
+  cap_domain: [0.0, 1.0]
+  conclusion: "every_maximin_optimizer_has_zero_non_singleton_zero_exposure"
+  frontier_conclusion: "same_singleton_zero_maximin_optimal_face_and_value_for_every_cap"
+
+expected_census:
+  predecessor_rows: 1248
+  rows_per_menu: 6
+  windows: 8
+  role_months_per_window: 26
+  development_months_per_window: 11
+  primary_months_per_window: 15
+  menu_certificates: 208
+  taxonomy_rows: 208
+
+tolerances:
+  minimum_score: 1.0e-12
+  budget_residual_dollars: 1.0e-4
+  total_allocated_dollars: 1.0e-4
+
+claim_boundary:
+  no_raw_read: true
+  no_new_optimization: true
+  no_phase_b: true
+  no_1248_ruler_coordinate_grid: true
+  no_selected_cap_window_or_policy: true
+  no_policy_winner: true
+  no_conformal_validity_repair: true
+  no_joint_cartesian_product_coverage: true
+  no_probabilistic_robustness_guarantee: true
+  no_funded_or_selected_set_validity: true
+  no_causal_or_prospective_claim: true
+  no_optimizer_uniqueness_claim: true
+
+stop_rules:
+  stop_on_untagged_or_dirty_head: true
+  stop_on_source_descriptor_mismatch: true
+  stop_on_predecessor_identity_failure: true
+  stop_on_nonzero_minimum_score: true
+  stop_on_inconsistent_minimum_score_objective: true
+  stop_on_budget_or_cash_failure: true
+  stop_on_taxonomy_reconciliation_failure: true
+  stop_on_incomplete_208_menu_census: true
+  stop_on_occupied_output: true
+  retain_all_predeclared_results: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  menu_certificates: "dual_coefficient_binary_set_native_menu_certificates.parquet"
+  manifest: "verified_outcome_free_manifest.json"
+  summary: "outcome_free_summary.json"
+  receipt: "outcome_free_execution_receipt.json"
+  protocol_freeze: "protocol_freeze.json"
+  artifact_tag: "artifacts/ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+  dvc_required: false
