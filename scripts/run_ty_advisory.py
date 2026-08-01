@@ -23,6 +23,7 @@ TY_REQUIREMENT = "ty==0.0.61"
 TY_ACTIVE_HASH_BOUND_EXCLUDES = (
     "src/ijds_audit/funded_selection_estimand.py",
     "src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py",
+    "src/ijds_audit/binary_phase_census.py",
 )
 
 SOURCE_ROOTS = ("src", "scripts")

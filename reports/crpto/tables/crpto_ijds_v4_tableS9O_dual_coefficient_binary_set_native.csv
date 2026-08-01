@@ -1,0 +1,3 @@
+role,menu_certificates,windows,months_per_window,all_conditions_certified,all_maximin_optimizers_singleton_zero,continuous_cap_frontier_collapses,cap_domain_lower,cap_domain_upper,new_optimizations,optimizer_unique_certified,validity_claim_established
+policy_development,88,8,11,True,True,True,0.0,1.0,0,False,False
+primary_oot,120,8,15,True,True,True,0.0,1.0,0,False,False

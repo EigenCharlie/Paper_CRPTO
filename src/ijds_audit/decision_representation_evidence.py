@@ -1,10 +1,11 @@
-"""Fail-closed paper loader for the two decision-representation audits.
+"""Fail-closed paper loader for the three decision-representation audits.
 
-The module verifies two immutable Git-native lineages before exposing any
+The module verifies three immutable Git-native lineages before exposing any
 paper-facing result:
 
 * the outcome-blind complete-hull score-equivalence audit (``P -> A``); and
-* the set-native binary robust-counterpart audit (``P1 -> A1 -> P2 -> B1``).
+* the set-native binary robust-counterpart audit (``P1 -> A1 -> P2 -> B1``); and
+* the outcome-free dual-coefficient logical-certificate audit (``P -> A``).
 
 The loader intentionally keeps the large funded-allocation table out of its
 returned objects.  It reads that table once to reconcile every Phase-A solve
@@ -52,6 +53,16 @@ _SET_PHASE_A_RUN_TAG = "ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
 _SET_PHASE_B_RUN_TAG = "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
 _SET_PHASE_A_STATUS = "outcome_free_set_native_binary_robust_counterpart_complete"
 _SET_PHASE_B_STATUS = "set_native_binary_robust_counterpart_evaluation_complete"
+
+_DUAL_PROTOCOL_COMMIT = "8d0f912023ce61765e15d2370680eb09cfb3a6af"
+_DUAL_ARTIFACT_COMMIT = "79c378366d394e4835183ed19f332f0cf0e28f77"
+_DUAL_PROTOCOL_TAG = "protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+_DUAL_ARTIFACT_TAG = "artifacts/ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+_DUAL_RUN_TAG = "ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+_DUAL_STATUS = "outcome_free_dual_coefficient_binary_set_native_certificates_complete"
+_DUAL_PAPER_ROLE = (
+    "complete_outcome_free_dual_coefficient_binary_set_native_menu_certificate_census"
+)
 
 _WINDOWS = (
     "w01_2012m01_m06",
@@ -120,6 +131,31 @@ _SET_PHASE_B_PATHS = (
     f"{_SET_PHASE_B_MODEL_PREFIX}verified_evaluation_manifest.json",
 )
 
+_DUAL_DATA_PREFIX = (
+    "data/processed/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/"
+)
+_DUAL_MODEL_PREFIX = (
+    "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/"
+)
+_DUAL_ARTIFACT_PATHS = (
+    f"{_DUAL_DATA_PREFIX}dual_coefficient_binary_set_native_menu_certificates.parquet",
+    f"{_DUAL_MODEL_PREFIX}outcome_free_execution_receipt.json",
+    f"{_DUAL_MODEL_PREFIX}outcome_free_summary.json",
+    f"{_DUAL_MODEL_PREFIX}protocol_freeze.json",
+    f"{_DUAL_MODEL_PREFIX}verified_outcome_free_manifest.json",
+)
+_DUAL_IMPLEMENTATION_PATHS = (
+    "configs/experiments/ijds_dual_coefficient_binary_set_native_2026-08-01_v1.yaml",
+    "docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md",
+    "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py",
+    "src/ijds_challengers/dual_coefficient_binary_set_native.py",
+    "tests/test_ijds_dual_coefficient_binary_set_native_v1.py",
+    "src/utils/isolated_experiment.py",
+    "src/utils/pipeline_runtime.py",
+    "pyproject.toml",
+    "uv.lock",
+)
+
 _REGISTERED_PATHS = {
     "score_equivalence_config": (
         "configs/experiments/ijds_score_equivalence_complete_hull_2026-07-31_v1.yaml"
@@ -180,6 +216,23 @@ _REGISTERED_PATHS = {
     "set_native_evaluation_manifest": (
         f"{_SET_PHASE_B_MODEL_PREFIX}verified_evaluation_manifest.json"
     ),
+    "dual_coefficient_config": (
+        "configs/experiments/ijds_dual_coefficient_binary_set_native_2026-08-01_v1.yaml"
+    ),
+    "dual_coefficient_protocol": (
+        "docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md"
+    ),
+    "dual_coefficient_runner": (
+        "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py"
+    ),
+    "dual_coefficient_implementation": (
+        "src/ijds_challengers/dual_coefficient_binary_set_native.py"
+    ),
+    "dual_coefficient_certificates": _DUAL_ARTIFACT_PATHS[0],
+    "dual_coefficient_receipt": _DUAL_ARTIFACT_PATHS[1],
+    "dual_coefficient_summary": _DUAL_ARTIFACT_PATHS[2],
+    "dual_coefficient_freeze": _DUAL_ARTIFACT_PATHS[3],
+    "dual_coefficient_manifest": _DUAL_ARTIFACT_PATHS[4],
 }
 
 _HULL_COLUMNS = (
@@ -247,6 +300,77 @@ _CONTROL_COLUMNS = (
     "observed_equivalent",
     "control_passed",
     *_SCORE_CERTIFICATE_COLUMNS,
+)
+
+_DUAL_COLUMNS = (
+    "window_id",
+    "role",
+    "period",
+    "predecessor_rows",
+    "minimum_score",
+    "minimum_n_candidates",
+    "maximum_n_candidates",
+    "maximum_abs_budget_residual",
+    "minimum_total_allocated",
+    "maximum_total_allocated",
+    "minimum_score_portfolio_objective",
+    "n_candidates",
+    "n_empty",
+    "n_singleton_zero",
+    "n_singleton_one",
+    "n_two_label",
+    "n_risk_zero",
+    "n_risk_one",
+    "empty_set_score",
+    "budget_dollars",
+    "purpose_cap",
+    "lgd",
+    "contractual_rate_lower",
+    "contractual_rate_upper",
+    "condition_budget_equality",
+    "condition_no_cash",
+    "condition_disjoint_purpose_partition",
+    "condition_upper_only_purpose_caps",
+    "condition_nonnegative_contractual_rates",
+    "condition_positive_lgd",
+    "condition_singleton_zero_capacity_at_least_budget",
+    "condition_exact_binary_set_labels",
+    "capacity_lower_bound_dollars",
+    "capacity_certificate",
+    "payoff_definition",
+    "all_maximin_optimizers_singleton_zero",
+    "continuous_cap_frontier_collapses",
+    "cap_domain_lower",
+    "cap_domain_upper",
+    "new_optimization_executed",
+    "raw_archive_read",
+    "optimizer_unique_certified",
+    "policy_selected",
+    "validity_claim_established",
+)
+_DUAL_CONDITION_COLUMNS = (
+    "condition_budget_equality",
+    "condition_no_cash",
+    "condition_disjoint_purpose_partition",
+    "condition_upper_only_purpose_caps",
+    "condition_nonnegative_contractual_rates",
+    "condition_positive_lgd",
+    "condition_singleton_zero_capacity_at_least_budget",
+    "condition_exact_binary_set_labels",
+)
+_DUAL_CLAIM_BOUNDARY_KEYS = (
+    "no_raw_read",
+    "no_new_optimization",
+    "no_phase_b",
+    "no_1248_ruler_coordinate_grid",
+    "no_selected_cap_window_or_policy",
+    "no_policy_winner",
+    "no_conformal_validity_repair",
+    "no_joint_cartesian_product_coverage",
+    "no_probabilistic_robustness_guarantee",
+    "no_funded_or_selected_set_validity",
+    "no_causal_or_prospective_claim",
+    "no_optimizer_uniqueness_claim",
 )
 
 _EVALUATED_COLUMNS = (
@@ -408,11 +532,24 @@ class SetNativeEvidence:
 
 
 @dataclass(frozen=True)
+class DualCoefficientEvidence:
+    """Verified dual-coefficient logical certificates and claim boundary."""
+
+    freeze: Mapping[str, Any]
+    summary: Mapping[str, Any]
+    receipt: Mapping[str, Any]
+    manifest: Mapping[str, Any]
+    certificates: pd.DataFrame
+    findings: Mapping[str, Any]
+
+
+@dataclass(frozen=True)
 class DecisionRepresentationEvidence:
-    """Compact verified evidence for both decision-representation lineages."""
+    """Compact verified evidence for all three decision-representation lineages."""
 
     score_equivalence: ScoreEquivalenceEvidence
     set_native: SetNativeEvidence
+    dual_coefficient: DualCoefficientEvidence
 
 
 def _load_json_object(path: Path, *, label: str) -> dict[str, Any]:
@@ -539,14 +676,21 @@ def _require_lineages(
     if set(identities) != {
         "score_equivalence_complete_hull",
         "set_native_binary_robust_counterpart",
+        "dual_coefficient_binary_set_native",
     }:
         raise RuntimeError(
             "Decision-representation identities must contain exactly "
-            "score_equivalence_complete_hull and set_native_binary_robust_counterpart."
+            "score_equivalence_complete_hull, set_native_binary_robust_counterpart, "
+            "and dual_coefficient_binary_set_native."
         )
     score = identities.get("score_equivalence_complete_hull")
     set_native = identities.get("set_native_binary_robust_counterpart")
-    if not isinstance(score, Mapping) or not isinstance(set_native, Mapping):
+    dual = identities.get("dual_coefficient_binary_set_native")
+    if (
+        not isinstance(score, Mapping)
+        or not isinstance(set_native, Mapping)
+        or not isinstance(dual, Mapping)
+    ):
         raise TypeError("Decision-representation lineage identities must be mappings.")
     if set(set_native) != {"outcome_free", "evaluation"}:
         raise RuntimeError("Set-native identity must contain exactly outcome_free and evaluation.")
@@ -608,6 +752,23 @@ def _require_lineages(
         },
         label="set-native Phase-B lineage",
     )
+    _require_exact_identity(
+        dual,
+        {
+            "run_tag": _DUAL_RUN_TAG,
+            "protocol_tag": _DUAL_PROTOCOL_TAG,
+            "protocol_commit": _DUAL_PROTOCOL_COMMIT,
+            "scientific_uv_lock_sha256": _UV_LOCK_SHA256,
+            "paper_role": _DUAL_PAPER_ROLE,
+            "dvc_tracked": False,
+            "artifact_tag": _DUAL_ARTIFACT_TAG,
+            "artifact_commit": _DUAL_ARTIFACT_COMMIT,
+            "artifact_parent_commit": _DUAL_PROTOCOL_COMMIT,
+            "artifact_transport": _TRANSPORT,
+            "artifact_paths": list(_DUAL_ARTIFACT_PATHS),
+        },
+        label="dual-coefficient lineage",
+    )
 
     _require_annotated_tag(
         _SCORE_PROTOCOL_TAG,
@@ -652,6 +813,20 @@ def _require_lineages(
         paths=_SET_PHASE_B_PATHS,
         repo_root=repo_root,
         label="set-native B1 artifact",
+    )
+    _require_annotated_tag(
+        _DUAL_PROTOCOL_TAG,
+        _DUAL_PROTOCOL_COMMIT,
+        repo_root=repo_root,
+        label="dual-coefficient protocol",
+    )
+    _require_git_stage(
+        tag=_DUAL_ARTIFACT_TAG,
+        commit=_DUAL_ARTIFACT_COMMIT,
+        parent=_DUAL_PROTOCOL_COMMIT,
+        paths=_DUAL_ARTIFACT_PATHS,
+        repo_root=repo_root,
+        label="dual-coefficient artifact",
     )
 
 
@@ -1835,20 +2010,453 @@ def _load_set_native(
     )
 
 
+def _validate_dual_config(config: Mapping[str, Any]) -> None:
+    if (
+        config.get("schema_version") != "2026-08-01.v1.1"
+        or config.get("protocol_status") != "locked_candidate_outcome_free_before_execution"
+        or config.get("protocol_tag") != _DUAL_PROTOCOL_TAG
+        or config.get("run_tag") != _DUAL_RUN_TAG
+    ):
+        raise RuntimeError("Dual-coefficient locked config identity changed.")
+    predecessor = _mapping(config, "predecessor", label="dual-coefficient config")
+    expected_predecessor_identity = {
+        "run_tag": _SET_PHASE_A_RUN_TAG,
+        "protocol_tag": _SET_P1_TAG,
+        "protocol_commit": _SET_P1_COMMIT,
+        "artifact_tag": _SET_A1_TAG,
+        "artifact_commit": _SET_A1_COMMIT,
+    }
+    changed = {
+        key: predecessor.get(key)
+        for key, value in expected_predecessor_identity.items()
+        if predecessor.get(key) != value
+    }
+    if changed:
+        raise RuntimeError(f"Dual-coefficient predecessor identity changed: {changed}.")
+    inherited = _mapping(config, "inherited_contract", label="dual-coefficient config")
+    expected_inherited = {
+        "budget_rule": "exact_equality",
+        "budget_dollars": 1_000_000.0,
+        "cash_variable_present": False,
+        "loan_bounds": "zero_to_requested_amount",
+        "purpose_partition": "one_exhaustive_disjoint_group_per_candidate",
+        "purpose_constraints": "upper_only",
+        "maximum_concentration_by_purpose": 0.25,
+        "contractual_rate_domain": [0.0, 1.0],
+        "lgd": 0.45,
+        "exact_set_score": "zero_iff_singleton_zero_else_one",
+        "empty_set_semantics": "declared_fail_closed_completion_to_both_labels",
+    }
+    if dict(inherited) != expected_inherited:
+        raise RuntimeError("Dual-coefficient inherited optimization contract changed.")
+    theorem = _mapping(config, "conditional_theorem", label="dual-coefficient config")
+    if (
+        theorem.get("name") != "singleton_zero_substitution_and_continuous_frontier_collapse"
+        or theorem.get("singleton_zero_payoff") != "contractual_rate"
+        or theorem.get("non_singleton_zero_payoff") != "negative_lgd"
+        or theorem.get("cap_domain") != [0.0, 1.0]
+        or theorem.get("conclusion")
+        != "every_maximin_optimizer_has_zero_non_singleton_zero_exposure"
+        or theorem.get("frontier_conclusion")
+        != "same_singleton_zero_maximin_optimal_face_and_value_for_every_cap"
+    ):
+        raise RuntimeError("Dual-coefficient conditional theorem contract changed.")
+    claim_boundary = _mapping(config, "claim_boundary", label="dual-coefficient config")
+    expected_boundary = dict.fromkeys(_DUAL_CLAIM_BOUNDARY_KEYS, True)
+    if dict(claim_boundary) != expected_boundary:
+        raise RuntimeError("Dual-coefficient claim boundary changed.")
+    census = _mapping(config, "expected_census", label="dual-coefficient config")
+    if dict(census) != {
+        "predecessor_rows": 1248,
+        "rows_per_menu": 6,
+        "windows": 8,
+        "role_months_per_window": 26,
+        "development_months_per_window": 11,
+        "primary_months_per_window": 15,
+        "menu_certificates": 208,
+        "taxonomy_rows": 208,
+    }:
+        raise RuntimeError("Dual-coefficient locked census changed.")
+    output = _mapping(config, "output", label="dual-coefficient config")
+    if output.get("artifact_tag") != _DUAL_ARTIFACT_TAG or output.get("dvc_required") is not False:
+        raise RuntimeError("Dual-coefficient artifact contract changed.")
+
+
+def _validate_dual_boundaries(
+    *,
+    config: Mapping[str, Any],
+    freeze: Mapping[str, Any],
+    summary: Mapping[str, Any],
+    receipt: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+) -> None:
+    _validate_dual_config(config)
+    for payload, label in (
+        (freeze, "dual-coefficient freeze"),
+        (summary, "dual-coefficient summary"),
+        (receipt, "dual-coefficient receipt"),
+    ):
+        _require_protocol_identity(
+            payload,
+            schema="2026-08-01.v1.1",
+            status=_DUAL_STATUS,
+            run_tag=_DUAL_RUN_TAG,
+            protocol_tag=_DUAL_PROTOCOL_TAG,
+            protocol_commit=_DUAL_PROTOCOL_COMMIT,
+            label=label,
+        )
+        _require_no_side_effects(payload, label=label)
+    if (
+        manifest.get("schema_version") != "2026-08-01.v1.1"
+        or manifest.get("status") != _DUAL_STATUS
+        or manifest.get("run_tag") != _DUAL_RUN_TAG
+    ):
+        raise RuntimeError("Dual-coefficient manifest identity changed.")
+    if (
+        freeze.get("artifact_status") != "pending_git_artifact_commit_and_annotated_tag"
+        or freeze.get("outcome_columns_passed") != []
+        or freeze.get("new_optimizations") != 0
+        or receipt.get("predecessor_rows_read") != 1456
+        or receipt.get("new_optimizations") != 0
+        or receipt.get("raw_archive_read") is not False
+        or receipt.get("outcome_columns_passed") != []
+        or summary.get("raw_archive_read") is not False
+        or summary.get("outcome_columns_passed") != []
+        or summary.get("validity_claim_established") is not False
+    ):
+        raise RuntimeError("Dual-coefficient outcome-free execution boundary changed.")
+    if dict(_mapping(summary, "selection", label="dual-coefficient summary")) != {
+        "cap": None,
+        "window": None,
+        "policy": None,
+    }:
+        raise RuntimeError("Dual-coefficient summary reports a selected result.")
+    if dict(_mapping(summary, "counts", label="dual-coefficient summary")) != {
+        "menu_certificates": 208,
+        "new_optimizations": 0,
+    }:
+        raise RuntimeError("Dual-coefficient summary census changed.")
+    if (
+        summary.get("all_conditions_certified") is not True
+        or summary.get("all_maximin_optimizers_singleton_zero") is not True
+        or summary.get("continuous_cap_frontier_collapses") is not True
+        or summary.get("cap_domain") != [0.0, 1.0]
+    ):
+        raise RuntimeError("Dual-coefficient conditional conclusion changed.")
+    if dict(_mapping(freeze, "artifact_contract", label="dual-coefficient freeze")) != {
+        "expected_tag": _DUAL_ARTIFACT_TAG,
+        "dvc_required": False,
+    }:
+        raise RuntimeError("Dual-coefficient freeze artifact contract changed.")
+    if dict(_mapping(freeze, "predecessor", label="dual-coefficient freeze")) != {
+        "run_tag": _SET_PHASE_A_RUN_TAG,
+        "artifact_tag": _SET_A1_TAG,
+        "artifact_commit": _SET_A1_COMMIT,
+    }:
+        raise RuntimeError("Dual-coefficient frozen predecessor changed.")
+
+
+def _dual_certificate_digest(frame: pd.DataFrame) -> str:
+    ordered = frame.sort_values(["window_id", "role", "period"], kind="mergesort")
+    payload = json.dumps(
+        ordered.to_dict(orient="records"),
+        ensure_ascii=False,
+        allow_nan=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def _validate_dual_certificates(
+    certificates: pd.DataFrame,
+    *,
+    summary: Mapping[str, Any],
+    manifest: Mapping[str, Any],
+    expected_menu_keys: set[tuple[str, str, str]],
+) -> dict[str, Any]:
+    _require_exact_columns(certificates, _DUAL_COLUMNS, label="dual-coefficient certificates")
+    schemas = _mapping(manifest, "official_schemas", label="dual-coefficient manifest")
+    if set(schemas) != {"menu_certificates"} or schemas.get(
+        "menu_certificates"
+    ) != dataframe_schema(certificates):
+        raise RuntimeError("Dual-coefficient certificate schema differs from the sealed manifest.")
+    if (
+        len(certificates) != 208
+        or bool(certificates.duplicated(["window_id", "role", "period"]).any())
+        or set(certificates[["window_id", "role", "period"]].itertuples(index=False, name=None))
+        != expected_menu_keys
+    ):
+        raise RuntimeError("Dual-coefficient census is not the exact 208 predecessor menus.")
+    if set(certificates["window_id"].astype(str)) != set(_WINDOWS):
+        raise RuntimeError("Dual-coefficient certificate window domain changed.")
+    role_counts = certificates.groupby("role", observed=True).size().to_dict()
+    if role_counts != {"policy_development": 88, "primary_oot": 120}:
+        raise RuntimeError("Dual-coefficient role census changed from 88/120.")
+    window_roles = certificates.groupby(["window_id", "role"], observed=True).size().unstack()
+    if (
+        set(window_roles.columns.astype(str)) != set(_ROLES)
+        or not window_roles["policy_development"].eq(11).all()
+        or not window_roles["primary_oot"].eq(15).all()
+    ):
+        raise RuntimeError("Dual-coefficient within-window role census changed from 11/15.")
+
+    numeric = [
+        column
+        for column in certificates.columns
+        if pd.api.types.is_numeric_dtype(certificates[column].dtype)
+        and not pd.api.types.is_bool_dtype(certificates[column].dtype)
+    ]
+    require_finite(certificates, numeric, label="dual-coefficient certificates")
+    count_columns = (
+        "predecessor_rows",
+        "minimum_n_candidates",
+        "maximum_n_candidates",
+        "n_candidates",
+        "n_empty",
+        "n_singleton_zero",
+        "n_singleton_one",
+        "n_two_label",
+        "n_risk_zero",
+        "n_risk_one",
+    )
+    if certificates[list(count_columns)].lt(0).any(axis=None):
+        raise RuntimeError("Dual-coefficient certificate contains a negative count.")
+    taxonomy_total = certificates[
+        ["n_empty", "n_singleton_zero", "n_singleton_one", "n_two_label"]
+    ].sum(axis=1)
+    if (
+        not certificates["predecessor_rows"].eq(6).all()
+        or not certificates["minimum_score"].abs().le(1.0e-12).all()
+        or not certificates["minimum_n_candidates"].eq(certificates["maximum_n_candidates"]).all()
+        or not certificates["minimum_n_candidates"].eq(certificates["n_candidates"]).all()
+        or not taxonomy_total.eq(certificates["n_candidates"]).all()
+        or not certificates["n_risk_zero"].eq(certificates["n_singleton_zero"]).all()
+        or not certificates["n_risk_one"]
+        .eq(certificates["n_candidates"] - certificates["n_singleton_zero"])
+        .all()
+    ):
+        raise RuntimeError(
+            "Dual-coefficient predecessor or binary-set taxonomy failed to reconcile."
+        )
+    if (
+        not certificates["maximum_abs_budget_residual"].le(1.0e-4).all()
+        or not certificates["minimum_total_allocated"].sub(1_000_000.0).abs().le(1.0e-4).all()
+        or not certificates["maximum_total_allocated"].sub(1_000_000.0).abs().le(1.0e-4).all()
+        or not certificates["budget_dollars"].eq(1_000_000.0).all()
+        or not certificates["purpose_cap"].eq(0.25).all()
+        or not certificates["lgd"].eq(0.45).all()
+        or not certificates["contractual_rate_lower"].eq(0.0).all()
+        or not certificates["contractual_rate_upper"].eq(1.0).all()
+        or not certificates["empty_set_score"].eq(1.0).all()
+        or not certificates["capacity_lower_bound_dollars"].eq(1_000_000.0).all()
+    ):
+        raise RuntimeError("Dual-coefficient numerical theorem conditions changed.")
+    if (
+        not certificates[list(_DUAL_CONDITION_COLUMNS)].eq(True).all(axis=None)
+        or not certificates["capacity_certificate"]
+        .eq("feasible_exact_budget_zero_minimum_set_score")
+        .all()
+        or not certificates["payoff_definition"]
+        .eq("min_standardized_payoff_over_completed_nonempty_set_with_declared_empty_fail_closure")
+        .all()
+        or not certificates["all_maximin_optimizers_singleton_zero"].eq(True).all()
+        or not certificates["continuous_cap_frontier_collapses"].eq(True).all()
+        or not certificates["cap_domain_lower"].eq(0.0).all()
+        or not certificates["cap_domain_upper"].eq(1.0).all()
+    ):
+        raise RuntimeError("Dual-coefficient logical certificate conclusion changed.")
+    forbidden_true = (
+        "new_optimization_executed",
+        "raw_archive_read",
+        "optimizer_unique_certified",
+        "policy_selected",
+        "validity_claim_established",
+    )
+    if certificates[list(forbidden_true)].eq(True).any(axis=None):
+        raise RuntimeError("Dual-coefficient certificate exceeds its claim boundary.")
+    digest = _dual_certificate_digest(certificates)
+    if summary.get("certificate_sha256") != digest:
+        raise RuntimeError("Dual-coefficient canonical certificate digest changed.")
+    return {
+        "menu_certificates": 208,
+        "role_menu_certificates": {"policy_development": 88, "primary_oot": 120},
+        "new_optimizations": 0,
+        "all_conditions_certified": True,
+        "all_maximin_optimizers_singleton_zero": True,
+        "continuous_cap_frontier_collapses": True,
+        "cap_domain": [0.0, 1.0],
+        "conditional_on_inherited_constraint_and_payoff_contract": True,
+        "raw_archive_read": False,
+        "outcome_columns_passed": [],
+        "selected_result": None,
+        "policy_winner": None,
+        "optimizer_unique_certified": False,
+        "conformal_validity_repair": False,
+        "joint_cartesian_product_coverage_established": False,
+        "probabilistic_robustness_guarantee": False,
+        "funded_or_selected_set_validity": False,
+        "causal_or_prospective_claim": False,
+    }
+
+
+def _load_dual_coefficient(
+    registered: Mapping[str, Path],
+    *,
+    repo_root: Path,
+    cache: dict[tuple[str, int, str], Path],
+) -> DualCoefficientEvidence:
+    config = _load_yaml_object(
+        registered["dual_coefficient_config"], label="dual-coefficient config"
+    )
+    freeze = _load_json_object(
+        registered["dual_coefficient_freeze"], label="dual-coefficient freeze"
+    )
+    summary = _load_json_object(
+        registered["dual_coefficient_summary"], label="dual-coefficient summary"
+    )
+    receipt = _load_json_object(
+        registered["dual_coefficient_receipt"], label="dual-coefficient receipt"
+    )
+    manifest = _load_json_object(
+        registered["dual_coefficient_manifest"], label="dual-coefficient manifest"
+    )
+    _validate_dual_boundaries(
+        config=config,
+        freeze=freeze,
+        summary=summary,
+        receipt=receipt,
+        manifest=manifest,
+    )
+    environment = _mapping(freeze, "environment", label="dual-coefficient freeze")
+    if environment.get("uv_lock_sha256") != _UV_LOCK_SHA256:
+        raise RuntimeError("Dual-coefficient scientific lock changed.")
+    git = _mapping(freeze, "git", label="dual-coefficient freeze")
+    if (
+        git.get("commit") != _DUAL_PROTOCOL_COMMIT
+        or git.get("dirty") is not False
+        or git.get("dirty_entries") != 0
+        or git.get("dirty_paths") != []
+    ):
+        raise RuntimeError("Dual-coefficient execution was not clean at its protocol commit.")
+    implementation = _mapping(freeze, "implementation_provenance", label="dual-coefficient freeze")
+    source_files = _mapping(
+        implementation, "source_files", label="dual-coefficient implementation provenance"
+    )
+    if set(source_files) != set(_DUAL_IMPLEMENTATION_PATHS):
+        raise RuntimeError("Dual-coefficient implementation inventory changed.")
+    _require_implementation_provenance(
+        freeze,
+        commit=_DUAL_PROTOCOL_COMMIT,
+        repo_root=repo_root,
+        label="dual-coefficient freeze",
+        cache=cache,
+    )
+
+    official_freeze = _mapping(freeze, "official_artifacts", label="dual-coefficient freeze")
+    official_manifest = _mapping(manifest, "official_artifacts", label="dual-coefficient manifest")
+    if set(official_freeze) != {"menu_certificates"} or official_freeze != official_manifest:
+        raise RuntimeError("Dual-coefficient freeze and manifest artifact descriptors disagree.")
+    _require_descriptor_equals_registered(
+        official_manifest.get("menu_certificates"),
+        registered["dual_coefficient_certificates"],
+        repo_root=repo_root,
+        label="dual-coefficient menu certificates",
+        commit=_DUAL_ARTIFACT_COMMIT,
+        cache=cache,
+    )
+    for descriptor_name, registered_name in (
+        ("summary", "dual_coefficient_summary"),
+        ("execution_receipt", "dual_coefficient_receipt"),
+        ("manifest", "dual_coefficient_manifest"),
+    ):
+        _require_descriptor_equals_registered(
+            freeze.get(descriptor_name),
+            registered[registered_name],
+            repo_root=repo_root,
+            label=f"dual-coefficient {descriptor_name}",
+            commit=_DUAL_ARTIFACT_COMMIT,
+            cache=cache,
+        )
+    freeze_descriptor = relative_artifact_descriptor(
+        registered["dual_coefficient_freeze"], repo_root=repo_root
+    )
+    _require_git_blob_descriptor(
+        commit=_DUAL_ARTIFACT_COMMIT,
+        descriptor=freeze_descriptor,
+        repo_root=repo_root,
+        label="dual-coefficient freeze",
+    )
+
+    source_artifacts = _mapping(manifest, "source_artifacts", label="dual-coefficient manifest")
+    source_registry = {
+        "solve_records": "set_native_phase_a_solve_records",
+        "taxonomy": "set_native_phase_a_taxonomy",
+        "summary": "set_native_phase_a_summary",
+        "manifest": "set_native_phase_a_manifest",
+    }
+    if set(source_artifacts) != set(source_registry):
+        raise RuntimeError("Dual-coefficient predecessor artifact inventory changed.")
+    predecessor = _mapping(config, "predecessor", label="dual-coefficient config")
+    for source_name, registered_name in source_registry.items():
+        descriptor = _require_descriptor_equals_registered(
+            source_artifacts.get(source_name),
+            registered[registered_name],
+            repo_root=repo_root,
+            label=f"dual-coefficient predecessor {source_name}",
+            commit=_SET_A1_COMMIT,
+            cache=cache,
+        )
+        if predecessor.get(source_name) != descriptor:
+            raise RuntimeError(
+                f"Dual-coefficient config and manifest disagree on predecessor {source_name}."
+            )
+
+    certificates = pd.read_parquet(registered["dual_coefficient_certificates"])
+    taxonomy = pd.read_parquet(registered["set_native_phase_a_taxonomy"])
+    if not {"window_id", "role", "period"}.issubset(taxonomy.columns):
+        raise RuntimeError("Dual-coefficient predecessor taxonomy lacks menu identities.")
+    expected_menu_keys = set(
+        taxonomy[["window_id", "role", "period"]].itertuples(index=False, name=None)
+    )
+    if len(taxonomy) != 208 or len(expected_menu_keys) != 208:
+        raise RuntimeError("Dual-coefficient predecessor taxonomy is not 208 unique menus.")
+    findings = _validate_dual_certificates(
+        certificates,
+        summary=summary,
+        manifest=manifest,
+        expected_menu_keys=expected_menu_keys,
+    )
+    return DualCoefficientEvidence(
+        freeze=freeze,
+        summary=summary,
+        receipt=receipt,
+        manifest=manifest,
+        certificates=certificates,
+        findings=findings,
+    )
+
+
 def load_decision_representation_evidence(
     registered: Mapping[str, Path],
     identities: Mapping[str, Any],
     *,
     repo_root: Path,
 ) -> DecisionRepresentationEvidence:
-    """Verify and load both active decision-representation audit lineages."""
+    """Verify and load all three active decision-representation audit lineages."""
     root = repo_root.resolve()
     _require_registered_paths(registered, repo_root=root)
     _require_lineages(identities, repo_root=root)
     cache: dict[tuple[str, int, str], Path] = {}
     score = _load_score_equivalence(registered, repo_root=root, cache=cache)
     set_native = _load_set_native(registered, repo_root=root, cache=cache)
-    return DecisionRepresentationEvidence(score_equivalence=score, set_native=set_native)
+    dual = _load_dual_coefficient(registered, repo_root=root, cache=cache)
+    return DecisionRepresentationEvidence(
+        score_equivalence=score,
+        set_native=set_native,
+        dual_coefficient=dual,
+    )
 
 
 def score_equivalence_publication_table(evidence: ScoreEquivalenceEvidence) -> pd.DataFrame:
@@ -1978,10 +2586,68 @@ def set_native_direction_publication_table(evidence: SetNativeEvidence) -> pd.Da
     return table
 
 
+def dual_coefficient_publication_table(evidence: DualCoefficientEvidence) -> pd.DataFrame:
+    """Return the compact disjoint 88/120 role certificate census."""
+    rows: list[dict[str, Any]] = []
+    certificates = evidence.certificates
+    for role in _ROLES:
+        group = certificates.loc[certificates["role"].eq(role)]
+        per_window = group.groupby("window_id", observed=True).size()
+        if per_window.nunique() != 1:
+            raise RuntimeError("Dual-coefficient role menus are not balanced across windows.")
+        rows.append(
+            {
+                "role": role,
+                "menu_certificates": int(len(group)),
+                "windows": int(group["window_id"].nunique()),
+                "months_per_window": int(per_window.iloc[0]),
+                "all_conditions_certified": bool(
+                    group[list(_DUAL_CONDITION_COLUMNS)].all(axis=None)
+                ),
+                "all_maximin_optimizers_singleton_zero": bool(
+                    group["all_maximin_optimizers_singleton_zero"].all()
+                ),
+                "continuous_cap_frontier_collapses": bool(
+                    group["continuous_cap_frontier_collapses"].all()
+                ),
+                "cap_domain_lower": float(group["cap_domain_lower"].min()),
+                "cap_domain_upper": float(group["cap_domain_upper"].max()),
+                "new_optimizations": int(group["new_optimization_executed"].sum()),
+                "optimizer_unique_certified": bool(group["optimizer_unique_certified"].any()),
+                "validity_claim_established": bool(group["validity_claim_established"].any()),
+            }
+        )
+    table = pd.DataFrame(rows)
+    observed = list(
+        table[["role", "menu_certificates", "windows", "months_per_window"]].itertuples(
+            index=False, name=None
+        )
+    )
+    if observed != [
+        ("policy_development", 88, 8, 11),
+        ("primary_oot", 120, 8, 15),
+    ]:
+        raise RuntimeError("Dual-coefficient publication role census changed.")
+    if (
+        not table["all_conditions_certified"].eq(True).all()
+        or not table["all_maximin_optimizers_singleton_zero"].eq(True).all()
+        or not table["continuous_cap_frontier_collapses"].eq(True).all()
+        or not table["cap_domain_lower"].eq(0.0).all()
+        or not table["cap_domain_upper"].eq(1.0).all()
+        or not table["new_optimizations"].eq(0).all()
+        or table["optimizer_unique_certified"].any()
+        or table["validity_claim_established"].any()
+    ):
+        raise RuntimeError("Dual-coefficient publication boundary changed.")
+    return table
+
+
 __all__ = [
     "DecisionRepresentationEvidence",
+    "DualCoefficientEvidence",
     "ScoreEquivalenceEvidence",
     "SetNativeEvidence",
+    "dual_coefficient_publication_table",
     "load_decision_representation_evidence",
     "score_equivalence_publication_table",
     "set_native_direction_publication_table",

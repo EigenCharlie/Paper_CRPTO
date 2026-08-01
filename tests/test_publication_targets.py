@@ -203,6 +203,10 @@ def test_active_capsule_paths_exist() -> None:
         "scripts/experiments/run_ijds_calibrator_sensitivity_v1.py",
         "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py",
         "scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py",
+        "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py",
+        "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+        "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py",
+        "scripts/experiments/run_ijds_binary_phase_census_v1.py",
     }
     assert {
         "scripts/experiments/run_ijds_exchangeability_transport_test.py",

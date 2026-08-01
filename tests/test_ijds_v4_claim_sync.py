@@ -52,6 +52,7 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         "tbl-catalog-transport",
         "tbl-embedding-direction",
         "tbl-calibrator-sensitivity",
+        "tbl-phase-census",
         "tbl-set-native-direction",
     }
     assert official.count(r"\begin{longtable}") == len(body_table_ids)

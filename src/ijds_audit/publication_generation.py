@@ -20,6 +20,9 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "claim_ledger_contract": "configs/ijds_claim_ledger.yaml",
     "publication_targets_contract": "configs/crpto_publication_targets.yaml",
     "evidence_builder": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
+    "sealed_parent_extension_builder": (
+        "scripts/extend_ijds_evidence_from_sealed_parent_2026_08_01.py"
+    ),
     "policy_support_evidence_builder": (
         "scripts/build_ijds_policy_support_optimal_face_evidence.py"
     ),
@@ -35,6 +38,7 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "robustness_sensitivities/loader": "src/ijds_audit/robustness_evidence.py",
     "scientific_frontiers/loader": "src/ijds_audit/frontier_evidence.py",
     "decision_representation/loader": ("src/ijds_audit/decision_representation_evidence.py"),
+    "binary_phase_census/loader": "src/ijds_audit/binary_phase_census_evidence.py",
     "claim_ledger_loader": "src/ijds_audit/claim_ledger.py",
     "source_registry_loader": "src/ijds_audit/publication_sources.py",
     "artifact_descriptor_helper": "src/utils/artifact_descriptor.py",

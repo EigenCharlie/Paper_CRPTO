@@ -72,8 +72,8 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Sanitized reproducibility capsule, if requested.
 - [ ] LaTeX `.fls`, `.aux`, `.log`, `.blg`, and `.bbl` files are excluded from
       every reviewer upload; the editor-only crosswalk is not reviewer-facing.
-- [ ] Capsule inventory reconciles to exactly 53 DVC pointers, nine scientific
-      Git artifact lineages, and 43 paper-facing CSV tables; unequal-follow-up roots appear
+- [ ] Capsule inventory reconciles to exactly 53 DVC pointers, 11 scientific
+      Git artifact lineages, and 45 paper-facing CSV tables; unequal-follow-up roots appear
       only as replay provenance.
 
 ## Build and Numerical QA

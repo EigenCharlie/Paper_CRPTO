@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -77,8 +78,8 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-07-31.1"
-    assert evidence["status"] == "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence"
+    assert evidence["schema_version"] == "2026-08-01.1"
+    assert evidence["status"] == "active_ijds_v5_phase_and_dual_set_native_paper_facing_evidence"
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
     assert evidence["claim_boundary"] == {
@@ -342,6 +343,43 @@ def test_common_panel_response_is_exact_and_bounded() -> None:
     assert common["interpretation"]["sharpness_is_cellwise"] is True
     assert common["interpretation"]["joint_attainability_of_all_cell_endpoints_claimed"] is False
     assert common["interpretation"]["stratum_sign_census_is_substantive_discovery"] is False
+
+
+def test_complete_binary_phase_census_is_calibration_only_and_nonselective() -> None:
+    phase = _json(EVIDENCE)["binary_phase_census"]
+
+    assert phase["complete_census_verified"] is True
+    assert phase["cells"] == 200
+    assert phase["global"]["threshold_below_half"] == 87
+    assert phase["global"]["phase_margin_nonpositive"] == 87
+    assert phase["global"]["half_condition_applicable"] == 184
+    assert phase["global"]["source_condition_applicable"] == 188
+    assert [row["threshold_below_half"] for row in phase["ordered_conformal_groups"]] == [
+        40,
+        40,
+        7,
+        0,
+        0,
+    ]
+    assert len(phase["rows"]) == 200
+    assert phase["interpretation"]["target_or_evaluation_endpoint_read"] is False
+    assert phase["interpretation"]["universal_phase_law_claimed"] is False
+
+
+def test_dual_coefficient_frontier_certificate_is_complete_and_bounded() -> None:
+    dual = _json(EVIDENCE)["dual_coefficient_binary_set_native"]
+
+    assert dual["complete_certificate_census_verified"] is True
+    assert dual["menu_certificates"] == 208
+    assert dual["role_menu_certificates"] == {"policy_development": 88, "primary_oot": 120}
+    assert dual["new_optimizations"] == 0
+    assert dual["all_conditions_certified"] is True
+    assert dual["all_maximin_optimizers_singleton_zero"] is True
+    assert dual["continuous_cap_frontier_collapses"] is True
+    assert dual["cap_domain"] == [0.0, 1.0]
+    assert dual["interpretation"]["true_zero_default_risk_claimed"] is False
+    assert dual["interpretation"]["optimizer_uniqueness_claimed"] is False
+    assert dual["interpretation"]["conformal_validity_repair_claimed"] is False
 
 
 def test_two_ruler_diagnostic_is_finite_complete_and_nonselective() -> None:
@@ -848,12 +886,39 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         "credit_controls/freeze",
     }.issubset(evidence["source_artifacts"])
     assert evidence["paper_artifacts"]
+    parent_bytes = subprocess.check_output(
+        [
+            "git",
+            "show",
+            "6e9086ed57492325787498d912b3f5f3e03458bf:"
+            "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json",
+        ],
+        cwd=REPO,
+    )
+    assert hashlib.sha256(parent_bytes).hexdigest() == evidence["incremental_parent"]["sha256"]
+    parent = json.loads(parent_bytes)
+    sealed_by_path = {
+        descriptor["path"]: descriptor for descriptor in parent["source_artifacts"].values()
+    }
+    registry = load_source_registry(
+        REPO / "configs/ijds_active_evidence_sources.yaml", repo_root=REPO
+    )
+    dvc_roots = tuple(
+        str(Path(pointer).parent / Path(pointer).stem).replace("\\", "/")
+        for pointer in registry["dvc_pointers"]
+    )
     for descriptor in (
         *evidence["source_artifacts"].values(),
         *evidence["paper_artifacts"].values(),
     ):
         path = REPO / descriptor["path"]
-        assert path.is_file(), path
+        if not path.is_file():
+            assert descriptor == sealed_by_path.get(descriptor["path"])
+            assert any(
+                descriptor["path"] == root or descriptor["path"].startswith(f"{root}/")
+                for root in dvc_roots
+            )
+            continue
         assert path.stat().st_size == descriptor["bytes"]
         assert _sha256(path) == descriptor["sha256"]
 

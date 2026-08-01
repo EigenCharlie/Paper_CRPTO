@@ -10,7 +10,7 @@ from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from tempfile import TemporaryDirectory
-from typing import Any
+from typing import Any, cast
 
 import yaml
 
@@ -171,6 +171,109 @@ def load_verified_source_registry(
         repo_root=repo_root,
     )
     return payload, verified
+
+
+def load_verified_or_sealed_source_registry(
+    path: Path,
+    *,
+    repo_root: Path,
+    sealed_parent_commit: str,
+    sealed_parent_registry_path: str,
+) -> tuple[dict[str, Any], dict[str, Path], tuple[str, ...]]:
+    """Verify present sources and pin absent DVC sources to a sealed registry.
+
+    This is a narrow development-time bridge for an additive Git-native
+    publication extension when the historical DVC cache is unavailable.  It
+    never accepts an absent Git source, a changed descriptor, or a source
+    outside an active DVC output.  Strict submission rebuilds continue to use
+    :func:`load_verified_source_registry` and therefore require all bytes.
+    """
+    if _PROTOCOL_COMMIT_PATTERN.fullmatch(sealed_parent_commit) is None:
+        raise ValueError("The sealed parent registry commit must be a full Git commit.")
+    relative_parent = PurePosixPath(sealed_parent_registry_path)
+    if (
+        not sealed_parent_registry_path
+        or relative_parent.is_absolute()
+        or ".." in relative_parent.parts
+        or relative_parent.as_posix() != sealed_parent_registry_path
+    ):
+        raise ValueError("The sealed parent registry path must be repository-relative.")
+
+    parent_probe = subprocess.run(
+        ["git", "show", f"{sealed_parent_commit}:{sealed_parent_registry_path}"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+    )
+    if parent_probe.returncode != 0:
+        raise RuntimeError("The sealed parent source registry Git blob is absent.")
+    parent = yaml.safe_load(parent_probe.stdout)
+    if not isinstance(parent, Mapping) or not isinstance(parent.get("sources"), Mapping):
+        raise TypeError("The sealed parent source registry is malformed.")
+    parent_sources = cast(Mapping[str, Any], parent["sources"])
+
+    payload = load_source_registry(path, repo_root=repo_root)
+    sources = payload.get("sources")
+    if not isinstance(sources, Mapping) or not sources:
+        raise ValueError("Active evidence source registry is empty.")
+    dvc_roots = tuple(
+        PurePosixPath(pointer).parent.joinpath(PurePosixPath(pointer).stem).as_posix()
+        for pointer in payload["dvc_pointers"]
+    )
+    registered: dict[str, Path] = {}
+    missing: list[str] = []
+    seen_paths: set[str] = set()
+    descriptors_by_path: dict[str, Mapping[str, Any]] = {}
+    for name, raw_descriptor in sources.items():
+        if not isinstance(raw_descriptor, Mapping):
+            raise TypeError(f"Evidence source descriptor {name!r} must be a mapping.")
+        descriptor = dict(raw_descriptor)
+        descriptor_path = descriptor.get("path")
+        if not isinstance(descriptor_path, str) or not descriptor_path:
+            raise TypeError(f"Evidence source descriptor {name!r} omits path.")
+        source_path = (repo_root / descriptor_path).resolve()
+        source_path.relative_to(repo_root.resolve())
+        if descriptor_path in seen_paths:
+            raise ValueError(f"Duplicate active evidence source path: {descriptor_path}")
+        seen_paths.add(descriptor_path)
+        descriptors_by_path[descriptor_path] = descriptor
+        registered[str(name)] = source_path
+        if source_path.is_file():
+            if relative_artifact_descriptor(source_path, repo_root=repo_root) != descriptor:
+                raise RuntimeError(f"Evidence source {name!r} mismatched its descriptor.")
+            continue
+        if not any(
+            descriptor_path == root or descriptor_path.startswith(f"{root}/") for root in dvc_roots
+        ):
+            raise FileNotFoundError(
+                f"Absent evidence source {name!r} is not under an active DVC output."
+            )
+        if parent_sources.get(name) != descriptor:
+            raise RuntimeError(
+                f"Absent evidence source {name!r} differs from the sealed parent registry."
+            )
+        missing.append(str(name))
+
+    units = _validated_registry_units(payload)
+    _verify_source_transport(
+        source_paths=tuple(seen_paths),
+        dvc_pointers=payload["dvc_pointers"],
+        git_artifact_paths=tuple(
+            artifact_path
+            for unit in units
+            for artifact_path in (
+                *(unit.source_artifact_paths or ()),
+                *(unit.artifact_paths or ()),
+            )
+        ),
+        repo_root=repo_root,
+    )
+    _verify_two_stage_git_blob_descriptors(
+        units=units,
+        descriptors_by_path=descriptors_by_path,
+        repo_root=repo_root,
+    )
+    return payload, registered, tuple(sorted(missing))
 
 
 def _verify_source_transport(

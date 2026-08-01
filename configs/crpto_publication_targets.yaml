@@ -1,4 +1,4 @@
-version: "2026-07-31"
+version: "2026-08-01"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -76,7 +76,13 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_calibrator_sensitivity_v1.py
       - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1c.py
       - scripts/experiments/run_ijds_set_preserving_embedding_sensitivity_v1d.py
+      - scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py
+      - scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py
+      - scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py
+      - scripts/experiments/run_ijds_binary_phase_census_v1.py
     support_tools:
+      - scripts/build_ijds_bibliography_views.py
+      - scripts/extend_ijds_evidence_from_sealed_parent_2026_08_01.py
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/build_ijds_policy_support_optimal_face_evidence.py
       - scripts/generate_ijds_information_boundary_figure.py
@@ -196,6 +202,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS6F_label_mondrian_categories.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6G_taxonomy_diagnostics.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6H_censored_extension_coverage.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6I_binary_phase_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS7D_individual_age_endpoint_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS11_fit_label_completion.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS12_allocation_granularity.csv
@@ -214,6 +221,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9M_score_equivalence_complete_hull.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9N_set_native_robust_minus_embedding.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS9O_dual_coefficient_binary_set_native.csv
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.pdf
     - reports/crpto/figures/crpto_ijds_v4_fig1_coverage.png
     - reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.pdf

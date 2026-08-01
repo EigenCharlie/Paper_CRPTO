@@ -130,7 +130,7 @@ outputs have separate authority. The calibrator lineage uses the four-stage
 `P -> A -> B -> C` chain because the endpoint lock is committed after the
 outcome-free source and before evaluation. The set-native lineage likewise uses
 `P1 -> A1 -> P2 -> B1` so Phase B is hash-pinned only after Phase A exists.
-Together these are nine scientific
+Together these are 11 scientific
 Git-native lineages. Every tag below is annotated, every listed child has one
 parent, and the source registry verifies the exact added-path census and file
 hashes.
@@ -146,6 +146,8 @@ hashes.
 | Calibrator sensitivity V1 | `protocol/ijds-calibrator-sensitivity-2026-07-30-v1` / `808827926eff5030b3cb28d2b89a87a0e6210b2e` | `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source` / `ea3e7326afc38ccc1b99b09de30792986640e3c3` | `protocol/ijds-calibrator-sensitivity-evaluation-2026-07-30-v1` / `753305e81e27f793acdea80b684b42e7eff2201d` -> `artifacts/ijds-calibrator-sensitivity-2026-07-30-v1` / `6552524eae5a22ce66b50689900383d16df1ff13` |
 | Complete-hull score equivalence V1 | `protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1` / `2066363ab0d09e25dade0f582a0c36c6aa7bee5c` | -- | `artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1` / `e31310090179ee96893c92adec3aa0bbc54f5a95` |
 | Set-native binary robust counterpart V1 | `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1` / `2066363ab0d09e25dade0f582a0c36c6aa7bee5c` | `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a` / `3ef847491e1ecdf55315774ddb295a634e441a54` | `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b` / `e3d91660f5c337b3a45713b02ad2ca6ec303b31e` -> `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b` / `b13718008cd23b444d1165d14f0fb78101d9f017` |
+| Clean binary-phase census V1 | `protocol/ijds-binary-phase-census-2026-08-01-v1` / `8f3219ee2591f63a0bbf17af49b004e4cec7351f` | -- | `artifacts/ijds-binary-phase-census-2026-08-01-v1` / `17b3614c18e755fd755839e3bab815cdec2dbc32` |
+| Dual-coefficient binary-set-native V1 | `protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1` / `8d0f912023ce61765e15d2370680eb09cfb3a6af` | -- | `artifacts/ijds-dual-coefficient-binary-set-native-2026-08-01-v1` / `79c378366d394e4835183ed19f332f0cf0e28f77` |
 
 V1d is retrospective and post-inspection. V1c failed its persistence contract
 before any evaluation commit or tag; its local Phase-B files are non-evidence
@@ -171,12 +173,14 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 43 CSV
+The registered evidence builder emits one paper-facing manifest, 45 CSV
 tables, and five figure families in both PDF and PNG. Calibrator Table S2C
 contains the four same-sample fit rows, S6O contains all 192
 method--window--scope rows, and S6P contains all 288 unordered-pair
 shared-completion rows. Table S9M contains the five complete-hull certificate
-partitions and S9N contains all 75 set-native theta--gamma--metric partitions.
+partitions, S9N contains all 75 set-native theta--gamma--metric partitions,
+S6I contains the complete 200-cell phase census, and S9O contains the two
+disjoint 88/120-role rows covering all 208 dual-coefficient certificates.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never
 committed.

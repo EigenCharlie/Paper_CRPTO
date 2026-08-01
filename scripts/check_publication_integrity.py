@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
+import subprocess
 import sys
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
@@ -15,7 +17,10 @@ from loguru import logger
 
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.publication_generation import publication_implementation_descriptors
-from src.ijds_audit.publication_sources import load_verified_source_registry
+from src.ijds_audit.publication_sources import (
+    load_verified_or_sealed_source_registry,
+    load_verified_source_registry,
+)
 from src.utils.artifact_descriptor import verified_artifact_path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -24,9 +29,21 @@ SOURCE_REGISTRY_PATH = REPO / "configs/ijds_active_evidence_sources.yaml"
 PUBLICATION_TARGETS_PATH = REPO / "configs/crpto_publication_targets.yaml"
 CLAIM_LEDGER_PATH = REPO / "configs/ijds_claim_ledger.yaml"
 
+EXPECTED_REGISTRY_SCHEMA = "2026-08-01.1"
+EXPECTED_DVC_POINTERS = 53
+EXPECTED_CSV_TABLES = 45
+SEALED_PARENT_COMMIT = "6e9086ed57492325787498d912b3f5f3e03458bf"
+SEALED_PARENT_MANIFEST_PATH = "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
+SEALED_PARENT_REGISTRY_PATH = "configs/ijds_active_evidence_sources.yaml"
+SEALED_PARENT_MANIFEST_BYTES = 3_500_642
+SEALED_PARENT_MANIFEST_SHA256 = "02122d92270425540fba930de574e3b8abc940cc667b3a34f32f5504e21bb5e4"
+EXPECTED_INCREMENTAL_MISSING_DVC_SOURCES = 33
+
 EXPECTED_SCIENTIFIC_GIT_LINEAGES = (
+    "lineages.diagnostics.binary_phase_census",
     "lineages.diagnostics.common_panel_threshold_response",
     "lineages.diagnostics.decision_catalog_transport",
+    "lineages.diagnostics.dual_coefficient_binary_set_native",
     "lineages.diagnostics.funded_selection_estimands",
     "lineages.diagnostics.marginal_score_outcome_gap",
     "lineages.diagnostics.residual_transport_frontier",
@@ -41,6 +58,93 @@ EXPECTED_SCIENTIFIC_GIT_LINEAGES = (
 class SurfaceCheck:
     path: Path
     required: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class SourceRegistryVerification:
+    """Verified active registry, including a narrowly sealed incremental state."""
+
+    registry: dict[str, Any]
+    registered: dict[str, Path]
+    missing_dvc_sources: tuple[str, ...]
+    mode: str
+
+
+def _sealed_parent_manifest(*, repo_root: Path = REPO) -> Mapping[str, Any]:
+    """Return the byte-pinned parent manifest used by the incremental bridge."""
+    ancestry = subprocess.run(
+        ["git", "merge-base", "--is-ancestor", SEALED_PARENT_COMMIT, "HEAD"],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+    )
+    if ancestry.returncode != 0:
+        raise RuntimeError("The sealed publication parent is not an ancestor of HEAD.")
+    blob = subprocess.run(
+        [
+            "git",
+            "cat-file",
+            "blob",
+            f"{SEALED_PARENT_COMMIT}:{SEALED_PARENT_MANIFEST_PATH}",
+        ],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+    )
+    if blob.returncode != 0:
+        raise RuntimeError("The sealed parent publication manifest Git blob is absent.")
+    actual_bytes = len(blob.stdout)
+    actual_sha256 = hashlib.sha256(blob.stdout).hexdigest()
+    if (
+        actual_bytes != SEALED_PARENT_MANIFEST_BYTES
+        or actual_sha256 != SEALED_PARENT_MANIFEST_SHA256
+    ):
+        raise RuntimeError(
+            "The sealed parent publication manifest differs from its exact byte/hash pin."
+        )
+    payload = json.loads(blob.stdout)
+    if not isinstance(payload, Mapping) or payload.get("schema_version") != "2026-07-31.1":
+        raise RuntimeError("The sealed parent publication manifest has an invalid schema.")
+    return payload
+
+
+def _load_integrity_source_registry(
+    registry_path: Path = SOURCE_REGISTRY_PATH,
+    *,
+    repo_root: Path = REPO,
+) -> SourceRegistryVerification:
+    """Use strict verification unless only the sealed 33-source DVC gap remains."""
+    try:
+        registry, registered = load_verified_source_registry(
+            registry_path,
+            repo_root=repo_root,
+        )
+    except FileNotFoundError as missing_error:
+        _sealed_parent_manifest(repo_root=repo_root)
+        registry, registered, missing = load_verified_or_sealed_source_registry(
+            registry_path,
+            repo_root=repo_root,
+            sealed_parent_commit=SEALED_PARENT_COMMIT,
+            sealed_parent_registry_path=SEALED_PARENT_REGISTRY_PATH,
+        )
+        if len(missing) != EXPECTED_INCREMENTAL_MISSING_DVC_SOURCES:
+            raise RuntimeError(
+                "Incremental publication verification requires exactly "
+                f"{EXPECTED_INCREMENTAL_MISSING_DVC_SOURCES} absent DVC sources; "
+                f"found {len(missing)}."
+            ) from missing_error
+        return SourceRegistryVerification(
+            registry=registry,
+            registered=registered,
+            missing_dvc_sources=missing,
+            mode="sealed_incremental",
+        )
+    return SourceRegistryVerification(
+        registry=registry,
+        registered=registered,
+        missing_dvc_sources=(),
+        mode="full",
+    )
 
 
 def _scientific_git_lineages(registry: Mapping[str, Any]) -> tuple[str, ...]:
@@ -796,6 +900,381 @@ def _check_decision_representation_payload() -> list[str]:
     return [message for failed, message in checks if failed]
 
 
+def _binary_phase_rows_are_complete(rows: object) -> bool:
+    """Validate the exact 5-by-8-by-5 cell grid and its row-level gates."""
+    if not isinstance(rows, list) or len(rows) != 200:
+        return False
+    forbidden_tokens = (
+        "target",
+        "outcome",
+        "coverage",
+        "selected",
+        "selection",
+        "optim",
+        "allocation",
+        "funded",
+        "policy",
+        "endpoint",
+        "resolved",
+        "unresolved",
+    )
+    keys: list[tuple[str, str, int]] = []
+    for raw_row in rows:
+        if not isinstance(raw_row, Mapping):
+            return False
+        row = cast(Mapping[str, Any], raw_row)
+        learner = row.get("learner")
+        window = row.get("window_id")
+        group = row.get("conformal_group")
+        if not isinstance(learner, str) or not isinstance(window, str):
+            return False
+        if not isinstance(group, int) or isinstance(group, bool) or group not in range(5):
+            return False
+        keys.append((learner, window, group))
+        if any(token in str(column).lower() for column in row for token in forbidden_tokens):
+            return False
+        integer_fields = (
+            "fit_rows",
+            "fit_defaults",
+            "fit_nondefaults",
+            "finite_sample_rank",
+            "boundary_count",
+            "boundary_closed_form",
+            "phase_margin",
+            "recomputed_residual_below_threshold",
+            "recomputed_residual_equal_threshold",
+            "recomputed_residual_above_threshold",
+            "frozen_residual_below_threshold",
+            "frozen_residual_equal_threshold",
+            "frozen_residual_above_threshold",
+            "count_nondefault_score_below_half",
+            "count_default_score_above_half",
+        )
+        if any(
+            not isinstance(row.get(field), int) or isinstance(row.get(field), bool)
+            for field in integer_fields
+        ):
+            return False
+        fit_rows = int(row["fit_rows"])
+        fit_defaults = int(row["fit_defaults"])
+        fit_nondefaults = int(row["fit_nondefaults"])
+        rank = int(row["finite_sample_rank"])
+        below = int(row["recomputed_residual_below_threshold"])
+        equal = int(row["recomputed_residual_equal_threshold"])
+        above = int(row["recomputed_residual_above_threshold"])
+        boolean_fields = (
+            "threshold_below_half",
+            "exact_half_criterion_expected",
+            "exact_half_criterion_observed",
+            "max_score_below_half_condition",
+            "phase_margin_half_check_applicable",
+            "no_interleaving_condition",
+            "phase_margin_source_check_applicable",
+        )
+        if any(type(row.get(field)) is not bool for field in boolean_fields):
+            return False
+        threshold = row.get("recomputed_threshold")
+        score_max = row.get("recomputed_score_max")
+        score_max_nondefault = row.get("fit_score_max_nondefault")
+        score_max_default = row.get("fit_score_max_default")
+        if not all(
+            isinstance(value, (int, float)) and not isinstance(value, bool)
+            for value in (threshold, score_max, score_max_nondefault, score_max_default)
+        ):
+            return False
+        threshold_value = float(cast(int | float, threshold))
+        score_max_value = float(cast(int | float, score_max))
+        score_max_nondefault_value = float(cast(int | float, score_max_nondefault))
+        score_max_default_value = float(cast(int | float, score_max_default))
+        expected_half_criterion = (
+            int(row["count_nondefault_score_below_half"])
+            + int(row["count_default_score_above_half"])
+            >= rank
+        )
+        if (
+            row.get("taxonomy_groups") != 5
+            or row.get("alpha") != 0.1
+            or fit_defaults <= 0
+            or fit_nondefaults <= 0
+            or fit_defaults + fit_nondefaults != fit_rows
+            or not (0 < rank <= fit_rows)
+            or row.get("boundary_count") != fit_rows - rank
+            or row.get("boundary_count") != (fit_rows + 1) // 10 - 1
+            or row.get("boundary_closed_form") != row.get("boundary_count")
+            or row.get("phase_margin") != fit_defaults - int(row["boundary_count"])
+            or below + equal + above != fit_rows
+            or not (below < rank <= below + equal)
+            or row.get("frozen_fit_rows") != fit_rows
+            or row.get("frozen_finite_sample_rank") != rank
+            or row.get("frozen_threshold") != row.get("recomputed_threshold")
+            or row.get("threshold_gap") != 0.0
+            or row.get("frozen_residual_below_threshold") != below
+            or row.get("frozen_residual_equal_threshold") != equal
+            or row.get("frozen_residual_above_threshold") != above
+            or row.get("frozen_score_min") != row.get("recomputed_score_min")
+            or row.get("frozen_score_max") != score_max
+            or row.get("threshold_below_half") is not (threshold_value < 0.5)
+            or row.get("exact_half_criterion_expected") is not expected_half_criterion
+            or row.get("exact_half_criterion_expected")
+            is not row.get("exact_half_criterion_observed")
+            or row.get("exact_half_criterion_observed") is not row.get("threshold_below_half")
+            or row.get("max_score_below_half_condition") is not (score_max_value < 0.5)
+            or row.get("phase_margin_half_check_applicable")
+            is not row.get("max_score_below_half_condition")
+            or row.get("no_interleaving_condition")
+            is not (score_max_nondefault_value + score_max_default_value < 1.0)
+            or row.get("phase_margin_source_check_applicable")
+            is not row.get("no_interleaving_condition")
+        ):
+            return False
+        required_true = (
+            "both_classes_nonempty",
+            "exact_half_criterion_pass",
+            "phase_margin_half_check_pass",
+            "phase_margin_source_check_pass",
+            "boundary_identity_reconciles",
+            "rows_reconcile",
+            "rank_reconciles",
+            "threshold_reconciles",
+            "tie_counts_reconcile",
+            "score_extrema_reconcile",
+            "rank_bracket_reconciles",
+            "cell_reconciles",
+        )
+        if any(row.get(field) is not True for field in required_true):
+            return False
+        applicable = row.get("phase_margin_source_check_applicable") is True
+        expected_branch = (
+            "nondefault_mirror"
+            if applicable and int(row["phase_margin"]) <= 0
+            else "default_mirror"
+            if applicable
+            else "condition_not_met"
+        )
+        if (
+            row.get("expected_threshold_source_branch") != expected_branch
+            or row.get("threshold_source_branch") != expected_branch
+        ):
+            return False
+
+    learners = {learner for learner, _, _ in keys}
+    windows = {window for _, window, _ in keys}
+    expected_keys = {
+        (learner, window, group) for learner in learners for window in windows for group in range(5)
+    }
+    return len(learners) == 5 and len(windows) == 8 and set(keys) == expected_keys
+
+
+def _check_sealed_extension_payload(
+    evidence_payload: Mapping[str, Any] | None = None,
+    registry_payload: Mapping[str, Any] | None = None,
+) -> list[str]:
+    """Fail closed on the sealed phase-census and dual-coefficient extension."""
+    evidence = evidence_payload if evidence_payload is not None else _evidence()
+    if registry_payload is None:
+        raw_registry = yaml.safe_load(SOURCE_REGISTRY_PATH.read_text(encoding="utf-8"))
+        if not isinstance(raw_registry, Mapping):
+            return ["sealed-extension source registry is malformed"]
+        registry = cast(Mapping[str, Any], raw_registry)
+    else:
+        registry = registry_payload
+    diagnostics = registry.get("lineages", {}).get("diagnostics", {})
+    if not isinstance(diagnostics, Mapping):
+        return ["sealed-extension diagnostic registry is missing"]
+    phase_identity = diagnostics.get("binary_phase_census", {})
+    dual_identity = diagnostics.get("dual_coefficient_binary_set_native", {})
+    phase = evidence.get("binary_phase_census", {})
+    dual = evidence.get("dual_coefficient_binary_set_native", {})
+    if not all(
+        isinstance(payload, Mapping) for payload in (phase_identity, dual_identity, phase, dual)
+    ):
+        return ["sealed phase-census or dual-coefficient payload is missing"]
+    phase_identity = cast(Mapping[str, Any], phase_identity)
+    dual_identity = cast(Mapping[str, Any], dual_identity)
+    phase = cast(Mapping[str, Any], phase)
+    dual = cast(Mapping[str, Any], dual)
+
+    expected_phase_groups = [
+        {
+            "conformal_group": group,
+            "cells": 40,
+            "threshold_below_half": threshold_count,
+            "phase_margin_nonpositive": threshold_count,
+            "half_condition_applicable": half_applicable,
+            "half_condition_inapplicable": 40 - half_applicable,
+            "half_condition_failed_when_applicable": 0,
+            "source_condition_applicable": source_applicable,
+            "source_condition_inapplicable": 40 - source_applicable,
+            "source_condition_failed_when_applicable": 0,
+            "exact_half_failures": 0,
+            "reconciliation_failures": 0,
+        }
+        for group, threshold_count, half_applicable, source_applicable in (
+            (0, 40, 40, 40),
+            (1, 40, 40, 40),
+            (2, 7, 40, 40),
+            (3, 0, 40, 40),
+            (4, 0, 24, 28),
+        )
+    ]
+    expected_phase_global = {
+        "threshold_below_half": 87,
+        "phase_margin_nonpositive": 87,
+        "half_condition_applicable": 184,
+        "half_condition_inapplicable": 16,
+        "half_condition_failed_when_applicable": 0,
+        "source_condition_applicable": 188,
+        "source_condition_inapplicable": 12,
+        "source_condition_failed_when_applicable": 0,
+        "exact_half_failures": 0,
+        "reconciliation_failures": 0,
+    }
+    phase_registry_identity = all(
+        phase.get(field) == phase_identity.get(field)
+        for field in (
+            "run_tag",
+            "protocol_tag",
+            "protocol_commit",
+            "artifact_tag",
+            "artifact_commit",
+        )
+    )
+    phase_census = (
+        phase.get("scope") == "five_learners_by_eight_windows_by_five_frozen_score_strata"
+        and phase.get("complete_census_verified") is True
+        and phase.get("cells") == 200
+        and phase.get("learner_count") == 5
+        and phase.get("window_count") == 8
+        and phase.get("conformal_group_count") == 5
+        and phase.get("cells_per_conformal_group") == 40
+        and phase.get("ordered_conformal_groups") == expected_phase_groups
+        and phase.get("global") == expected_phase_global
+        and _binary_phase_rows_are_complete(phase.get("rows"))
+    )
+    phase_interpretation = phase.get("interpretation", {})
+    phase_boundary = (
+        phase.get("retrospective") is True
+        and phase.get("confirmatory") is False
+        and phase.get("learner_window_breakdown_emitted") is False
+        and phase.get("forbidden_columns") == []
+        and isinstance(phase_interpretation, Mapping)
+        and phase_interpretation.get("retrospective_complete_calibration_grid") is True
+        and phase_interpretation.get("target_or_evaluation_endpoint_read") is False
+        and phase_interpretation.get("all_strata_reported_without_selection") is True
+        and phase_interpretation.get("condition_inapplicability_is_not_failure") is True
+        and phase_interpretation.get("universal_phase_law_claimed") is False
+        and phase_interpretation.get("coverage_transport_or_validity_claimed") is False
+        and phase_interpretation.get("optimization_or_funded_policy_claimed") is False
+        and phase_interpretation.get("causal_or_prospective_claimed") is False
+    )
+
+    dual_protocol = dual.get("protocol", {})
+    dual_registry_identity = (
+        dual.get("run_tag") == dual_identity.get("run_tag")
+        and isinstance(dual_protocol, Mapping)
+        and dual_protocol.get("tag") == dual_identity.get("protocol_tag")
+        and dual_protocol.get("commit") == dual_identity.get("protocol_commit")
+        and dual_protocol.get("tag_object") == "d4e1c400a5a0a2be3ad83661a3a796741b2f3363"
+        and dual.get("artifact_tag") == dual_identity.get("artifact_tag")
+        and dual.get("artifact_commit") == dual_identity.get("artifact_commit")
+    )
+    expected_role_rows = [
+        {
+            "role": "policy_development",
+            "menu_certificates": 88,
+            "windows": 8,
+            "months_per_window": 11,
+            "all_conditions_certified": True,
+            "all_maximin_optimizers_singleton_zero": True,
+            "continuous_cap_frontier_collapses": True,
+            "cap_domain_lower": 0.0,
+            "cap_domain_upper": 1.0,
+            "new_optimizations": 0,
+            "optimizer_unique_certified": False,
+            "validity_claim_established": False,
+        },
+        {
+            "role": "primary_oot",
+            "menu_certificates": 120,
+            "windows": 8,
+            "months_per_window": 15,
+            "all_conditions_certified": True,
+            "all_maximin_optimizers_singleton_zero": True,
+            "continuous_cap_frontier_collapses": True,
+            "cap_domain_lower": 0.0,
+            "cap_domain_upper": 1.0,
+            "new_optimizations": 0,
+            "optimizer_unique_certified": False,
+            "validity_claim_established": False,
+        },
+    ]
+    dual_census = (
+        dual.get("scope")
+        == "complete_outcome_free_dual_set_native_risk_and_maximin_payoff_certificate_census_"
+        "over_all_frozen_primary_catboost_platt_menus"
+        and dual.get("complete_certificate_census_verified") is True
+        and dual.get("menu_certificates") == 208
+        and dual.get("role_menu_certificates") == {"policy_development": 88, "primary_oot": 120}
+        and dual.get("new_optimizations") == 0
+        and dual.get("all_conditions_certified") is True
+        and dual.get("all_maximin_optimizers_singleton_zero") is True
+        and dual.get("continuous_cap_frontier_collapses") is True
+        and dual.get("cap_domain") == [0.0, 1.0]
+        and dual.get("conditional_on_inherited_constraint_and_payoff_contract") is True
+        and dual.get("role_rows") == expected_role_rows
+    )
+    dual_interpretation = dual.get("interpretation", {})
+    dual_boundary = (
+        dual.get("raw_archive_read") is False
+        and dual.get("outcome_columns_passed") == []
+        and dual.get("selected_result") is None
+        and dual.get("policy_winner") is None
+        and dual.get("optimizer_unique_certified") is False
+        and dual.get("conformal_validity_repair") is False
+        and dual.get("joint_cartesian_product_coverage_established") is False
+        and dual.get("probabilistic_robustness_guarantee") is False
+        and dual.get("funded_or_selected_set_validity") is False
+        and dual.get("causal_or_prospective_claim") is False
+        and isinstance(dual_interpretation, Mapping)
+        and dual_interpretation.get("conditional_substitution_theorem") is True
+        and dual_interpretation.get("both_risk_and_payoff_coefficients_are_set_native") is True
+        and dual_interpretation.get("empty_set_is_declared_fail_closed_convention") is True
+        and dual_interpretation.get("continuous_cap_domain_certified") == [0.0, 1.0]
+        and dual_interpretation.get("new_optimization_run") is False
+        and dual_interpretation.get("true_zero_default_risk_claimed") is False
+        and dual_interpretation.get("cartesian_product_joint_coverage_guarantee_established")
+        is False
+        and dual_interpretation.get("probabilistic_robustness_claimed") is False
+        and dual_interpretation.get("conformal_validity_repair_claimed") is False
+        and dual_interpretation.get("optimizer_uniqueness_claimed") is False
+        and dual_interpretation.get("selected_result_or_policy") is False
+        and dual_interpretation.get("outcome_causal_or_prospective_claimed") is False
+    )
+
+    artifacts = evidence.get("paper_artifacts", {})
+    artifact_binding = isinstance(artifacts, Mapping) and all(
+        isinstance(artifacts.get(name), Mapping) and artifacts[name].get("path") == path
+        for name, path in {
+            "table/binary_phase_census": (
+                "reports/crpto/tables/crpto_ijds_v4_tableS6I_binary_phase_census.csv"
+            ),
+            "table/dual_coefficient_binary_set_native": (
+                "reports/crpto/tables/crpto_ijds_v4_tableS9O_dual_coefficient_binary_set_native.csv"
+            ),
+        }.items()
+    )
+    checks = (
+        (not phase_registry_identity, "binary-phase identity differs from the registry"),
+        (not phase_census, "binary-phase 200-cell census or exact checks changed"),
+        (not phase_boundary, "binary-phase interpretation boundary changed"),
+        (not dual_registry_identity, "dual-coefficient identity differs from the registry"),
+        (not dual_census, "dual-coefficient 208/88/120/0 certificate census changed"),
+        (not dual_boundary, "dual-coefficient interpretation boundary changed"),
+        (not artifact_binding, "sealed-extension publication tables are misbound"),
+    )
+    return [message for failed, message in checks if failed]
+
+
 def _check_evidence_decision() -> list[str]:
     evidence = _evidence()
     boundary = evidence["claim_boundary"]
@@ -1185,12 +1664,10 @@ def _check_lineage_sync() -> list[str]:
     """Verify identities and DVC pointers against the single source registry."""
     failures: list[str] = []
     try:
-        registry, registered = load_verified_source_registry(
-            SOURCE_REGISTRY_PATH,
-            repo_root=REPO,
-        )
+        verification = _load_integrity_source_registry()
     except (KeyError, OSError, TypeError, ValueError, RuntimeError) as error:
         return [f"active source registry failed verification: {error}"]
+    registry = verification.registry
     evidence = _evidence()
     targets = yaml.safe_load(PUBLICATION_TARGETS_PATH.read_text(encoding="utf-8"))
     contract = targets.get("active_scientific_contract", {}) if isinstance(targets, dict) else {}
@@ -1198,21 +1675,25 @@ def _check_lineage_sync() -> list[str]:
     expected_source_registry = {
         "schema_version": str(registry["schema_version"]),
         "status": str(registry["status"]),
-        "sources": sorted(registered),
+        "sources": sorted(registry["sources"]),
     }
     scientific_git_lineages = _scientific_git_lineages(registry)
     checks = (
         (
-            str(registry.get("schema_version")) != "2026-07-31.1",
-            "active source registry schema is not 2026-07-31.1",
+            str(registry.get("schema_version")) != EXPECTED_REGISTRY_SCHEMA,
+            f"active source registry schema is not {EXPECTED_REGISTRY_SCHEMA}",
         ),
         (
-            len(registry.get("dvc_pointers", [])) != 53,
-            "active source registry does not contain exactly 53 DVC pointers",
+            evidence.get("schema_version") != EXPECTED_REGISTRY_SCHEMA,
+            f"paper evidence manifest schema is not {EXPECTED_REGISTRY_SCHEMA}",
+        ),
+        (
+            len(registry.get("dvc_pointers", [])) != EXPECTED_DVC_POINTERS,
+            f"active source registry does not contain exactly {EXPECTED_DVC_POINTERS} DVC pointers",
         ),
         (
             scientific_git_lineages != EXPECTED_SCIENTIFIC_GIT_LINEAGES,
-            "active source registry does not contain exactly the nine declared "
+            "active source registry does not contain exactly the eleven declared "
             "scientific Git-native lineages",
         ),
         (
@@ -1223,8 +1704,8 @@ def _check_lineage_sync() -> list[str]:
                     if str(descriptor.get("path", "")).endswith(".csv")
                 ]
             )
-            != 43,
-            "paper evidence manifest does not contain exactly 43 CSV tables",
+            != EXPECTED_CSV_TABLES,
+            f"paper evidence manifest does not contain exactly {EXPECTED_CSV_TABLES} CSV tables",
         ),
         (
             contract.get("source_registry") != expected_registry_path,
@@ -1318,7 +1799,7 @@ def _check_lineage_sync() -> list[str]:
 
 def _check_inventory_count_sync() -> list[str]:
     """Keep manually written capsule counts tied to the machine registries."""
-    registry, _ = load_verified_source_registry(SOURCE_REGISTRY_PATH, repo_root=REPO)
+    registry = _load_integrity_source_registry().registry
     evidence = json.loads(EVIDENCE_PATH.read_text(encoding="utf-8"))
     dvc_count = len(registry["dvc_pointers"])
     csv_count = sum(
@@ -1391,6 +1872,7 @@ def check_publication_integrity() -> list[str]:
         ("evidence decision contract", _check_evidence_decision),
         ("calibrator-family publication contract", _check_calibrator_publication_payload),
         ("decision-representation publication contract", _check_decision_representation_payload),
+        ("sealed-extension publication contract", _check_sealed_extension_payload),
         ("claim ledger", _check_claim_ledger),
         ("lineage synchronization", _check_lineage_sync),
         ("inventory-count synchronization", _check_inventory_count_sync),

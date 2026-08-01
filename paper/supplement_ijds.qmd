@@ -56,13 +56,24 @@ learner, window, taxonomy, gamma, ruler, coordinate, policy, cap, or comparator.
 Nested supports, overlapping windows, and repeated allocations are
 specification paths, not independent replications or votes.
 
+Two later outcome-free audits close questions that did not require another
+endpoint evaluation. A calibration-only phase census reports all 200
+learner--window--ordered-stratum cells and checks the exact half-threshold and
+conditional mirror-sample identities without reading any target or allocation.
+A dual-coefficient binary-set-native audit then verifies, on all 208 primary
+CatBoost--Platt monthly menus, the assumptions of a conditional substitution theorem using existing
+hash-pinned solve records and zero new optimizations. Neither audit supplies
+target coverage, joint-set validity, a selected policy, or prospective evidence.
+
 | Reader question | Location | Audit answer |
 |---|---|---|
 | Which loans could enter a decision? | Appendix A | Status-independent monthly menus retain unresolved outcomes |
 | What does the conformal object predict? | Appendix B | The observed binary terminal label, not latent individual PD |
 | Why can interval geometry change abruptly? | Appendix B | An exact rank-count condition can switch which mirror calibration sample supplies the binary residual order statistic |
+| Is that phase pattern universal across the archive? | Appendix B | No; the complete calibration-only census is heterogeneous across the five ordered strata and every conditional identity is reported only where its hypothesis holds |
 | What is held fixed in portfolio comparisons? | Appendix C | Menu, budget, payoff, loan bounds, purpose cap, solver, and one declared ruler |
 | What is exact? | Appendices B and D | Mirror-order-statistic threshold geometry, the crossed-band coverage identity, score-ruler algebra, C2 feasibility, binary-outcome bounds, and the conditional within-basis endpoint lemma |
+| What happens when both decision coefficients use only the binary set? | Appendices D and E | Under the stated exact-budget polytope and a singleton-zero feasibility certificate, substitution collapses the constructed cap frontier without identifying true risk or a unique allocation |
 | Which empirical signs survive? | Appendix E | The endpoint sign changes by ruler/coordinate and no sign survives the finite registered cap values spanning $[0.05,0.12]$; continuous-support extrema are not computed |
 | Can the evidence be replayed? | Appendix F | Yes, conditional on authorized access to the hash-identified raw and DVC inputs, using the active source registry and full raw-data audit |
 | What may the paper claim? | Appendix G | Finite-archive facts and joint-block rank-reference flags at locked nominal thresholds, not significance, superiority, causality, or selected-set validity |
@@ -925,6 +936,42 @@ reported per stratum rather than assumed.
 Changing calibration blocks can move the threshold and the resulting set
 composition sharply. Section B.5.1 accounts for the coverage response separately
 through target mass crossed by any two thresholds.
+
+<!-- claim:geometry.binary_phase_census_complete -->
+
+The clean calibration-only census checks these distinctions over the complete
+$5\times8\times5=200$ learner--window--ordered-stratum design. Every cell
+contains both labels, has an attained finite-sample rank, and reconciles the
+frozen threshold, tie counts, score extrema, and rank bracket; the maximum
+absolute threshold-reconciliation gap is zero. The unconditional criterion
+$c<1/2\iff A+B\ge k$ passes in all 200 cells. Thresholds lie below one half in
+87 cells, while phase margins are nonpositive in the same 87 cells, with the
+two counts distributed $40/40/7/0/0$ over ordered strata. Their numerical
+coincidence outside a stated support condition is not promoted to an
+unconditional phase theorem.
+
+| Internal score group $g$ | Complete cells | $c<1/2$ / $m\le0$ | $\max p_i<1/2$ / applicable identity passes | No interleaving / supplier identity passes |
+|---:|---:|---:|---:|---:|
+| 0 | 40 | 40 / 40 | 40 / 40 | 40 / 40 |
+| 1 | 40 | 40 / 40 | 40 / 40 | 40 / 40 |
+| 2 | 40 | 7 / 7 | 40 / 40 | 40 / 40 |
+| 3 | 40 | 0 / 0 | 40 / 40 | 40 / 40 |
+| 4 | 40 | 0 / 0 | 24 / 24 | 28 / 28 |
+| **All** | **200** | **87 / 87** | **184 / 184** | **188 / 188** |
+
+**Table S6I.** Complete symmetric binary-phase census. In each of the last two
+columns, the first count is the number of cells satisfying the stated
+calibration-support condition and the second is the number passing the identity
+where that condition makes it applicable. Reader-facing score stratum
+$s=g+1$, so internal groups 0--4 are strata 1--5 in the main paper. The
+paper-facing CSV
+`crpto_ijds_v4_tableS6I_binary_phase_census.csv` retains all 200 identifier-
+bearing cell rows; the display above is their complete permutation-symmetric
+ordered-stratum aggregation and selects no learner--window path. This table
+uses calibration labels to form residuals but reads no target/evaluation
+endpoint, target coverage, allocation,
+optimization, or policy. It establishes neither a universal low-bin phase,
+continuity, temporal transport, validity, mechanism, nor confirmation.
 
 CatBoost S3 (the third score stratum; internal zero-based group 2) displays the
 corresponding diagnostic pattern:
@@ -1803,6 +1850,84 @@ numerical cap, every guardrail-feasible allocation is point-feasible. The
 point optimum therefore weakly dominates in the shared plug-in objective.
 Neither nesting nor the equivalence theorem orders status-indexed outcomes.
 
+### D.2.1 Proof of Proposition 2C: conditional dual-coefficient frontier collapse
+
+<!-- claim:theory.dual_coefficient_binary_set_native_frontier_collapse -->
+
+For this proposition only, complete an empty binary set to $\{0,1\}$ under the
+declared fail-closed decision convention and call the resulting nonempty set
+$S_i^+$. Define both loan coefficients directly from that completed set,
+
+$$
+q_i=\max S_i^+,
+\qquad
+w_i=\min_{y\in S_i^+}\{(1-y)r_i-y\,\mathrm{LGD}\}.
+$$
+
+For binary labels, $r_i\ge0$, and $\mathrm{LGD}>0$, the two coefficient pairs
+are exactly
+
+$$
+(q_i,w_i)=
+\begin{cases}
+(0,r_i),&S_i=\{0\},\\
+(1,-\mathrm{LGD}),&S_i\in\{\varnothing,\{1\},\{0,1\}\}.
+\end{cases}
+$$
+
+This is a loanwise set-internal maximin objective. It does not assert that the
+Cartesian product of the marginal sets is jointly covered.
+
+Fix a bounded-loan allocation polytope with $0\le a_i\le\bar a_i$. Write
+$B_{\mathrm{cap}}$ for the exact budget $B_0$ in Proposition 2C, so that
+$\sum_i a_i=B_{\mathrm{cap}}$; assume no cash, one exhaustive disjoint purpose
+group per loan, and
+upper purpose caps $\sum_{i\in g}a_i\le C_g$ only. Assume a feasible
+full-budget allocation exists using only singleton-zero loans. Consider any
+feasible allocation with total nonsingleton-zero exposure $\Delta>0$, and remove
+that exposure. Let $A_g$ denote remaining singleton-zero exposure in purpose
+group $g$ and $U_g$ the aggregate singleton-zero loan capacity in that group.
+Existence of a full-budget singleton-zero allocation implies
+
+$$
+\sum_g\min(U_g,C_g)\ge B_{\mathrm{cap}}.
+$$
+
+Since the groups are disjoint and have no lower constraints, the aggregate
+unused admissible singleton-zero capacity satisfies
+
+$$
+\sum_g\{\min(U_g,C_g)-A_g\}
+\ge B_{\mathrm{cap}}-\sum_g A_g
+=\Delta.
+$$
+
+The removed exposure can therefore be reassigned within the singleton-zero
+loan and purpose bounds while preserving the exact budget. Each substituted
+dollar changes its objective coefficient from $-\mathrm{LGD}$ to some
+$r_i\ge0$, a strict improvement of at least $\mathrm{LGD}$, and changes its
+constructed set-risk coefficient from one to zero. Thus no maximin optimizer
+can place positive exposure outside singleton-zero loans.
+
+Every allocation on that restricted support has constructed set risk zero and
+is feasible for every cap
+$\sum_i a_iq_i\le\eta B_{\mathrm{cap}}$, $\eta\in[0,1]$. Conversely, every optimizer for any
+such cap lies on the same restricted support by the strict substitution
+argument. Maximizing the common objective over that support therefore gives
+the same complete optimal face and value for every $\eta\in[0,1]$. This proves
+Proposition 2C.
+
+These conditions are sufficient, not asserted to be individually necessary.
+The conclusion can fail when the substitution structure is relaxed, for
+example with an inequality budget, cash, overlapping or lower group
+constraints, negative rates, zero LGD, another empty-set convention, or
+insufficient singleton-zero capacity.
+Equality of the complete face across caps is not uniqueness within that face,
+and constructed set risk zero is not true-outcome risk zero. The result also
+provides no joint-set coverage, probabilistic robustness, funded- or selected-
+set validity, winner, outcome comparison, causal conclusion, or prospective
+guarantee.
+
 ## D.3 Positive-affine invariance of normalized coordinates
 
 Under the theorem in D.2, let the total portfolio score satisfy
@@ -2533,6 +2658,47 @@ establishes no joint product-set, selected- or funded-set, or probabilistic
 robustness guarantee. No ruler, coordinate, window, embedding, policy, or result is
 selected.
 
+### E.4.6 Dual-coefficient binary-set-native structural certificates
+
+<!-- claim:decision.dual_coefficient_binary_set_native_certificate_census -->
+
+The follow-up changes the decision object rather than selecting from the Phase-A
+frontier: it replaces the remaining point-score payoff coefficient by the
+minimum standardized payoff inside the completed binary set, as defined in
+Proposition 2C and proved in Appendix D.2.1. It then reads the hash-pinned 1,248
+Phase-A solve rows and 208 primary CatBoost--Platt taxonomy rows, but executes
+no new optimization. The
+six ruler--coordinate solve records attached to each menu are repeated
+reconciliation witnesses, not six independent certificates.
+
+| Role | Windows | Months per window | Unique menu certificates | Contract and witness gates | Frontier collapse certified | Cap domain | New LP solves |
+|---|---:|---:|---:|:---:|:---:|:---:|---:|
+| Development | 8 | 11 | 88 | Yes | Yes | $[0,1]$ | 0 |
+| Primary OOT | 8 | 15 | 120 | Yes | Yes | $[0,1]$ | 0 |
+
+**Table S9O.** Complete outcome-free menu-certificate census. The paper-facing
+CSV `crpto_ijds_v4_tableS9O_dual_coefficient_binary_set_native.csv` retains the
+exact two-row role partition, assumption flags, cap domain, no-new-solve count,
+and explicit false uniqueness and validity flags. Together the rows contain 208
+unique primary CatBoost--Platt menu certificates and reconcile all 1,248
+predecessor witnesses. Every
+menu directly reconciles a feasible USD 1 million full-budget singleton-zero
+witness. The nonnegative bounded-loan, exact-budget, no-cash, disjoint
+exhaustive purpose-group, upper-cap-only polytope, coefficient semantics,
+positive LGD, nonnegative rates, and taxonomy partition are inherited from and
+verified against the hash-pinned predecessor contract and implementation; they
+are not remeasured from outcomes by the new two-row table.
+
+Combining those existence certificates with Proposition 2C shows, conditionally
+on that full list of assumptions, that every maximin optimizer uses only
+singleton-zero loans and that the complete optimal face and objective value are
+constant over the continuous constructed set-risk cap domain $[0,1]$. This is a
+structural theorem plus a finite-archive logical audit, not interpolation across
+an evaluated cap grid. It identifies neither a unique allocation nor true
+portfolio risk and supports no joint product-set coverage, probabilistic robust-
+optimization guarantee, selected/funded-set validity, preferred cap or policy,
+outcome direction, causal effect, confirmation, or prospective claim.
+
 ## E.5 Named-comparator census
 
 The table counts the sign of the guardrail-minus-point sharp contrast over 72
@@ -2683,13 +2849,15 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, endpoint lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 43 tables, five figure families in PNG and PDF,
+cardinalities before producing 45 tables, five figure families in PNG and PDF,
 and one paper-facing manifest. Additional outcome-isolated families cover joint
 fit-label completion, deterministic allocation granularity, marginal score and
 residual-distribution diagnostics, complete-catalog transport, and funded
 estimand dependence, plus the set-preserving continuous-embedding and closed
 CatBoost calibrator-family sensitivities, the complete-hull score certificate,
-and the set-native binary counterpart with declared empty-set fail-closure.
+the set-native binary counterpart with declared empty-set fail-closure, the
+complete binary-phase calibration census, and the dual-coefficient structural
+certificate census.
 
 ## F.2 Replay contract
 
@@ -2712,7 +2880,10 @@ direct-child six-output artifact commit. The set-native lineage uses the stricte
 four-state chain Phase-A protocol $P_1\rightarrow$ outcome-free artifact
 $A_1\rightarrow$ hash-pinned Phase-B protocol $P_2\rightarrow$ evaluated
 artifact $B_1$, with every arrow a single-parent direct-child relationship.
-Neither lineage changes a protected historical artifact.
+The binary-phase census and dual-coefficient certificate each use an annotated
+protocol commit followed by one exact direct-child artifact commit; the former
+adds three outputs and the latter five. None of these lineages changes a
+protected historical artifact.
 
 The shared contract requires:
 
@@ -2722,14 +2893,15 @@ The shared contract requires:
    endpoint, structure, missingness, individual-age second-origin, fit-label
    completion, allocation-granularity, joint-block rank-reference diagnostic, and
    label-Mondrian, and policy-support optimal-face/RHS-recovery families; plus
-   nine hash-described scientific Git artifact lineages: five direct-child
+   eleven hash-described scientific Git artifact lineages: five direct-child
    bundles for the V8 common-panel response, V3I marginal gap,
    residual-distribution frontier, decision catalog, and funded-estimand audit,
    plus the set-preserving embedding's protocol-to-source-to-evaluation
    direct-child chain and the calibrator sensitivity's
    protocol-to-source-to-evaluation-lock-to-result chain, the complete-hull
-   direct-child certificate, and the set-native four-stage phase chain, each
-   verified against its exact registered path set;
+   direct-child certificate, the set-native four-stage phase chain, the binary-
+   phase direct-child census, and the dual-coefficient direct-child certificate,
+   each verified against its exact registered path set;
 3. a separate freeze and evaluate command with no combined shortcut;
 4. exact ID alignment at the outcome join;
 5. byte-identical evidence builds;
@@ -2769,6 +2941,9 @@ instructions be released under the journal's data and code policy.
 <!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
 <!-- claim:decision.complete_hull_score_equivalence_census -->
 <!-- claim:decision.set_native_robust_counterpart_complete_census -->
+<!-- claim:geometry.binary_phase_census_complete -->
+<!-- claim:theory.dual_coefficient_binary_set_native_frontier_collapse -->
+<!-- claim:decision.dual_coefficient_binary_set_native_certificate_census -->
 <!-- claim:calibration.closed_family_complete_state -->
 
 | Evidence object | Permitted conclusion | Not established |
@@ -2785,6 +2960,7 @@ instructions be released under the journal's data and code policy.
 | Individual-age second temporal origin | All 16 CatBoost upper bounds are below 0.90 after every candidate receives 39 months from issue-month end | Exact day-level age, independent replication, temporal invariance, prospective validation, or selection of an origin |
 | Four fit-label scenarios | All 32 overall coverage upper bounds are below 0.90; the W7--W8 crossing remains in three scenarios | Sharp bounds over all label assignments, geometry invariance, or preregistration |
 | Exact binary geometry | The threshold is the stated mirror-sample order statistic and, on a common fixed target distribution, a two-threshold coverage change equals crossed target mass | An archive-wide phase-table certification, a universal low-bin regime, continuity, or an identified cause of the shortfall |
+| Complete binary-phase census | All 200 calibration cells reconcile; below-half thresholds occur in 87 cells with ordered-stratum distribution 40/40/7/0/0, and all 184 below-half-support and 188 no-interleaving applicable identities pass, giving a complete retrospective calibration-only description with hypotheses checked cell by cell | A universal phase or low-score-bin theorem; continuity; target coverage or target-mass behavior; temporal transport; a selected path, mechanism, optimization, policy, or confirmation |
 | Common-panel adjacent-threshold replay | Cellwise shared-completion response bounds and crossed-band counts are exact on the fixed target panel | Preregistration, a causal mechanism, slope or continuity, a threshold-distance bound, temporal-validity transfer, a selected transition, or joint attainability across the 175 overlapping cells |
 | Residual-distribution frontier | The complete 200 pooled-cell direction census is 158 calibration-minus-target ranges larger, 8 reverse ranges larger, and 34 not robustly ordered under cellwise shared completion | Stochastic dominance, a KS test or p-value, exchangeability, a transport mechanism, independent replications, or joint attainability across cells |
 | Marginal score--outcome gap | All five sharp mean-score-minus-prevalence intervals are below zero on the common primary-OOT panel | Individual or conditional calibration, a sampling interval, learner ranking, a cause of conformal shortfall, or prospective validity |
@@ -2800,6 +2976,8 @@ instructions be released under the journal's data and code policy.
 | Set-preserving embedding allocation census | All 80 set diagnostics are unchanged; 9,659/11,520 positive-$\gamma$ monthly $\theta$ contrasts change allocation beyond $10^{-10}$. All 2,880 monthly $\gamma=0$ allocation contrasts are zero; the corresponding 2,880 monthly and 192 pooled objective/outcome contrasts are also zero | A preferred embedding, $\theta$, ruler, coordinate, or policy; allocation change inferred from the theorem alone; set-native optimization; validity repair; generalization beyond the declared finite grid |
 | Set-preserving embedding direction census | Among 576 fixed four-$\theta$ tracks, 324 change tolerance category and 77 contain both separated signs; the complete metric counts appear in Table S9L | A universal favorable or adverse direction, causal or prospective effects, confirmation, independent replications, or joint attainability across overlapping tracks |
 | Set-native binary robust counterpart | All 1,248 outcome-free cells and all 18,000 monthly/1,200 pooled robust-minus-V1d contrasts are retained; pooled default is positive/negative/contains-zero in 1,196/0/4 cells | Joint coverage of marginal-set products, conformal-validity repair, probabilistic robustness, preferred policy or embedding, causal mechanism, p-value, or prospective validation |
+| Dual-coefficient conditional theorem | Under the exact-budget, no-cash, bounded-loan, disjoint exhaustive upper-purpose-cap polytope, nonnegative rates, positive LGD, fail-closed empty-set completion, and feasible full-budget singleton-zero support, every maximin optimizer is singleton-zero and its complete optimal face and value are invariant over constructed set-risk caps in $[0,1]$ | An unconditional frontier collapse, optimizer uniqueness, true zero risk, joint product-set coverage, probabilistic robustness, selected/funded-set validity, or a preferred policy |
+| Dual-coefficient menu certificates | All 208 primary CatBoost--Platt menus (88 development and 120 primary OOT) pass the structural and existence gates by reconciling 1,248 hash-pinned predecessor witnesses, with zero new LP solves; this is a complete retrospective outcome-free logical reconciliation | Independent replication, a new optimizer comparison, outcome direction, winner, causal or prospective evidence, preregistration, or confirmation |
 | Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
 | USD 25 floor-with-cash diagnostic | Rate perturbations are at most 0.001284 percentage points in the complete baseline family | Integer optimality, discrete reoptimization, or another lot rule |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Status-indexed payoff, default, or miscoverage dominance |
@@ -2831,7 +3009,7 @@ inspected archive.
 | Marginal coverage of one future loan | Freeze chronology, score, taxonomy, temporal weights, and one nonexchangeable-conformal theorem before the target outcome | An external, independent, or design-based upper bound on the theorem's swap, decoupling, or dependence penalty, with any confidence-bound failure probability propagated | The penalty is unbounded, postselected, or vacuous, or its estimation failure probability is omitted; current KS-like distances, PSI, rolling origins, and joint-block flags cannot substitute for it |
 | Selection-conditional coverage and FCR | JOMI with exactly $K$ selected loans and equal exposure $B/K$ [@jin2025focal] | Same-population exchangeability or a proved replacement, permutation-equivariant selection, disjoint policy construction and final calibration, and complete reference sets | Calibration-row permutations or irrelevant ID reversals change the rule, reference sets are too small, or historical target outcomes influence the policy |
 | Expected fractional exposure-weighted FCP | Exactly $K$ positive exposures, $A=\sum_j a_j>0$, and a predeclared hard concentration bound $a_i/A\le\kappa/K$ | Count FCR calibrated at $\alpha/\kappa$, using the deterministic inequality $\operatorname{FCP}^{\$}\le\kappa\operatorname{FCP}^{N}$ | $\kappa$ is selected post hoc, the portfolio denominator is ambiguous, the bound is written relative to $B$ while cash makes $A<B$, or the adjusted sets are uninformative |
-| Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible endpoints, bounded loss, and a policy family frozen before risk calibration | Classical CRC for an exchangeable monotone family with its finite-sample safe-terminal correction; stability-based CRC for a symmetric non-monotone algorithm only with a valid nonvacuous stability certificate; or LTT for a finite reoptimized catalog evaluated on valid contexts [@angelopoulos2024risk; @angelopoulos2026nonmonotonic; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible endpoint is incomplete, the classical CRC correction, non-monotone stability/reference-risk margin, or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
+| Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible endpoints, bounded loss, and a policy family frozen before risk calibration | Classical CRC for an exchangeable monotone family with its finite-sample safe-terminal correction; stability-based CRC for a symmetric non-monotone algorithm only with a valid nonvacuous stability certificate; finite-grid non-monotone CRC with an adjusted level and safe candidate; or LTT for a finite reoptimized catalog evaluated on valid contexts [@angelopoulos2024risk; @angelopoulos2026nonmonotonic; @aldirawi2026nonmonotone_crc; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible endpoint is incomplete, the classical CRC correction, non-monotone stability/reference-risk margin, finite-grid adjusted level or safe-candidate condition, or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
 
 In the first row, *temporal weights* means the sampling weights required by a
 named nonexchangeable or covariate-shift conformal theorem
@@ -2942,7 +3120,7 @@ credit scoring, conformal prediction, or linear programming separately.
 | Literature family | Established contribution | Active CRPTO boundary |
 |---|---|---|
 | Finite-batch and sample-conditional split conformal [@marques2025universal; @duchi2025sampleconditional] | Exact Beta--Binomial empirical-coverage law for a shared threshold, and high-probability sample-/group-conditional guarantees under iid sampling | Uses the complementary law only as a stronger joint-block retrospective reference with tie-safe domination and unresolved completion; the chronological archive does not inherit iid sample-conditional guarantees |
-| Probability scaling, beta calibration, and Venn--Abers prediction [@platt2000; @zadrozny2002; @kull2017; @vovk2014] | Logistic, isotonic, and beta probability maps plus a distinct multiprobabilistic calibration construction under their respective sampling contracts | Reports a closed four-map CatBoost sensitivity under one common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy: 18/32 pooled upper endpoints are below 0.90, so a uniform family-wide shortfall is not established. It selects no map, transfers no Venn guarantee to $p^\prime$, and runs no alternative-map portfolio optimization |
+| Probability scaling, beta calibration, and Venn--Abers prediction [@platt2000; @zadrozny2002; @kull2017; @vovk2014; @vanderlaan2025generalized_venn; @dabah2025temperature_conformal] | Logistic, isotonic, and beta probability maps plus distinct Venn multiprobability constructions; recent work also separates probability calibration from conformal coverage, class behavior, and set efficiency under its own setting | Reports a closed four-map CatBoost sensitivity under one common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy: 18/32 pooled upper endpoints are below 0.90, so a uniform family-wide shortfall is not established. It selects no map, transfers no Venn guarantee to $p^\prime$, and runs no alternative-map portfolio optimization |
 | Covariate-shift weighted conformal prediction [@tibshirani2019covshift] | Reweights calibration examples by a source-to-target likelihood ratio to obtain marginal target-distribution coverage under an invariant conditional outcome law | The active design neither prespecifies nor validates the required ratio and conditional-invariance ingredients; LP exposure weights and date decay are not conformal sampling weights |
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
 | P2P and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
@@ -2951,7 +3129,7 @@ credit scoring, conformal prediction, or linear programming separately.
 | Censoring-aware and competing-risk prediction [@candes2023survival; @gui2024adaptive; @li2023online_loans] | Lower prediction bounds for time-to-event outcomes under explicit censoring contracts, and event-specific default/prepayment modeling | Uses a partially identified terminal binary label; it has neither exact event/censoring times nor a competing-risk estimand, overlap audit, or funded-set guarantee |
 | Conformal portfolio and contextual optimization [@kato2025; @sun2024ptc; @johnstone2021; @patel2024; @hu2026crc] | Per-candidate conformal intervals used to rank portfolios, conformal or coverage-calibrated uncertainty sets for contextual robust optimization, and direct decision-risk or robustness calibration | Audits a frozen binary credit score, endpoint reconstruction, and matched comparators; no post-selection asset-return, contextual-LP, or selected-set guarantee is inherited |
 | Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative] | Validity targets tailored to black-box or informative selection under their own reference-set and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans; neither procedure is implemented by the monthly optimizer |
-| Chance-constrained conformal predictive programming [@zhao2024cpp] | Calibrates a constraint-function quantile; its general a-posteriori guarantee uses a second i.i.d. calibration sample and covers an offset event | CRPTO inserts a prediction-set endpoint as an LP coefficient; no funded-set, zero-threshold, or temporal-transport certificate transfers |
+| Chance-constrained and learned-constraint conformal optimization [@zhao2024cpp; @ovalle2025cmicl] | Calibrates a constraint-function quantile with a second i.i.d. calibration sample, or learns set-native mixed-integer constraints under explicit conditional-independence and group contracts | CRPTO inserts a prediction-set endpoint as an LP coefficient and supplies neither construction's independent-calibration, conditional-independence, funded-set, zero-threshold, or temporal-transport certificate |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
 | Utility-directed and learned decision-aware conformal sets [@cortesgomez2025utility; @yeh2026; @chen2026polyhedral_conformal_ro] | Incorporate downstream utility into classification-set construction, or learn conditional/polyhedral uncertainty-set geometry against robust decision loss with their own calibration or independent recalibration contracts | Freezes one binary-set lifting instead of learning the predictive object; it lacks those design/recalibration splits and inherits none of their downstream robustness guarantees |
 

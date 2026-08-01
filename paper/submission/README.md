@@ -133,7 +133,7 @@ overlap, and table or figure legibility.
 
 The previous pre-freeze bundle was rebuilt and audited on 2026-07-29. This
 record predates the calibrator-family integration and must be replaced after
-the 43-table evidence build:
+the 45-table evidence build:
 
 - official INFORMS PDF: 36 pages, with references beginning on page 32 (31
   pre-reference pages; the final-freeze page cap was deliberately not run);
@@ -169,8 +169,8 @@ every regenerated reviewer page again.
 - reviewer files contain no identity, local path, commit, tag, or hash;
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
-- the package contains exactly 53 registered DVC pointers, nine scientific Git
-  artifact lineages, and 43 paper-facing CSV tables, with unequal-follow-up roots labeled
+- the package contains exactly 53 registered DVC pointers, 11 scientific Git
+  artifact lineages, and 45 paper-facing CSV tables, with unequal-follow-up roots labeled
   only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 

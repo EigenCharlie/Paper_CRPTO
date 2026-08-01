@@ -71,6 +71,11 @@ order before changing scientific code or paper claims:
    - active nonempty-set worst-label frontier with declared empty-set fail-closure and hash-pinned evaluation.
 16c11. [`docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`](docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md)
    - adversarial theory, state-of-the-art, long-run, and GO/NO-GO synthesis.
+16c12. [`docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md`](docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md)
+   - active conditional dual-coefficient set-native theorem and complete
+     208-menu logical-certificate census without new optimization.
+16c13. [`docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`](docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md)
+   - active clean calibration-only 200-cell exact phase census.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -100,7 +105,7 @@ order before changing scientific code or paper claims:
 28. [`.codex/skills/crpto/SKILL.md`](.codex/skills/crpto/SKILL.md) - concise
    execution and writing guidance.
 
-Theory precedence note (2026-07-31): the exact statements in the active claim
+Theory precedence note (2026-08-01): the exact statements in the active claim
 registry and exact-theory notes override any older summary in
 the CRPTO skill. In particular, do not infer continuity, a common-maxima unit
 crossing, universal low score bins, or a miscoverage floor from `l>0` alone.
@@ -109,6 +114,9 @@ bands; calibration support alone does not bound it. The residual frontier is
 not a KS test or stochastic-dominance claim; the marginal gap is not individual
 calibration; the worst-catalog ordering does not apply to every policy; and a
 count-minus-dollar coverage gap supplies no funded-set conformal validity.
+The dual-coefficient collapse is conditional on its exact-budget, no-cash,
+partition, cap, exposure, rate, LGD, empty-set, and feasibility assumptions;
+the complete phase census is calibration-only and is not target transport.
 The binary-set embedding theorem alone does not prove an allocation change;
 the separate active V1d finite-grid census supplies that empirical result and
 does not select a theta, embedding, ruler, coordinate, or policy.

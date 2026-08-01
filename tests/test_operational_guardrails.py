@@ -9,6 +9,13 @@ from typing import Any
 import pytest
 import yaml
 
+_RECENT_SEALED_SCIENTIFIC_RUNNERS = {
+    "scripts/experiments/run_ijds_binary_phase_census_v1.py",
+    "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py",
+    "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py",
+    "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+}
+
 
 def _text(path: str) -> str:
     return Path(path).read_text(encoding="utf-8")
@@ -153,6 +160,24 @@ def test_publication_contract_names_every_executable_protocol() -> None:
     assert not multiply_classified, f"multiply classified entrypoints: {multiply_classified}"
     assert not missing, f"classified experiment entrypoints are missing: {missing}"
     assert all(Path(path).is_file() for path in declared)
+
+
+def test_recent_completed_scientific_runners_are_sealed_and_inactive() -> None:
+    config = yaml.safe_load(_text("configs/crpto_publication_targets.yaml"))
+    surface = config["active_scientific_contract"]["active_code_surface"]
+    quarantine = config["executed_quarantine_capsule"]
+    stopped = config["stopped_tagged_candidate_capsule"]
+
+    sealed = set(surface["sealed_protocol_entrypoints"])
+    active = set(surface["protocol_entrypoints"])
+    quarantined = set(quarantine["replay_entrypoints"])
+    stopped_entrypoints = set(stopped["replay_entrypoints"])
+
+    assert _RECENT_SEALED_SCIENTIFIC_RUNNERS.issubset(sealed)
+    assert _RECENT_SEALED_SCIENTIFIC_RUNNERS.isdisjoint(active)
+    assert _RECENT_SEALED_SCIENTIFIC_RUNNERS.isdisjoint(quarantined)
+    assert _RECENT_SEALED_SCIENTIFIC_RUNNERS.isdisjoint(stopped_entrypoints)
+    assert all(Path(path).is_file() for path in _RECENT_SEALED_SCIENTIFIC_RUNNERS)
 
 
 def test_extra_scripts_are_only_sealed_path_bound_compatibility() -> None:

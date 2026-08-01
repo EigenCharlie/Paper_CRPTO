@@ -1,4 +1,4 @@
-# IJDS decision-loss-aligned conformal design (2026-07-30)
+# IJDS decision-loss-aligned conformal design (updated 2026-08-01)
 
 ## Status, scope, and authority
 
@@ -58,7 +58,7 @@ hidden by success in another.
 |---|---|---|---|---|
 | S1 | Equal-notional, fixed-\(K\) funded set | JOMI focal selection-conditional coverage and the corresponding FCR implication | Same-population exchangeability, deterministic permutation-equivariant selection, exact taxonomy, exactly \(K\) equal allocations | Prospective; specified separately |
 | S2 | Concentration-bounded funded set | Dollar-weighted FCP bounded through JOMI at level \(\alpha/\kappa\) and a deterministic count-to-dollar inequality | All S1 conditions plus a predeclared hard bound \(a_i/A\leq\kappa/K\) and proof audit | Prospective; specified separately |
-| D | Complete issue-month context | Expected bounded monthly decision loss under CRC, or simultaneous certification of a finite policy catalog under LTT | Untouched complete contexts, frozen catalog, temporal theorem contract, and route-specific assumptions | Prospective; this document |
+| D | Complete issue-month context | Expected bounded monthly decision loss under monotone, stability-certified, or finite-grid CRC; alternatively, simultaneous certification of a finite policy catalog under LTT | Untouched complete contexts, frozen catalog, temporal theorem contract, and route-specific assumptions | Prospective; this document |
 
 The intended order is S1, then S2, then D. S1 is the cleanest
 selection-conditional target because equal notional makes count FCP and dollar
@@ -362,6 +362,49 @@ default for the present reoptimized LP catalog, whose active-set changes,
 degeneracy, and solver tie resolution would themselves require a new stability
 audit.
 
+## Route A3: finite-grid CRC for bounded non-monotone loss
+
+A separate finite-grid theorem avoids a stability estimate but pays an explicit
+selection penalty [Aldirawi, Li, and Guo, 2026, arXiv:2604.01502v2]. Freeze
+$\Lambda=\{\lambda_1,\ldots,\lambda_m\}$ before risk-calibration outcomes, assume
+that the complete context-level losses are i.i.d. across $n$ calibration
+contexts for every grid value, bound them in $[0,B_{\mathrm{loss}}]$, and require
+at least one candidate whose population risk is at most the working level. The
+finite-sample excess term is
+
+\[
+D(m,n)=
+B_{\mathrm{loss}}\sqrt{\frac{\log(2m)}{2n}}
++\frac{B_{\mathrm{loss}}}{2\sqrt{2n\log(2m)}}.
+\]
+
+The unadjusted rule controls expected future loss at
+$\alpha_{\mathrm{work}}+D(m,n)$. To target
+$\alpha_{\mathrm{risk}}$ exactly, the protocol must instead use
+$\alpha_{\mathrm{work}}=\alpha_{\mathrm{risk}}-D(m,n)$ and must stop when this
+working level is nonpositive or unattainable. Applying the theorem at that
+adjusted level also requires a frozen candidate with population risk strictly
+below $\alpha_{\mathrm{work}}$. The source construction obtains feasibility
+from a maximally conservative full-response-set candidate with identically zero
+loss; the present reoptimized portfolio catalog has no corresponding certified
+terminal policy. For the present fixed-capital loss,
+$B_{\mathrm{loss}}=1$. Even the smallest nontrivial grid $m=2$ gives
+$D(2,11)=0.341563$ and $D(2,15)=0.292497$; $n=129$ is the first integer with
+$D(2,n)<0.10$. This is only the first positive-working-level threshold, not a
+sufficient sample size for validity or candidate feasibility. The already
+inspected 11 development and 15 target issue months
+per window therefore cannot support a nonvacuous $\alpha_{\mathrm{risk}}=0.10$
+retrofit under this route.
+
+Route A3 is scientifically useful because it turns "run a larger grid" into a
+sample-size decision. Increasing $m$ raises the correction only logarithmically,
+but no number of loan-level observations replaces independent context units.
+The route remains ineligible if the context losses are not i.i.d., the grid or
+loss was chosen after outcomes, the bounded-loss condition fails, or no
+candidate satisfies the theorem's existence condition. Variance-sensitive or
+importance-weighted refinements in that paper would require their own frozen
+assumptions and bounds; they are not authorized by this note.
+
 ## Route B: learn-then-test for a non-monotone or reoptimized catalog
 
 LTT is the default route when the end-to-end loss is not provably monotone,
@@ -549,9 +592,12 @@ The future study stops without a positive claim if any of the following holds:
    prospectively locked replacement theorem applies;
 8. the catalog, solver version, tolerance, seed, tie rule, or status handling
    changes after calibration begins;
-9. a CRC loss family lacks a universal pointwise monotonicity argument,
+9. Route A1 lacks a universal pointwise monotonicity argument,
    right-continuity convention, or terminal policy meeting the exact
-   \(B_{\mathrm{loss}}/(n_{\mathrm{cal}}+1)\) finite-sample correction;
+   \(B_{\mathrm{loss}}/(n_{\mathrm{cal}}+1)\) correction; Route A2 lacks a
+   valid nonvacuous stability certificate; or Route A3 has
+   \(D(m,n)\ge\alpha_{\mathrm{risk}}\), an unattainable working level, or a
+   violated finite-grid/i.i.d./bounded-loss condition;
 10. an LTT p-value is invalid for bounded non-Bernoulli losses, the
     multiplicity implementation fails, or any policy-context cell is missing;
 11. synthetic enumeration, permutation, repeatability, negative-control, or
@@ -602,6 +648,7 @@ or prose assertions cannot replace the immutable loss matrix and audit trail.
 | \(\kappa\)-bounded allocation | Deterministic inequality plus JOMI at \(\alpha/\kappa\) | A conservative expected dollar-FCP bound if the hard allocation bound and JOMI assumptions both hold | Direct exposure-weighted conformal validity; the inequality still requires proof audit |
 | Monotone monthly loss | Conformal risk control (`angelopoulos2024risk`) | Expected bounded loss control for a new exchangeable context under the theorem's monotonicity and regularity conditions | Non-monotone reoptimization, per-month high-probability control, focal coverage, or temporal robustness |
 | Stable non-monotone algorithm | Stability-based non-monotone CRC (`angelopoulos2026nonmonotonic`) | Expected risk control under exchangeability, algorithm symmetry, a valid reference-risk margin, and a nonvacuous certified stability penalty | Automatic validity for an unstable reoptimized LP, an unqualified bootstrap stability estimate, per-month high-probability control, or temporal transport |
+| Finite-grid non-monotone loss | Finite-grid CRC-NM (`aldirawi2026nonmonotone_crc`) | Expected bounded-loss control with explicit $D(m,n)$ under i.i.d. context losses, a frozen finite grid, and an attainable adjusted target | A nonvacuous 0.10 guarantee with 11 or 15 contexts; temporal independence; continuous-grid control; selected-set validity |
 | Finite reoptimized catalog | Learn then test (`angelopoulos2025ltt`) | With valid p-values and FWER control, simultaneous high-probability certification that all returned policies meet the population-risk target | Independence/exchangeability by assertion, untested policies, per-realization control, or utility |
 | Temporal deployment | Prospective temporal contract linked above | A declared unit, chronology, population, and explicit route to a transport theorem | An active guarantee from the current archive |
 | Complete endpoints | This design requirement | A loss matrix for the full predeclared eligible population without selective missingness | A theorem for censored or selectively observed endpoints |

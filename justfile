@@ -11,7 +11,7 @@ strict-manifest-prefix := if os() == "windows" {
 
 # Exact-byte dependencies of active Git artifact lineages. They remain covered
 # by the read-only lint command but must never be rewritten by Ruff.
-sealed-scientific-sources := "scripts/experiments/run_ijds_decision_catalog_transport_v1.py,scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py,scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py,scripts/experiments/run_ijds_residual_transport_frontier.py,src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py"
+sealed-scientific-sources := "scripts/experiments/run_ijds_decision_catalog_transport_v1.py,scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py,scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py,scripts/experiments/run_ijds_residual_transport_frontier.py,src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py,scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py,src/ijds_audit/score_equivalence_complete_hull.py,scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py,src/ijds_challengers/set_native_binary_robust.py,scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py,src/ijds_challengers/dual_coefficient_binary_set_native.py,scripts/experiments/run_ijds_binary_phase_census_v1.py,src/ijds_audit/binary_phase_census.py"
 
 default: help
 
@@ -29,7 +29,10 @@ fmt:
     uv run --locked ruff format . --exclude "{{ sealed-scientific-sources }}"
 
 type-check:
-    uv run --locked mypy src scripts tests
+    uv run --locked mypy src scripts tests --exclude "^src/ijds_audit/binary_phase_census\\.py$"
+    # Preserve this artifact-bound source byte-for-byte while suppressing only
+    # pandas-stubs' widened Hashable groupby-key diagnostic.
+    uv run --locked mypy src/ijds_audit/binary_phase_census.py --disable-error-code index
 
 type-check-fast:
     @uv run --locked python scripts/run_ty_advisory.py --scope active --fail-on-diagnostics --no-report

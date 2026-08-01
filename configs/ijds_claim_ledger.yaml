@@ -1,4 +1,4 @@
-schema_version: "2026-07-31.1"
+schema_version: "2026-08-01.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -337,6 +337,61 @@ claims:
        universal_adverse_direction, causal_mechanism,
        prospective_validation, independent_replications,
        p_value, joint_attainability_across_grid_cells]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.dual_coefficient_binary_set_native_frontier_collapse
+    status: active
+    kind: theorem
+    rule: documented
+    lineages:
+      [dual_coefficient_binary_set_native,
+       set_native_binary_robust_counterpart.outcome_free]
+    scope: conditional_exact_budget_no_cash_disjoint_exhaustive_purpose_partition_upper_only_purpose_caps_nonnegative_bounded_loan_exposures_nonnegative_contractual_rates_positive_lgd_declared_empty_set_fail_closure_and_full_budget_singleton_zero_feasibility
+    forbidden_inference:
+      [unconditional_frontier_collapse, optimizer_uniqueness,
+       joint_coverage_of_product_sets, probabilistic_robustness_guarantee,
+       selected_set_validity, funded_set_validity, true_zero_portfolio_risk,
+       safe_loan_class, preferred_policy, policy_winner, causal_effect,
+       prospective_validation, external_generalization]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: decision.dual_coefficient_binary_set_native_certificate_census
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /dual_coefficient_binary_set_native/complete_certificate_census_verified
+    expected: true
+    lineages: [dual_coefficient_binary_set_native]
+    scope: complete_retrospective_outcome_free_logical_reconciliation_of_two_hundred_eight_primary_catboost_platt_monthly_menu_certificates_from_the_hash_pinned_set_native_predecessor_without_new_optimization
+    forbidden_inference:
+      [independent_replication, new_lp_solution, optimizer_uniqueness,
+       joint_coverage_of_product_sets, probabilistic_robustness_guarantee,
+       selected_set_validity, funded_set_validity, true_zero_portfolio_risk,
+       preferred_policy, policy_winner, outcome_direction, causal_effect,
+       prospective_validation, confirmation, preregistration]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: geometry.binary_phase_census_complete
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /binary_phase_census/complete_census_verified
+    expected: true
+    lineages: [binary_phase_census, credit_controls.outcome_free]
+    scope: complete_retrospective_calibration_only_five_learner_by_eight_window_by_five_ordered_score_stratum_census_with_exact_order_statistic_half_threshold_and_conditional_phase_reconciliation
+    forbidden_inference:
+      [preregistration, confirmation, independent_replication,
+       universal_low_score_bin, universal_phase, boundary_continuity,
+       common_maxima_unit_crossing, threshold_distance_coverage_bound,
+       target_coverage, temporal_transport, mechanism, learner_winner,
+       selected_stratum, funded_set_validity, optimizer_or_policy_claim,
+       causal_effect, prospective_validation]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

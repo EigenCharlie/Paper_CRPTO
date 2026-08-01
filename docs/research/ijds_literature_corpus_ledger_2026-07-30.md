@@ -1,4 +1,4 @@
-# IJDS literature corpus ledger (through 2026-07-31)
+# IJDS literature corpus ledger (through 2026-08-01)
 
 Status: documentary literature-provenance record; not an empirical evidence
 source and not an entry in the active-evidence registry.
@@ -6,14 +6,16 @@ source and not an entry in the active-evidence registry.
 ## Scope and authority
 
 This is the cumulative receipt for the five last-mile literature objects
-materialized on 2026-07-30 and two distinct intakes audited on 2026-07-31: the
-six-object frontier intake and the 23-active-citation gap intake. The frontier
-intake consists of five newly materialized PDFs plus the already-local
+materialized on 2026-07-30, two distinct intakes audited on 2026-07-31, and the
+four-object theory-neighbor intake audited on 2026-08-01. The 2026-07-31
+frontier intake consists of five newly materialized PDFs plus the already-local
 non-monotonic conformal-risk-control preprint. The active-citation gap intake
 materialized 19 PDFs from primary or official open-access surfaces and left
 four works as metadata-only citations because no suitable primary/open full
-text was verified. Together these receipts close the byte-level gaps recorded
-in
+text was verified. The 2026-08-01 intake adds exact versions for non-monotone
+CRC, generalized Venn calibration, temperature scaling before conformal
+prediction, and conformal mixed-integer constraint learning. Together these
+receipts close the byte-level gaps recorded in
 `conformal_decision_sota_lastmile_2026-07-26.md` and
 `conformal_optimization_v3_corpus_addendum_2026-07-26.md`. The earlier audits
 remain the authority for theorem interpretation; this ledger is the authority
@@ -36,6 +38,12 @@ After the 2026-07-31 active-citation gap intake, `Papers_tesis` contains 151 PDF
 objects, 5,408 pages, and 310,330,945 bytes. A full strict-parser and SHA-256
 pass found 151 distinct hashes, no duplicate object, no encrypted object, and
 no parse error. The 19 new objects contribute 484 pages and 23,444,014 bytes.
+
+After the 2026-08-01 theory-neighbor intake, `Papers_tesis` contains 155 PDF
+objects, 5,533 pages, and 319,875,860 bytes. A fresh full-corpus strict-PyPDF
+and SHA-256 pass found 155 distinct hashes, no duplicate object, no encrypted
+object, and no parse error. The four new objects contribute 125 pages and
+9,544,915 bytes.
 
 ## Exact-object ledger
 
@@ -169,6 +177,54 @@ compared with the extracted text:
 | Ziliaskopoulos, Vinel, and Smith (2026) | 1, 17 | arXiv v1 identity; decision-value interpretation and limitations | The dependence on background distributions/player grouping, approximation error, and noncausal boundary are explicit. |
 | Angelopoulos (2026) | 1, 2 | arXiv v1 identity; Theorem 1 and monotonic-loss specialization | Exchangeability, symmetry, reference-rule control, and the stability remainder are explicit and agree with extraction. |
 
+## Theory-neighbor intake — 2026-08-01
+
+The four exact local objects below were matched to their arXiv v2, PMLR ICML
+2025, or NeurIPS 2025 primary records. Their inclusion records literature
+identity and interpretation boundaries; it does not promote a new CRPTO method
+or empirical claim.
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | Primary surface / local-use boundary | BibTeX key | Citation surface | Intake grade and disposition |
+|---|---|---:|---:|---|---|---|---|---|
+| Aldirawi, Li, and Guo, *Conformal Risk Control under Non-Monotone Losses: Theory and Finite-Sample Guarantees*, arXiv:2604.01502v2 | `Papers_tesis/supplement/Aldirawi Li Guo 2026 - Conformal Risk Control under Non-Monotone Losses - arXiv 2604.01502v2.pdf` | 1,040,554 | 39 | `d5d1f3b61ff2736c024a38c4fc657e25230d4ae75675aecc5d549715618a021c` | [arXiv v2](https://arxiv.org/abs/2604.01502v2); local research copy under the arXiv distribution terms | `aldirawi2026nonmonotone_crc` | Body | **A-boundary.** Retain as the exact finite-grid non-monotone CRC neighbor. Its bounded-loss, i.i.d./exchangeability, feasible-grid, and positive excess-term contract does not retroactively validate the inspected CRPTO archive. |
+| Van der Laan and Alaa, *Generalized Venn and Venn-Abers Calibration with Applications in Conformal Prediction*, ICML 2025 | `Papers_tesis/supplement/Van der Laan Alaa 2025 - Generalized Venn and Venn-Abers Calibration - ICML.pdf` | 467,159 | 16 | `a3dca5857f3cf87813966aed2b1cfc9c936087281e42a65456ed0ba3cd7841bf` | [PMLR version of record](https://proceedings.mlr.press/v267/van-der-laan25a.html); CC BY 4.0 | `vanderlaan2025generalized_venn` | Body | **A-boundary.** Retain for the distinction between Venn's set-valued calibrated output and a downstream scalar embedding. Its guarantees do not transfer to the historical IVAP scalar, temporal transport, or funded-set selection. |
+| Dabah and Tirer, *On Temperature Scaling and Conformal Prediction of Deep Classifiers*, ICML 2025 | `Papers_tesis/supplement/Dabah Tirer 2025 - Temperature Scaling and Conformal Prediction - ICML.pdf` | 7,216,227 | 33 | `e347b8bec219bc0605dc4d0164b7690f554f0c1b1eff7e759774ae47eec5e59c` | [PMLR version of record](https://proceedings.mlr.press/v267/dabah25a.html); CC BY 4.0 | `dabah2025temperature_conformal` | Body | **B-context.** Retain as direct evidence that probability calibration, conformal coverage, conditional coverage diagnostics, and set efficiency are distinct objectives. Its deep multiclass temperature-scaling results neither select Platt nor establish the same response for binary CRPTO. |
+| Ovalle, Biegler, Grossmann, Laird, and Dulce Rubio, *Conformal Mixed-Integer Constraint Learning with Feasibility Guarantees*, NeurIPS 2025 | `Papers_tesis/supplement/Ovalle et al 2025 - Conformal Mixed-Integer Constraint Learning - NeurIPS.pdf` | 820,975 | 37 | `d0e20efd6b73118ad9747996c68dfcc72c01e32996950aeaf85a818d468b5d47` | [NeurIPS proceedings version](https://proceedings.neurips.cc/paper_files/paper/2025/hash/73b0f567e5471e73261853dc962c92bf-Abstract-Conference.html); official open proceedings/local research copy | `ovalle2025cmicl` | Body | **A-boundary.** Retain as a close conformal-to-MIP construction. Its feasibility result uses a set-native learned-constraint formulation plus an explicit conditional-independence assumption; neither ingredient is supplied by CRPTO's scalar objective coefficient. |
+
+### Parser and text-layer QA — 2026-08-01
+
+All four objects are born-digital and unencrypted. PyPDF 6.14.2 found zero
+empty pages and zero pages with fewer than 200 extracted characters. Median
+text-layer characters per page were 1,772 for Aldirawi--Li--Guo, 4,744.5 for
+Van der Laan--Alaa, 2,490 for Dabah--Tirer, and 3,410 for Ovalle et al.
+
+Docling 2.110.0 was the primary structural parser. The standard pipeline ran
+with OCR and all enrichment models disabled, table extraction enabled, and
+placeholder image export. It processed the 125 pages in 194.362 seconds (1.555
+seconds per page) without a document failure or parser warning. Markdown and
+JSON outputs are noncanonical scratch under
+`.tmp_pdf_intake_benchmark/literature-intake-20260801/docling/`.
+
+| Object | Markdown bytes | JSON bytes | Section headings | Formula items | Tables | Pictures | Parser warning |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Aldirawi--Li--Guo v2 | 75,028 | 792,769 | 33 | 161 | 3 | 6 | None |
+| Van der Laan--Alaa | 72,875 | 643,249 | 30 | 51 | 2 | 1 | None |
+| Dabah--Tirer | 102,831 | 1,780,858 | 55 | 82 | 10 | 19 | None |
+| Ovalle et al. | 122,000 | 1,123,599 | 57 | 42 | 11 | 16 | None |
+
+### Manual visual QA — 2026-08-01
+
+Poppler renders were compared against the all-page text extraction and Docling
+structure. Contact sheets are noncanonical scratch under
+`.tmp_pdf_intake_benchmark/literature-intake-20260801/visual/`.
+
+| Object | Pages visually checked | Objects checked | Result |
+|---|---|---|---|
+| Aldirawi--Li--Guo v2 | 1, 7, 8, 21 | arXiv v2 identity; Theorem 1; excess-term table and interpretation; importance-weighted distribution-shift proposition | Identity, bounded/i.i.d./finite-grid assumptions, formulas, table, and covariate-shift qualification are legible and agree with extraction. |
+| Van der Laan--Alaa | 1, 4, 7, 8 | Proceedings identity; Theorems 3.1, 3.2, 4.1, and 4.2; conformal applications; Table 1 | The set-valued calibration construction, finite-sample marginal statements, formulas, and reported coverage/efficiency table are legible and agree with extraction. |
+| Dabah--Tirer | 1, 3, 7, 12 | Proceedings identity; marginal-versus-conditional coverage distinction; Theorem 4.1 and Proposition 4.3; proof page | The coverage distinction, temperature-dependent cumulative-softmax results, and proof equations are legible and agree with extraction. |
+| Ovalle et al. | 1, 5, 6, 17 | Proceedings identity; Theorem 3.1; Assumption 4.1 and Theorem 4.1; Mondrian theorem and main proof | The set-native MIP formulation, conditional-independence assumption, group-conditional statement, and proof are legible and agree with extraction. Poppler emitted missing-display-font warnings for `Symbol` and `ArialUnicode`, but the inspected formulas and glyphs showed no visible corruption. |
+
 ## Bibliography and use boundary
 
 `paper/references.bib` now pins Zhao and Zhou--Zhu to their exact v3 URLs and
@@ -179,6 +235,13 @@ Shekhar--Howard already pin v1. The new watchlist keys are
 presence does not by itself authorize a manuscript claim. The
 weighted-conformal citation `tibshirani2019covshift` was already present and
 was not duplicated.
+
+The 2026-08-01 exact keys are `aldirawi2026nonmonotone_crc`,
+`vanderlaan2025generalized_venn`, `dabah2025temperature_conformal`, and
+`ovalle2025cmicl`. The master remains `paper/references.bib`. Deterministic
+active and reserve views plus their complete, disjoint partition receipt are
+generated by `scripts/build_ijds_bibliography_views.py`; the views are never
+edited as independent bibliographies.
 
 The same metadata pass corrected three older records: Johnstone--Cox now names
 the Tenth Symposium on Conformal and Probabilistic Prediction and Applications

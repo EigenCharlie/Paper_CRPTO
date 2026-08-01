@@ -10,10 +10,12 @@ paper and reproducibility bundle, not a production service.
 
 ## Authority Snapshot
 
-Research authority is current through 2026-07-31. The active claim registry
+Research authority is current through 2026-08-01. The active claim registry
 remains the sole paper-facing claim authority; exact theory overrides a
 conflicting summary. The complete-hull score-equivalence and set-native binary
-robust-counterpart lineages are sealed Git-native July-31 audits. Artifact
+robust-counterpart lineages are sealed Git-native July-31 audits. The clean
+binary-phase census and conditional dual-coefficient certificate lineage are
+sealed Git-native August-1 audits. Artifact
 existence alone does not promote them into the manuscript: verify that the
 current source registry, claim ledger, and publication builder explicitly
 register a lineage before using it as paper-facing evidence.
@@ -57,15 +59,17 @@ Read first:
 33. `docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md`
 34. `docs/research/ijds_set_native_binary_robust_counterpart_v1_protocol_2026-07-31.md`
 35. `docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`
-36. `docs/research/ijds_predict_calibrate_optimize_sota_audit_2026-07-31.md`
-37. `docs/research/ijds_long_run_observability_contract_2026-07-30.md`
-38. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
-39. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
-40. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
-41. `docs/ACADEMIC_CONTEXT.md`
-42. `docs/SCOPE_AND_GOVERNANCE.md`
-43. `CONTRIBUTING.md`
-44. `EXTRACTION_MANIFEST.md`
+36. `docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md`
+37. `docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`
+38. `docs/research/ijds_predict_calibrate_optimize_sota_audit_2026-07-31.md`
+39. `docs/research/ijds_long_run_observability_contract_2026-07-30.md`
+40. `docs/research/applied_conformal_prediction_book_audit_2026-07-21.md`
+41. `docs/research/conformal_literature_corpus_audit_2026-07-21.md`
+42. `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`
+43. `docs/ACADEMIC_CONTEXT.md`
+44. `docs/SCOPE_AND_GOVERNANCE.md`
+45. `CONTRIBUTING.md`
+46. `EXTRACTION_MANIFEST.md`
 
 Active evidence:
 
@@ -147,6 +151,12 @@ Active evidence:
   at `e3d9166`, and Phase-B artifact tag
   `artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b`
   at `b137180`. It selects no ruler, coordinate, window, policy, or comparison.
+- The clean binary-phase census uses protocol `8f3219e` and direct-child
+  artifact `17b3614`; all 200 calibration cells are reported, with no target,
+  outcome, optimizer, selected stratum, or transport claim.
+- The dual-coefficient audit uses protocol `8d0f912` and direct-child artifact
+  `79c3783`; its conditional theorem and 208 logical menu certificates run no
+  new optimizer and establish neither true risk nor joint set validity.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.
@@ -188,6 +198,14 @@ Headline evidence:
   `-281/76,495`, and the sharp all-candidate shared-completion endpoint hull is
   `[-312,-290]/79,047`; this retrospectively highlighted cell is neither a
   selected winner nor an inferential test;
+- the clean 5-by-8-by-5 phase census reconciles all `200/200` cells. There are
+  87 below-half thresholds distributed `40/40/7/0/0`; the 184 below-half-
+  support and 188 no-interleaving applicable identities all pass. These are
+  calibration-only statements;
+- all `208/208` dual-coefficient menu certificates satisfy the conditional
+  set-native collapse, split `88/120` across development/primary roles, with
+  zero new LP solves. This is a full-optimal-face theorem under stated
+  structural assumptions, not optimizer uniqueness or true zero risk;
 - all five sharp marginal mean-score-minus-prevalence intervals are negative;
   the least-negative upper endpoint is `-0.023934`, without an individual-
   calibration or learner-ranking claim;
@@ -375,8 +393,13 @@ joint-block rank reference, common-panel V8, individual-age follow-up,
 label-Mondrian, fit-label completion, and allocation-granularity
 manifests/freezes, the set-preserving-embedding two-stage Git lineage, the
 calibrator-sensitivity four-commit Git lineage, and every artifact descriptor.
-The active capsule contains 53 DVC pointers and nine scientific Git artifact
-lineages. It emits 43
+It also verifies the clean phase census and dual-coefficient direct-child
+lineages. During scientific editing, the sealed-parent extension builder may
+accept an unavailable historical DVC source only when its descriptor is
+identical to commit `6e9086e` and it remains under an active DVC pointer;
+submission-freeze rebuilds still require every DVC byte.
+The active capsule contains 53 DVC pointers and 11 scientific Git artifact
+lineages. It emits 45
 paper-facing CSV tables and five figure families
 in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be

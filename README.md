@@ -34,6 +34,8 @@ time roles before evaluation.
 | Set-preserving embedding audit | 80 / 80 binary-set cells unchanged |
 | Positive-gamma allocation changes | 9,659 / 11,520 monthly contrasts |
 | Fixed theta tracks with both separated signs | 77 / 576 |
+| Clean binary-phase census | 200 / 200 exact reconciliations; 87 below-half cells |
+| Dual set-native certificates | 208 / 208; 0 new optimization solves |
 
 Under the declared six-month outcome-availability rule, all 40 sharp
 all-candidate coverage upper bounds are below 0.90. That is a deterministic
@@ -80,8 +82,8 @@ Read these in order:
 5. [`paper/CRPTO_ijds.qmd`](paper/CRPTO_ijds.qmd)
 6. [`paper/supplement_ijds.qmd`](paper/supplement_ijds.qmd)
 
-The source registry owns lineage identities, 53 DVC pointers, and nine
-scientific Git-native artifact lineages. The evidence builder emits 43
+The source registry owns lineage identities, 53 DVC pointers, and 11
+scientific Git-native artifact lineages. The evidence builder emits 45
 paper-facing CSV tables and five figure families. The evidence manifest is the
 only numeric paper-facing manifest. The body QMD is the only editable source
 for the official submission TeX.

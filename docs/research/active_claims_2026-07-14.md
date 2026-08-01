@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-07-31
+# CRPTO Active IJDS Claim Registry - 2026-08-01
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -54,6 +54,22 @@ pre-endpoint-correction evaluations are provenance only.
   positive in 15, and contains zero in 120. This is an adverse descriptive
   finite-grid result, not a conformal-validity repair, product-set coverage
   theorem, selected policy, or probabilistic robustness guarantee.
+- A dual-coefficient follow-up replaces the remaining point-score payoff with
+  the minimum standardized payoff inside each completed binary set. Under the
+  inherited exact-budget, no-cash, disjoint upper-purpose-cap polytope and a
+  feasible full-budget singleton-zero allocation, substitution proves that
+  every maximin optimum is singleton-zero and that the complete optimal face
+  and value are constant for every constructed set-risk cap in `[0,1]`. All
+  208 primary CatBoost--Platt menu certificates pass without a new optimization. This is a conditional
+  structural result, not joint coverage, probabilistic robustness, true zero
+  risk, optimizer uniqueness, or policy validation.
+- The clean calibration-only binary-phase census reconciles all 200
+  learner--window--ordered-stratum cells. Thresholds are below one half in
+  87/200 cells, distributed `40/40/7/0/0`; the below-half score-support
+  condition holds in 184/200 and the no-interleaving condition in 188/200, with
+  every applicable identity passing. The exhaustive retrospective census
+  documents heterogeneity; it is not a universal low-bin phase, target-coverage
+  result, transport test, named transition, or confirmation.
 - The V2--V3H marginal mean-score--outcome-gap lineages remain historical
   provenance. V3H was transport-blocked by its mandatory clean-clone DVC pull.
   The separately frozen V3I reran the full calculation in a clean tagged clone
@@ -418,6 +434,59 @@ pre-endpoint-correction evaluations are provenance only.
   score. No policy, ruler, coordinate, window,
   embedding, or result is selected; there is no p-value, causal mechanism,
   independent replication, or prospective claim.
+
+### Dual-coefficient binary-set-native structural certificate
+
+- Protocol tag
+  `protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1` resolves to
+  `8d0f912023ce61765e15d2370680eb09cfb3a6af`; its exact direct-child
+  artifact tag
+  `artifacts/ijds-dual-coefficient-binary-set-native-2026-08-01-v1` resolves to
+  `79c378366d394e4835183ed19f332f0cf0e28f77` and contains exactly five
+  Git-tracked outputs.
+- The runner reads the 1,248 hash-pinned primary CatBoost--Platt GO2 solve rows
+  and 208 taxonomy rows,
+  reconciles their six repeated ruler--coordinate witnesses into 208 monthly
+  menu certificates (88 development and 120 primary OOT), and executes zero new
+  optimizations. Every menu has a full-budget zero-set-score witness under the
+  same exact-budget, no-cash polytope.
+- Complete each empty binary set to `{0,1}` by the declared fail-closed decision
+  convention. The set-internal minimum standardized payoff is the nonnegative
+  contractual rate for `{0}` and `-LGD` for empty, `{1}`, or `{0,1}`. With
+  disjoint exhaustive purpose groups, upper-only purpose caps, nonnegative bounded loan
+  exposures, nonnegative rates, positive LGD, and a feasible full-budget
+  singleton-zero allocation, replacing any nonsingleton-zero exposure strictly
+  improves the objective and reduces the constructed set-risk coefficient.
+  Hence every maximin optimizer is singleton-zero, and the optimal face and
+  value are identical over the continuous cap domain `[0,1]`.
+- The theorem is conditional on every named polyhedral and payoff assumption.
+  It supplies no joint coverage for the Cartesian product, probabilistic robust
+  guarantee, funded- or selected-set validity, true-outcome risk, unique
+  allocation, winner, outcome comparison, causal result, or prospective claim.
+
+### Complete binary-phase calibration census
+
+<!-- claim:geometry.binary_phase_census_complete -->
+
+- Protocol tag `protocol/ijds-binary-phase-census-2026-08-01-v1` resolves to
+  `8f3219ee2591f63a0bbf17af49b004e4cec7351f`; its exact direct-child artifact
+  tag `artifacts/ijds-binary-phase-census-2026-08-01-v1` resolves to
+  `17b3614c18e755fd755839e3bab815cdec2dbc32` and contains exactly the complete
+  CSV, summary, and execution receipt.
+- The calibration-only run reports all `5 x 8 x 5 = 200` cells; all contain both
+  labels, all ranks are uncapped, all frozen thresholds and tie counts reconcile,
+  and the exact half-threshold criterion passes in 200/200. The maximum absolute
+  threshold-reconciliation gap is zero.
+- The threshold and phase margin are below-half/nonpositive in 87/200 cells,
+  exhaustively distributed `40/40/7/0/0` across ordered score strata. The
+  condition `max p_i<1/2` holds in 184/200 and its conditional margin identity
+  passes in all 184. The two mirror samples do not interleave in 188/200 and the
+  conditional threshold-supplier identity passes in all 188.
+- This is a retrospectively locked descriptive geometry census. It reads no OOT
+  endpoint, target coverage, allocation, or policy and names no learner/window
+  path. It does not establish continuity, a common-maxima crossing, a universal
+  phase, target-mass behavior, temporal transport, validity, mechanism, winner,
+  causal effect, preregistration, or confirmation.
 
 ### Closed CatBoost calibrator-family sensitivity
 
@@ -847,6 +916,8 @@ coverage upper bounds are below 0.90 for every model:
 <!-- claim:decision.set_preserving_embedding_direction_noninvariant -->
 <!-- claim:decision.complete_hull_score_equivalence_census -->
 <!-- claim:decision.set_native_robust_counterpart_complete_census -->
+<!-- claim:theory.dual_coefficient_binary_set_native_frontier_collapse -->
+<!-- claim:decision.dual_coefficient_binary_set_native_certificate_census -->
 
 The frozen contrast is gamma 1 minus gamma 0. The objective-matched ruler holds
 the common plug-in objective floor fixed; the normalized-score ruler holds a

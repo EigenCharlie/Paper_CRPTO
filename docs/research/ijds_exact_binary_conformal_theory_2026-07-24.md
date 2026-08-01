@@ -206,9 +206,13 @@ Label-Mondrian is retained as a retrospective outcome-free sensitivity; it is no
 proved repair for temporal nonexchangeability and does not transfer a classwise
 coverage guarantee to this archive.
 
-No archive-wide phase count is active until a clean, registered empirical replay is
-promoted. The theory alone does not license the universal phrase “degenerate by
-construction.”
+The clean, tagged V1 phase census now provides the archive-wide descriptive
+count: all 200 calibration cells reconcile, and the low-threshold/nonpositive-
+margin state occurs in 87, distributed `40/40/7/0/0` over all five ordered
+strata. The below-half support condition is satisfied in 184/200 and the
+no-interleaving condition in 188/200; every applicable conditional identity
+passes. These counts are retrospective empirical bookkeeping. They do not make
+the phase universal or license the phrase “degenerate by construction.”
 
 ---
 
@@ -324,6 +328,58 @@ loan discrimination. For sets without label one the boundary is a supremum,
 not generally an attained maximum. This is an information-loss corollary for
 the declared fibre. It neither asserts that an optimizer must change nor treats
 the product of marginal binary sets as a jointly covered uncertainty set.
+
+### Conditional dual-coefficient binary-set-native frontier collapse
+
+The preceding fibre result shows why worst-case robustification of an
+unidentified continuous endpoint is uninformative. A different object uses only
+the completed binary set itself in **both** coefficients. Complete an empty set
+to `{0,1}` by the declared fail-closed decision convention and write
+`S_i^+` for the resulting nonempty set. Define
+
+    q_i = max S_i^+,
+    w_i = min_{y in S_i^+} [(1-y) r_i - y LGD].
+
+For binary labels, nonnegative contractual rates `r_i>=0`, and `LGD>0`,
+
+    (q_i,w_i) = (0,r_i)  if S_i={0},
+    (q_i,w_i) = (1,-LGD) otherwise.
+
+This is a set-internal additive maximin objective. It is not a claim that the
+Cartesian product of marginal sets is jointly covered.
+
+**Conditional substitution theorem.** Fix a nonnegative bounded-loan
+allocation polytope, `0<=a_i<=a_i_bar`,
+with exact budget `sum_i a_i=B_0`, no cash, one exhaustive disjoint purpose group
+per loan, and upper purpose caps only. Assume there exists a feasible
+full-budget allocation supported entirely on singleton-zero loans. Then every
+optimizer of `max sum_i a_i w_i`, with any constructed set-risk cap
+`sum_i a_i q_i <= eta B_0` for `eta in [0,1]`, is supported entirely on
+singleton-zero loans. The complete optimal face and objective value are the
+same for every `eta in [0,1]`.
+
+**Proof.** Take any feasible allocation with total nonsingleton-zero exposure
+`Delta>0` and remove that exposure. Let `A_g` be the remaining singleton-zero
+exposure in purpose group `g`, `U_g` its aggregate loan-level upper capacity,
+and `C_g` the purpose cap. Existence of a full-budget singleton-zero allocation
+implies `sum_g min(U_g,C_g)>=B_0`. Because the groups are disjoint and have no
+lower constraints,
+
+    sum_g [min(U_g,C_g)-A_g] >= B_0-sum_g A_g = Delta.
+
+The removed amount can therefore be reassigned within singleton-zero loan and
+group bounds. Each substituted dollar changes its objective coefficient from
+`-LGD` to `r_i>=0`, a strict gain of at least `LGD`, and changes `q_i` from one
+to zero. Thus no optimizer has positive nonsingleton-zero exposure. Every such
+optimizer has constructed set risk zero and is feasible at every cap; conversely
+any solution outside that face is strictly dominated by the substitution. This
+proves equality of both value and full optimal face. QED.
+
+The theorem can fail with an inequality budget, cash, overlapping or lower
+group constraints, negative rates, zero LGD, another empty-set convention, or
+insufficient singleton-zero capacity. It proves neither optimizer uniqueness
+nor true-outcome risk. The clean V1 logical audit verifies its stated inherited
+conditions in all 208 monthly menus without a new optimization.
 
 ---
 
@@ -450,7 +506,10 @@ Ranked by defensibility:
    from the additional target-support condition needed for zero positive coverage.
 4. **Sharp empty/full-set outcome-free bounds**, without an optimizer mechanism or
    policy-direction claim.
-5. **The Proposition 4 and JOMI corrections**, required regardless of which empirical
+5. **The conditional dual-coefficient substitution theorem**, which gives a
+   genuine continuous-cap result but also shows how coarse binary sets collapse
+   the economic frontier under this particular exact-budget model.
+6. **The Proposition 4 and JOMI corrections**, required regardless of which empirical
    additions are retained.
 
 These results support an identification audit, not a pre-deployment certificate or a

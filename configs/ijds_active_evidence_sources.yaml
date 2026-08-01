@@ -1,4 +1,4 @@
-schema_version: "2026-07-31.1"
+schema_version: "2026-08-01.1"
 status: "active_ijds_paper_evidence_source_registry"
 
 lineages:
@@ -278,6 +278,38 @@ lineages:
           - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_execution_receipt.json"
           - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/evaluation_summary.json"
           - "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json"
+    dual_coefficient_binary_set_native:
+      run_tag: "ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+      protocol_tag: "protocol/ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+      protocol_commit: "8d0f912023ce61765e15d2370680eb09cfb3a6af"
+      scientific_uv_lock_sha256: "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      paper_role: "complete_outcome_free_dual_coefficient_binary_set_native_menu_certificate_census"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-dual-coefficient-binary-set-native-2026-08-01-v1"
+      artifact_commit: "79c378366d394e4835183ed19f332f0cf0e28f77"
+      artifact_parent_commit: "8d0f912023ce61765e15d2370680eb09cfb3a6af"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/dual_coefficient_binary_set_native_menu_certificates.parquet"
+        - "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/outcome_free_execution_receipt.json"
+        - "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/outcome_free_summary.json"
+        - "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/protocol_freeze.json"
+        - "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/verified_outcome_free_manifest.json"
+    binary_phase_census:
+      run_tag: "ijds-binary-phase-census-2026-08-01-v1"
+      protocol_tag: "protocol/ijds-binary-phase-census-2026-08-01-v1"
+      protocol_commit: "8f3219ee2591f63a0bbf17af49b004e4cec7351f"
+      scientific_uv_lock_sha256: "41a982834374d96995457704ff291d2f6dc4a9ae9d9809cd3dc0a21b23b25367"
+      paper_role: "complete_retrospective_outcome_free_binary_phase_census"
+      dvc_tracked: false
+      artifact_tag: "artifacts/ijds-binary-phase-census-2026-08-01-v1"
+      artifact_commit: "17b3614c18e755fd755839e3bab815cdec2dbc32"
+      artifact_parent_commit: "8f3219ee2591f63a0bbf17af49b004e4cec7351f"
+      artifact_transport: "git_force_tracked_direct_child_commit"
+      artifact_paths:
+        - "data/processed/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census.csv"
+        - "models/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census_summary.json"
+        - "models/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/execution_receipt.json"
 
 sensitivities:
   endpoint_availability:
@@ -1110,3 +1142,67 @@ sources:
     path: "models/experiments/ijds_audit/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b/verified_evaluation_manifest.json"
     bytes: 13783
     sha256: "a2438e5f6363b7f2480634450d5bfa7ad5c19da01f4a4dd643c05bcdd25b2f00"
+  dual_coefficient_config:
+    path: "configs/experiments/ijds_dual_coefficient_binary_set_native_2026-08-01_v1.yaml"
+    bytes: 6905
+    sha256: "338ba1ceddff389d7dd39e849d6fd6e279b44b5007a62077e40ffa3f1c692021"
+  dual_coefficient_protocol:
+    path: "docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md"
+    bytes: 6660
+    sha256: "2fdd926f4c8acf0a97372237aa45875f5cd79c434afa66ff1882172bad170d16"
+  dual_coefficient_runner:
+    path: "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py"
+    bytes: 13996
+    sha256: "6df9a9c6a73baca7cf1be9a35ce6cd4bbabe1fe77635d3e77ca080c63cc92130"
+  dual_coefficient_implementation:
+    path: "src/ijds_challengers/dual_coefficient_binary_set_native.py"
+    bytes: 18111
+    sha256: "eaa61d5548ec76ca1a94b617538f7b7045be5851e801f4b5f0c93fbaaeddcf02"
+  dual_coefficient_certificates:
+    path: "data/processed/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/dual_coefficient_binary_set_native_menu_certificates.parquet"
+    bytes: 36431
+    sha256: "77343ebb790db6894de84c83a05dc8bd24c8619daef0f50f3d351754b25d09a1"
+  dual_coefficient_receipt:
+    path: "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/outcome_free_execution_receipt.json"
+    bytes: 756
+    sha256: "83d4a5964c9c7cfbe103e92875fb3f20404b655deff25c17ba76fa034da9fb08"
+  dual_coefficient_summary:
+    path: "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/outcome_free_summary.json"
+    bytes: 997
+    sha256: "9a06f1a1a3e2f61a414e1ec9b7c4629d3a0156d49e6021b1dbeff91802eba872"
+  dual_coefficient_freeze:
+    path: "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/protocol_freeze.json"
+    bytes: 5418
+    sha256: "299d059e206ae5e1804c48b6e20f7de405f569d530e0f6fe8baa962fe6d5e0f7"
+  dual_coefficient_manifest:
+    path: "models/experiments/ijds_audit/ijds-dual-coefficient-binary-set-native-2026-08-01-v1/verified_outcome_free_manifest.json"
+    bytes: 3601
+    sha256: "4a5aa1cfa2947659bb1cbf2e337685022b0644c1854c639be629af476f44a59c"
+  binary_phase_census_config:
+    path: "configs/experiments/ijds_binary_phase_census_2026-08-01_v1.yaml"
+    bytes: 3603
+    sha256: "f67a3c29ccb8ddadbcd5995d09b9a13f268c562335a92505ef631a39dd90c430"
+  binary_phase_census_protocol:
+    path: "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md"
+    bytes: 8827
+    sha256: "ea5805a275daf25edf1da9d1858e77f8ab015d52e8b651e50c7e74a872ac7ea6"
+  binary_phase_census_runner:
+    path: "scripts/experiments/run_ijds_binary_phase_census_v1.py"
+    bytes: 17390
+    sha256: "5378c69d30da2bfd9670dfed286cb0a9bdbf7ed7e9ccf4381466272bc3c0707b"
+  binary_phase_census_implementation:
+    path: "src/ijds_audit/binary_phase_census.py"
+    bytes: 27519
+    sha256: "e98311793093afaa97666fab0fc053e0316fc7404da78a7b58c9491b25a6133d"
+  binary_phase_census_table:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census.csv"
+    bytes: 87367
+    sha256: "49551463b3073eb4938d4e51129ef3707400922a94ce941b71c396f4d707bc38"
+  binary_phase_census_summary:
+    path: "models/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/binary_phase_census_summary.json"
+    bytes: 13253
+    sha256: "a0f668c100f0dcf6b5500fa537428b9984682255182ffe85075513a81061d032"
+  binary_phase_census_receipt:
+    path: "models/experiments/ijds_audit/ijds-binary-phase-census-2026-08-01-v1/execution_receipt.json"
+    bytes: 6203
+    sha256: "2258f932f437ae6224bb910114dea2b7b71e2a70beec227619b862005a89ea4e"

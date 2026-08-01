@@ -52,6 +52,12 @@ not active evidence.
      coverage-guarantee boundary.
 19c11. `docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`
    - integrated adversarial theory, literature, run-value, and GO/NO-GO audit.
+19c12. `docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md`
+   - conditional dual-coefficient set-native theorem and complete 208-menu
+     logical-certificate census without a new optimization run.
+19c13. `docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`
+   - clean calibration-only 5-by-8-by-5 exact phase census and conditional
+     hypothesis boundaries.
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -95,11 +101,15 @@ and evaluates the global score certificate on all 26 menus without outcomes or
 optimization. The active set-native counterpart uses the four-state chain
 Phase-A protocol, Phase-A artifact, hash-pinned Phase-B protocol, and Phase-B
 artifact; it is a finite-grid challenger, not a validity repair.
+The dual-coefficient follow-up and clean binary-phase census use separate
+protocol-to-direct-child-artifact chains. The former is conditional decision
+algebra, not true zero risk or joint set validity; the latter reads no target
+or outcome and supplies no transport conclusion.
 
 The claim registry is the editorial authority. The source registry owns exact
-lineage identities, artifact descriptors, 53 DVC pointers, and nine
+lineage identities, artifact descriptors, 53 DVC pointers, and 11
 scientific Git-native artifact lineages. The V4 evidence JSON is the only
-numeric paper-facing manifest; the publication builder emits 43 CSV tables and
+numeric paper-facing manifest; the publication builder emits 45 CSV tables and
 five figure families.
 
 The audited Calibre runtime uses `sys.flags.optimize == 2`, so it removes

@@ -84,12 +84,14 @@ Bibliographic metadata belongs in `paper/references.bib`. The local
 `Papers_tesis/` directory contains the working PDF corpus and is ignored by
 Git. Do not commit copyrighted PDFs. Literature supports positioning and
 assumptions; it does not override the registered empirical evidence.
-The complete local-corpus audit is
-`conformal_literature_corpus_audit_2026-07-21.md`; the two nonlocal 2026
-decision-calibration papers found in the final search and their theorem-level
-boundaries are recorded in
-`conformal_decision_sota_lastmile_2026-07-26.md`. They do not enter the local
-PDF checksum until their bytes can be acquired and hashed.
+The baseline local-corpus audit is
+`conformal_literature_corpus_audit_2026-07-21.md`; exact later object identity,
+parser routing, visual QA, and interpretation boundaries are cumulative in
+`ijds_literature_corpus_ledger_2026-07-30.md`. Run
+`uv run python scripts/build_ijds_bibliography_views.py` to derive
+`paper/references_active.bib`, `paper/references_reserve.bib`, and their JSON
+partition receipt from the unchanged master plus body/supplement citations.
+Never edit either generated bibliography view directly.
 
 ## Transport-blocked candidate
 

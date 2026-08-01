@@ -23,6 +23,10 @@ from matplotlib.colors import (
 )
 from matplotlib.ticker import FixedFormatter, FixedLocator
 
+from src.ijds_audit.binary_phase_census_evidence import (
+    binary_phase_census_publication_table,
+    load_binary_phase_census_evidence,
+)
 from src.ijds_audit.calibrator_sensitivity_evidence import (
     CalibratorSensitivityEvidence,
     calibrator_method_publication_table,
@@ -33,6 +37,7 @@ from src.ijds_audit.calibrator_sensitivity_evidence import (
 from src.ijds_audit.claim_ledger import materialize_claim_ledger
 from src.ijds_audit.config import load_v4_config
 from src.ijds_audit.decision_representation_evidence import (
+    dual_coefficient_publication_table,
     load_decision_representation_evidence,
     score_equivalence_publication_table,
     set_native_direction_publication_table,
@@ -173,6 +178,10 @@ TABLE_TARGETS = {
     "set_native_robust_minus_embedding": (
         TABLE_DIR / "crpto_ijds_v4_tableS9N_set_native_robust_minus_embedding.csv"
     ),
+    "binary_phase_census": (TABLE_DIR / "crpto_ijds_v4_tableS6I_binary_phase_census.csv"),
+    "dual_coefficient_binary_set_native": (
+        TABLE_DIR / "crpto_ijds_v4_tableS9O_dual_coefficient_binary_set_native.csv"
+    ),
 }
 FIGURE_STEMS = {
     "coverage": "crpto_ijds_v4_fig1_coverage",
@@ -240,6 +249,25 @@ DECISION_REPRESENTATION_SOURCE_KEYS = (
     "set_native_evaluation_summary",
     "set_native_evaluation_receipt",
     "set_native_evaluation_manifest",
+    "dual_coefficient_config",
+    "dual_coefficient_protocol",
+    "dual_coefficient_runner",
+    "dual_coefficient_implementation",
+    "dual_coefficient_certificates",
+    "dual_coefficient_receipt",
+    "dual_coefficient_summary",
+    "dual_coefficient_freeze",
+    "dual_coefficient_manifest",
+)
+
+BINARY_PHASE_CENSUS_SOURCE_KEYS = (
+    "binary_phase_census_config",
+    "binary_phase_census_protocol",
+    "binary_phase_census_runner",
+    "binary_phase_census_implementation",
+    "binary_phase_census_table",
+    "binary_phase_census_summary",
+    "binary_phase_census_receipt",
 )
 
 CREDIT_LEARNER_ORDER = (
@@ -3896,6 +3924,9 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
         "set_native_binary_robust_counterpart": cast(
             dict[str, Any], diagnostic_lineage["set_native_binary_robust_counterpart"]
         ),
+        "dual_coefficient_binary_set_native": cast(
+            dict[str, Any], diagnostic_lineage["dual_coefficient_binary_set_native"]
+        ),
     }
     decision_representation = load_decision_representation_evidence(
         registered,
@@ -3908,6 +3939,15 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     set_native_direction_table = set_native_direction_publication_table(
         decision_representation.set_native
     )
+    dual_coefficient_table = dual_coefficient_publication_table(
+        decision_representation.dual_coefficient
+    )
+    binary_phase_census = load_binary_phase_census_evidence(
+        registered,
+        cast(dict[str, Any], diagnostic_lineage["binary_phase_census"]),
+        repo_root=ROOT,
+    )
+    binary_phase_census_table = binary_phase_census_publication_table(binary_phase_census)
     sensitivities = cast(dict[str, Any], registry["sensitivities"])
     replay_dependencies = cast(dict[str, Any], registry["replay_dependencies"])
     endpoint_lineage = cast(dict[str, Any], sensitivities["endpoint_availability"])
@@ -4444,6 +4484,8 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             ),
             "score_equivalence_complete_hull": score_equivalence_table,
             "set_native_robust_minus_embedding": set_native_direction_table,
+            "binary_phase_census": binary_phase_census_table,
+            "dual_coefficient_binary_set_native": dual_coefficient_table,
         },
         coverage=credit_temporal_coverage,
         exchangeability_cells=exchangeability_cells,
@@ -4519,6 +4561,10 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             **{
                 f"decision_representation/{name}": registered[name]
                 for name in DECISION_REPRESENTATION_SOURCE_KEYS
+            },
+            **{
+                f"binary_phase_census/{name}": registered[name]
+                for name in BINARY_PHASE_CENSUS_SOURCE_KEYS
             },
             "two_ruler/outcome_free/freeze": two_ruler_freeze_path,
             "two_ruler/manifest": two_ruler_manifest_path,
@@ -4703,8 +4749,8 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-07-31.1",
-        "status": "active_ijds_v5_endpoint_reason_audited_paper_facing_evidence",
+        "schema_version": "2026-08-01.1",
+        "status": "active_ijds_v5_phase_and_dual_set_native_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
             "status": str(registry["status"]),
@@ -4967,6 +5013,27 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "learner_rows_data": common_panel.publication_learners.to_dict(orient="records"),
             "stratum_rows_data": common_panel.publication_strata.to_dict(orient="records"),
         },
+        "binary_phase_census": {
+            "scope": "five_learners_by_eight_windows_by_five_frozen_score_strata",
+            "run_tag": binary_phase_census.summary["run_tag"],
+            "protocol_tag": binary_phase_census.summary["protocol_tag"],
+            "protocol_commit": binary_phase_census.summary["protocol_commit"],
+            "artifact_tag": diagnostic_lineage["binary_phase_census"]["artifact_tag"],
+            "artifact_commit": diagnostic_lineage["binary_phase_census"]["artifact_commit"],
+            "complete_census_verified": True,
+            **dict(binary_phase_census.findings),
+            "rows": binary_phase_census_table.to_dict(orient="records"),
+            "interpretation": {
+                "retrospective_complete_calibration_grid": True,
+                "target_or_evaluation_endpoint_read": False,
+                "all_strata_reported_without_selection": True,
+                "condition_inapplicability_is_not_failure": True,
+                "universal_phase_law_claimed": False,
+                "coverage_transport_or_validity_claimed": False,
+                "optimization_or_funded_policy_claimed": False,
+                "causal_or_prospective_claimed": False,
+            },
+        },
         "residual_transport_frontier": {
             "scope": "five_learners_by_eight_windows_by_five_strata_primary_oot",
             "run_tag": frontiers.residual_transport.summary["run_tag"],
@@ -5144,6 +5211,37 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
                 "selected_result_or_policy": False,
                 "causal_or_prospective_claimed": False,
                 "independent_replications_or_p_value_claimed": False,
+            },
+        },
+        "dual_coefficient_binary_set_native": {
+            "scope": (
+                "complete_outcome_free_dual_set_native_risk_and_maximin_payoff_"
+                "certificate_census_over_all_frozen_primary_catboost_platt_menus"
+            ),
+            "run_tag": decision_representation.dual_coefficient.summary["run_tag"],
+            "protocol": dict(decision_representation.dual_coefficient.summary["protocol"]),
+            "artifact_tag": decision_representation_identities[
+                "dual_coefficient_binary_set_native"
+            ]["artifact_tag"],
+            "artifact_commit": decision_representation_identities[
+                "dual_coefficient_binary_set_native"
+            ]["artifact_commit"],
+            "complete_certificate_census_verified": True,
+            **dict(decision_representation.dual_coefficient.findings),
+            "role_rows": dual_coefficient_table.to_dict(orient="records"),
+            "interpretation": {
+                "conditional_substitution_theorem": True,
+                "both_risk_and_payoff_coefficients_are_set_native": True,
+                "empty_set_is_declared_fail_closed_convention": True,
+                "continuous_cap_domain_certified": [0.0, 1.0],
+                "new_optimization_run": False,
+                "true_zero_default_risk_claimed": False,
+                "cartesian_product_joint_coverage_guarantee_established": False,
+                "probabilistic_robustness_claimed": False,
+                "conformal_validity_repair_claimed": False,
+                "optimizer_uniqueness_claimed": False,
+                "selected_result_or_policy": False,
+                "outcome_causal_or_prospective_claimed": False,
             },
         },
         "evaluation_endpoint": {
@@ -5776,13 +5874,20 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             "leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below "
             "0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored "
             "transport guarantee. A "
+            "clean calibration-only census reconciles the exact threshold geometry in all "
+            "200 learner-window-stratum cells, with 87 below-half thresholds distributed "
+            "40/40/7/0/0 across ordered strata; it supplies no target or transport claim. A "
             "prevalence-threshold crossing explains one observed geometry change but is "
             "not invariant to every fit-label scenario. Portfolio direction is not identified "
             "without outcome-free comparator support and is not invariant to the declared "
             "ruler or interior coordinate; USD 25 floor rounding produces only negligible "
             "rate perturbations in the evaluated archive. Status-aware numerical basis "
             "intervals leave no registered support gap above 1e-10, but scale-aware warnings "
-            "block any exact or strict numerical uniqueness conclusion."
+            "block any exact or strict numerical uniqueness conclusion. A conditional "
+            "dual-coefficient theorem and 208 outcome-free menu certificates show that the "
+            "maximin full optimal face collapses to singleton-zero support over the "
+            "continuous cap domain [0,1]; this is decision algebra, not true zero risk, "
+            "joint conformal validity, outcome dominance, or a selected policy."
         ),
         "source_artifacts": source_artifact_descriptors,
         "paper_artifacts": paper_artifact_descriptors,

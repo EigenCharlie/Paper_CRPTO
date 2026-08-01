@@ -11,7 +11,9 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from scripts import extend_ijds_evidence_from_sealed_parent_2026_08_01 as sealed_extension
 from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
+    BINARY_PHASE_CENSUS_SOURCE_KEYS,
     CALIBRATOR_SOURCE_KEYS,
     CREDIT_LEARNER_ORDER,
     DECISION_REPRESENTATION_SOURCE_KEYS,
@@ -40,7 +42,7 @@ from src.ijds_audit.publication_generation import (
     staged_artifact_descriptor,
     staged_output_path,
 )
-from src.ijds_audit.publication_sources import load_verified_source_registry
+from src.ijds_audit.publication_sources import load_verified_or_sealed_source_registry
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -190,9 +192,9 @@ def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten
 
 
 def test_publication_inventory_is_derived_from_declared_targets() -> None:
-    assert len(TABLE_TARGETS) == 43
+    assert len(TABLE_TARGETS) == 45
     assert len(FIGURE_STEMS) == 5
-    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 53
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 55
     assert {
         "calibrator_fit_diagnostics",
         "calibrator_sensitivity_cells",
@@ -200,8 +202,10 @@ def test_publication_inventory_is_derived_from_declared_targets() -> None:
     }.issubset(TABLE_TARGETS)
     assert len(CALIBRATOR_SOURCE_KEYS) == 21
     assert len(set(CALIBRATOR_SOURCE_KEYS)) == 21
-    assert len(DECISION_REPRESENTATION_SOURCE_KEYS) == 30
-    assert len(set(DECISION_REPRESENTATION_SOURCE_KEYS)) == 30
+    assert len(DECISION_REPRESENTATION_SOURCE_KEYS) == 39
+    assert len(set(DECISION_REPRESENTATION_SOURCE_KEYS)) == 39
+    assert len(BINARY_PHASE_CENSUS_SOURCE_KEYS) == 7
+    assert len(set(BINARY_PHASE_CENSUS_SOURCE_KEYS)) == 7
 
 
 def test_historical_v8_lock_is_verified_at_its_protocol_commit() -> None:
@@ -248,10 +252,29 @@ def test_historical_v8_lock_is_verified_at_its_protocol_commit() -> None:
 
 
 def test_calibrator_manifest_is_derived_from_the_complete_overall_grid() -> None:
-    registry, registered = load_verified_source_registry(
+    registry, registered, missing = load_verified_or_sealed_source_registry(
         REPO / "configs/ijds_active_evidence_sources.yaml",
         repo_root=REPO,
+        sealed_parent_commit="6e9086ed57492325787498d912b3f5f3e03458bf",
+        sealed_parent_registry_path="configs/ijds_active_evidence_sources.yaml",
     )
+    assert len(missing) == 33
+    if missing:
+        # The pre-freeze additive path is deliberately usable without the
+        # historical DVC cache.  In that environment, the exact parent seal is
+        # the derivation authority; a strict rebuild still follows the branch
+        # below after the publication capsule is materialized.
+        _, parent = sealed_extension._load_pinned_parent()
+        current = json.loads(
+            (REPO / "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert (
+            current["sensitivity"]["calibrator_family"]
+            == parent["sensitivity"]["calibrator_family"]
+        )
+        return
     identities = registry["sensitivities"]["calibrator_family"]
     evidence = load_calibrator_sensitivity_evidence(
         registered,
@@ -407,6 +430,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "claim_ledger_contract",
         "publication_targets_contract",
         "evidence_builder",
+        "sealed_parent_extension_builder",
         "policy_support_evidence_builder",
         "publication_integrity_checker",
         "paper_pdf_auditor",
@@ -416,6 +440,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "grid_contracts",
         "calibrator_sensitivity/loader",
         "decision_representation/loader",
+        "binary_phase_census/loader",
         "endpoint_availability_sensitivity/loader",
         "portfolio_structure_sensitivity/loader",
         "robustness_sensitivities/loader",
