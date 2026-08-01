@@ -1,0 +1,176 @@
+schema_version: "2026-07-31.v1.1"
+protocol_status: "locked_candidate_phase_a_before_execution"
+protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+run_tag: "ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+
+hypothesis: >-
+  Replacing an arbitrary continuous embedding by the exact worst-label score of
+  each binary prediction set yields a set-native robust counterpart whose full
+  allocation census can be compared with the embedding grid without selecting
+  a cap, ruler, coordinate, window, direction, or policy.
+
+phase_authority:
+  topology: "annotated_P1_to_direct_child_A1_to_direct_child_P2_to_direct_child_B1"
+  phase_a_artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a"
+  phase_b_protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+  phase_b_artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+  exact_diff_required: true
+  annotated_tags_required: true
+  single_parent_required: true
+  dvc_required: false
+
+parent:
+  config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-12.yaml"
+  protocol: "docs/research/ijds_binary_geometry_frontier_v4_protocol_2026-07-12.md"
+  run_tag: "ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_tag: "protocol/ijds-binary-geometry-frontier-v4-2026-07-12-v1"
+  protocol_commit: "2f8a7606e4eb65aa3ae3701fb3af8d9a51c953cd"
+  protocol_freeze:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/protocol_freeze.json"
+    bytes: 20362
+    sha256: "c2b3dc2d18c9fed80708682d5a0369c80c89643e2d28024418522d954ebe667c"
+
+source_ingest:
+  raw_path: "data/raw/Loan_status_2007-2020Q3.csv"
+  raw_sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  allowed_raw_columns: ["id", "loan_amnt", "int_rate", "purpose"]
+  forbidden_tokens: ["status", "outcome", "default", "pymnt", "realized", "miscoverage"]
+  retained_decision_columns:
+    - "id"
+    - "issue_d"
+    - "design_split"
+    - "pd_point"
+    - "loan_amnt"
+    - "purpose"
+    - "contractual_rate"
+  chunksize: 100000
+
+set_native_score:
+  source_model: "catboost_platt_primary_only"
+  source_recipe: "fixed_taxonomy_split_mondrian_absolute_residual"
+  canonical_groups: 5
+  calibration_windows: "all_eight_declared_windows"
+  label_space: [0, 1]
+  default_label: 1
+  definition: "zero_iff_exact_singleton_zero_else_one"
+  singleton_zero: 0.0
+  empty_set: 1.0
+  singleton_one: 1.0
+  two_label_set: 1.0
+  empty_set_semantics: "explicit_fail_closed_decision_convention_not_conformal_theorem"
+  interval_membership: "zero_iff_lower_equals_zero_one_iff_upper_equals_one"
+  no_continuous_endpoint_magnitude: true
+
+frontier:
+  roles: ["policy_development", "primary_oot"]
+  expected_development_months: 11
+  expected_primary_months: 15
+  expected_windows: 8
+  rulers: ["objective_matched", "normalized_score"]
+  coordinate_grid: [0.25, 0.50, 0.75]
+  normalized_score:
+    definition: "score_min_plus_coordinate_times_score_at_objective_minus_score_min"
+    minimum_score_range: 1.0e-4
+    cap_residual_tolerance: 1.0e-8
+    minimum_endpoint_retry_slacks: [1.0e-10, 1.0e-9, 1.0e-8]
+  objective_matched:
+    definition: "score_minimizer_subject_to_coordinate_plugin_objective_floor"
+    minimum_objective_range_dollars: 1.0e-4
+    floor_residual_tolerance_dollars: 1.0e-5
+  objective_optimum:
+    diagnostic: "nonbasic_reduced_costs_plus_reversed_id_order"
+    dual_tolerance: 1.0e-7
+    primal_tolerance: 1.0e-8
+
+solver:
+  primary: "highspy_exact_budget_simplex"
+  threads: 1
+  time_limit_seconds: 300
+  allocation_tolerance: 1.0e-8
+  budget_residual_tolerance_dollars: 1.0e-4
+  order_exposure_distance_tolerance: 1.0e-10
+  order_objective_tolerance_dollars: 1.0e-5
+  determinism:
+    scope: "all_1248_cells_fresh_same_order"
+    exposure_distance_tolerance: 1.0e-10
+    objective_tolerance_dollars: 1.0e-5
+    weighted_score_tolerance: 1.0e-10
+  reversal:
+    scope: "all_1248_cells"
+    objective_tolerance_dollars: 1.0e-5
+    weighted_score_tolerance: 1.0e-10
+    exposure_distance: "descriptive_due_to_possible_optimal_face_degeneracy"
+  independent_validation:
+    solver: "ortools_glop"
+    scope: "all_1248_cells"
+    objective_rate_tolerance: 1.0e-7
+    weighted_score_tolerance: 1.0e-7
+    exposure_distance: "descriptive_due_to_possible_optimal_face_degeneracy"
+
+expected_census:
+  windows: 8
+  role_months_per_window: 26
+  menu_cells: 208
+  rulers: 2
+  coordinates: 3
+  phase_a_cells: 1248
+  primary_cells: 720
+  set_taxonomy_rows: 208
+  solver_audit_rows: 1248
+  phase_b_v1d_contrasts: 18000
+
+phase_b_design:
+  status: "blocked_until_separate_hash_pinned_config_and_tag"
+  evaluated_role: "primary_oot"
+  endpoint_parent_config: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+  v1d_source_manifest: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
+  comparator: "same_window_month_ruler_coordinate_all_25_v1d_theta_gamma_cells"
+  common_outcome_assignment: "loanwise_sharp_on_funded_union"
+  inspected_v1d_evaluation_tables_reused: false
+
+claim_boundary:
+  no_outcome_in_phase_a: true
+  no_absolute_cap: true
+  no_cash_or_polytope_change: true
+  no_policy_selection: true
+  no_ruler_selection: true
+  no_coordinate_selection: true
+  no_window_selection: true
+  no_policy_winner: true
+  no_conformal_guarantee_repair: true
+  no_calibrated_pd_interpretation: true
+  no_joint_coverage_for_cartesian_product_of_marginal_sets: true
+  no_probabilistic_robustness_guarantee: true
+  no_causal_claim: true
+  no_submission_freeze: true
+
+stop_rules:
+  stop_on_occupied_nonmatching_shard: true
+  stop_on_parent_descriptor_mismatch: true
+  stop_on_outcome_like_decision_column: true
+  stop_on_invalid_binary_set_partition: true
+  stop_on_incomplete_cell: true
+  stop_on_score_range_failure: true
+  stop_on_objective_range_failure: true
+  stop_on_budget_failure: true
+  stop_on_same_order_nondeterminism: true
+  stop_on_reversal_objective_or_score_mismatch: true
+  stop_on_independent_solver_objective_or_score_mismatch: true
+  stop_on_freeze_or_artifact_mismatch: true
+  retain_all_predeclared_results: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "external_atomic_runtime_shards_then_four_immutable_consolidated_parquets"
+  runtime_checkpoint_root: "localappdata_crpto_runtime_or_explicit_cli"
+  shard_directory: "cell_shards"
+  phase_a_intent: "phase_a_intent.json"
+  solve_records: "frontier_solve_records.parquet"
+  allocations: "frontier_funded_allocations.parquet"
+  set_taxonomy: "set_taxonomy_diagnostics.parquet"
+  solver_audit: "solver_audit.parquet"
+  phase_a_manifest: "verified_phase_a_manifest.json"
+  outcome_free_summary: "outcome_free_summary.json"
+  outcome_free_receipt: "outcome_free_execution_receipt.json"
+  protocol_freeze: "protocol_freeze.json"

@@ -1,0 +1,164 @@
+schema_version: "2026-07-31.1"
+protocol_status: "locked_retrospective_outcome_free_complete_hull_audit"
+protocol_tag: "protocol/ijds-score-equivalence-complete-hull-2026-07-31-v1"
+artifact_tag: "artifacts/ijds-score-equivalence-complete-hull-2026-07-31-v1"
+run_tag: "ijds-score-equivalence-complete-hull-2026-07-31-v1"
+protocol_path: "docs/research/ijds_score_equivalence_complete_hull_v1_protocol_2026-07-31.md"
+
+git_transport:
+  artifact_commit_relationship: "single_direct_child_of_protocol_commit"
+  annotated_tags_required: true
+  source_tags:
+    v1d_source:
+      tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1a-recovery-v1d"
+      commit: "95e39f05bb990429025d0115a0e55c53b1fb1ea8"
+    v1d_evaluation:
+      tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+      commit: "276a5db8772262aad2edd8936dbe226926e412b5"
+    calibrator_source:
+      tag: "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1-source"
+      commit: "ea3e7326afc38ccc1b99b09de30792986640e3c3"
+    calibrator_evaluation:
+      tag: "artifacts/ijds-calibrator-sensitivity-2026-07-30-v1"
+      commit: "6552524eae5a22ce66b50689900383d16df1ff13"
+  exact_output_paths:
+    - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/complete_hull_certificates.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/v1d_embedding_score_equivalence.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/calibrator_score_equivalence.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/runtime_controls.parquet"
+    - "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/score_equivalence_summary.json"
+    - "models/experiments/ijds_audit/ijds-score-equivalence-complete-hull-2026-07-31-v1/execution_receipt.json"
+
+sources:
+  v1d_scientific_config:
+    path: "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-26_v1.yaml"
+    bytes: 8712
+    sha256: "aaf4de29f4e48226d2acccf7a22ea76911025bdbe0381cc56b1df11dabbc61a7"
+  v1d_active_delta_config:
+    path: "configs/experiments/ijds_set_preserving_embedding_sensitivity_2026-07-30_v1d.yaml"
+    bytes: 3821
+    sha256: "9c183a594e3f283cc35f0e67fb3f2a4a3a05e1b34b0f314d4489190745642599"
+  v1d_outcome_free_freeze:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/protocol_freeze.json"
+    bytes: 32026
+    sha256: "1a4b88b0db256c9819fe24973abecef161b3f1a61c4f4c769a6a2f1c9ca037cf"
+  v1d_active_evaluation_manifest:
+    path: "models/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d/verified_evaluation_manifest.json"
+    bytes: 24757
+    sha256: "6d39748a917068861b8f20f141225b5c865ccbfd3ca3c329aa9933bacbac8fc4"
+  calibrator_phase_a_freeze:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/protocol_freeze.json"
+    bytes: 12098
+    sha256: "bf00dff0084bb6d017a808897a2ef654f4efaca6880da6a91161b6a3a1171f4c"
+  scores:
+    path: "data/processed/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/scores.parquet"
+    bytes: 14212211
+    sha256: "4053efdbf13066355bb772233231e5fe4ccb436ca75aaf873fb14e213c1e319c"
+  v4_residual_recipes:
+    path: "models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-12-v1/prediction/residual_recipes.json"
+    bytes: 74218
+    sha256: "0874a5e9eea37adce302f4a059d4ccde5570230a7fdabcc29ceab410988f207a"
+  raw_decision_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+  calibrator_family:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_family.pkl"
+    bytes: 566016
+    sha256: "dab0b1207559118ab63742e51d0d7085e9d9d0d7e3a103802dae57f05ddeabce"
+  calibrator_residual_recipes:
+    path: "models/experiments/ijds_audit/ijds-calibrator-sensitivity-2026-07-30-v1-source/prediction/calibrator_residual_recipes.json"
+    bytes: 35852
+    sha256: "4f1f9f8a1680eb3b2af27eaa0bdeb55088530917336863a5b60b5b34bcf2e360"
+
+design:
+  roles: ["policy_development", "primary_oot"]
+  expected_policy_development_months: 11
+  expected_primary_oot_months: 15
+  expected_total_months: 26
+  windows:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+  theta_grid: [0.0, 0.25, 0.50, 0.75, 1.0]
+  theta_reference: 0.0
+  gamma_grid: [0.0, 0.25, 0.50, 0.75, 1.0]
+  calibrator_methods: ["platt", "isotonic", "beta", "venn_abers"]
+  calibrator_pairing: "all_six_unordered_pairs"
+  score_definition: "q_gamma_equals_p_plus_gamma_times_upper_minus_p"
+  budget_dollars: 1000000.0
+  purpose_cap: 0.25
+  raw_allowed_columns: ["id", "loan_amnt", "int_rate", "purpose"]
+  raw_forbidden_tokens: ["status", "outcome", "default", "pymnt", "realized", "miscoverage"]
+  outcome_columns_passed: []
+
+numerics:
+  hull_absolute_tolerance_dollars: 1.0e-8
+  hull_relative_tolerance: 1.0e-12
+  score_absolute_tolerance: 1.0e-12
+  score_relative_tolerance: 1.0e-10
+  vector_replay_tolerance: 5.0e-14
+  v1d_diagnostic_float_tolerance: 1.0e-12
+  synthetic_positive_scale: 1.75
+  synthetic_positive_intercept: 0.125
+  synthetic_negative_amplitude: 1.0e-3
+
+expected_census:
+  complete_hull_certificates: 26
+  v1d_embedding_comparisons: 5200
+  v1d_theta_zero_self_controls: 1040
+  v1d_gamma_zero_controls: 1040
+  v1d_nonzero_theta_gamma_zero_controls: 832
+  calibrator_comparisons: 6240
+  calibrator_pairs: 6
+  runtime_controls: 52
+  runtime_positive_controls: 26
+  runtime_negative_controls: 26
+  v1d_set_preservation_rows: 80
+
+stop_rules:
+  require_clean_exact_annotated_protocol_tag: true
+  require_annotated_source_tags_and_ancestry: true
+  stop_on_source_descriptor_or_hash_drift: true
+  stop_on_candidate_identity_or_census_drift: true
+  stop_on_outcome_like_decision_column: true
+  stop_on_calibrator_vector_hash_mismatch: true
+  stop_on_v1d_set_preservation_replay_mismatch: true
+  stop_on_incomplete_hull_certificate: true
+  stop_on_positive_or_negative_control_failure: true
+  stop_on_incomplete_or_duplicate_grid: true
+  stop_on_nonfinite_persisted_numeric: true
+  hard_no_overwrite: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  complete_hull_certificates: "complete_hull_certificates.parquet"
+  v1d_embedding_score_equivalence: "v1d_embedding_score_equivalence.parquet"
+  calibrator_score_equivalence: "calibrator_score_equivalence.parquet"
+  runtime_controls: "runtime_controls.parquet"
+  summary: "score_equivalence_summary.json"
+  execution_receipt: "execution_receipt.json"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+
+interpretation:
+  retrospective: true
+  outcome_free: true
+  complete_candidate_menu_not_funded_subset: true
+  optimization_run: false
+  protected_stages_run: []
+  protected_artifacts_written: []
+  calibrator_embedding_gamma_window_role_or_month_selected: false
+  failure_means_global_invariance_not_certified: true
+  failure_implies_fixed_cell_allocation_change: false
+  common_objective_across_calibrator_maps_established: false
+  calibrator_score_equivalence_certifies_full_optimizer_invariance: false
+  common_solver_output_certifies_equal_optimal_faces: false
+  selected_or_funded_set_validity: false
+  portfolio_performance_claim: false
+  causal_claim: false

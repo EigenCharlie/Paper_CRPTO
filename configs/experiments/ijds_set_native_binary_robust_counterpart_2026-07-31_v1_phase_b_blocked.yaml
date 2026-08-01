@@ -1,0 +1,68 @@
+schema_version: "2026-07-31.v1.phase-b-template.1"
+protocol_status: "blocked_pending_phase_a_artifact_hashes"
+protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+run_tag: "ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+phase_chain:
+  phase_a_protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1"
+  phase_a_protocol_commit: null
+  phase_a_artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a"
+  phase_b_protocol_tag: "protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+  phase_b_artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-b"
+  require_p1_direct_parent_of_a1: true
+  require_a1_direct_parent_of_p2: true
+source_phase_a:
+  artifact_tag: "artifacts/ijds-set-native-binary-robust-counterpart-2026-07-31-v1-phase-a"
+  artifact_commit: null
+  freeze: null
+  summary: null
+  receipt: null
+  phase_a_manifest: null
+  solve_records: null
+  allocation: null
+  set_taxonomy: null
+  solver_audit: null
+source_v1d:
+  artifact_tag: "artifacts/ijds-set-preserving-embedding-sensitivity-2026-07-30-v1d"
+  artifact_commit: "276a5db8772262aad2edd8936dbe226926e412b5"
+  solve_records:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_solve_records.parquet"
+    bytes: 1782252
+    sha256: "c89bad6e9a7f9513f871be66da3950b3b690051915c51963936718314ea6598a"
+  allocation:
+    path: "data/processed/experiments/ijds_audit/ijds-set-preserving-embedding-sensitivity-2026-07-29-v1a/frontier/frontier_funded_allocations.parquet"
+    bytes: 49246668
+    sha256: "f192a70512f2fed01bb64c2b302cb47ecfd264648b7407b9b5aa50c5d666cf51"
+endpoint_source:
+  config:
+    path: "configs/experiments/ijds_binary_geometry_frontier_v4_2026-07-15_v5.yaml"
+    bytes: 1371
+    sha256: "c749befbd0ab7e0f8d6fcded7e7c730cae998032f897f65c7e7673d2a12c3715"
+  raw_archive:
+    path: "data/raw/Loan_status_2007-2020Q3.csv"
+    bytes: 1773470505
+    sha256: "5878af2a088f8ab5214c9337289fb8b5eb6c6338fd3f417b6cdc18513dc6f35f"
+evaluation:
+  role: "primary_oot"
+  expected_robust_cells: 720
+  expected_v1d_cells_per_robust_cell: 25
+  expected_contrasts: 18000
+  common_outcome_assignment: "loanwise_sharp_on_funded_union"
+  inspected_v1d_evaluation_tables_reused: false
+claim_boundary:
+  no_selection: true
+  no_policy_winner: true
+  no_causal_claim: true
+  no_conformal_guarantee_repair: true
+  no_joint_coverage_for_cartesian_product_of_marginal_sets: true
+  no_probabilistic_robustness_guarantee: true
+  no_reuse_of_inspected_v1d_evaluation_tables: true
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  evaluated_portfolios: "evaluated_primary_portfolios.parquet"
+  monthly_v1d_contrasts: "monthly_robust_minus_v1d_contrasts.parquet"
+  window_v1d_contrasts: "window_robust_minus_v1d_contrasts.parquet"
+  evaluation_summary: "evaluation_summary.json"
+  evaluation_receipt: "evaluation_execution_receipt.json"
+  evaluation_manifest: "verified_evaluation_manifest.json"
