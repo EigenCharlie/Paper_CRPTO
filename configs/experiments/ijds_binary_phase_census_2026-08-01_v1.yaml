@@ -1,0 +1,94 @@
+schema_version: "2026-08-01.1"
+protocol_status: "retrospectively_locked_before_execution"
+run_tag: "ijds-binary-phase-census-2026-08-01-v1"
+protocol_path: "docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md"
+protocol_tag: "protocol/ijds-binary-phase-census-2026-08-01-v1"
+artifact_tag: "artifacts/ijds-binary-phase-census-2026-08-01-v1"
+
+source:
+  credit_control_freeze:
+    path: "models/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/protocol_freeze.json"
+    bytes: 25908
+    sha256: "da4805e644bcf5decfbb0a67c0c81a5b9dd61f3ab2e17d3dc5264100e7eb4d35"
+    role: "provenance_witness_unparsed"
+  residual_fit_audit:
+    path: "data/processed/experiments/ijds_audit/ijds-credit-risk-controls-2026-07-13-v1b/prediction/residual_fit_audit.parquet"
+    bytes: 45955332
+    sha256: "396c30d9bec7d222220cfe6f9870ab4994cf5c33e6da8c9e4ebbd99153155353"
+    role: "scientific_table_allowlisted_columns"
+  exchangeability_summary:
+    path: "models/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/exchangeability_transport_test_summary.json"
+    bytes: 9078
+    sha256: "72d9d39b2bef36a36440f1ccc720575d74005f1ad1932a774a91f73ed26c8af6"
+    role: "provenance_witness_unparsed"
+  exchangeability_strata:
+    path: "data/processed/experiments/ijds_audit/ijds-exchangeability-transport-test-2026-07-21-v1/evaluation/exchangeability_transport_strata.parquet"
+    bytes: 90676
+    sha256: "4d34a1de1d3d9556e9b9b74d0517b01b117030d7036a6911d5ad6807080601e3"
+    role: "scientific_table_allowlisted_columns"
+
+design:
+  alpha: 0.10
+  taxonomy_groups: 5
+  expected_cells: 200
+  require_both_classes_nonempty: true
+  require_uncapped_rank: true
+  threshold_tolerance: 1.0e-15
+  learners:
+    - "catboost_platt"
+    - "numeric_logistic_platt"
+    - "catboost_monotonic_platt"
+    - "woe_scorecard_platform_platt"
+    - "woe_scorecard_borrower_platt"
+  window_ids:
+    - "w01_2012m01_m06"
+    - "w02_2012m02_m07"
+    - "w03_2012m03_m08"
+    - "w04_2012m04_m09"
+    - "w05_2012m05_m10"
+    - "w06_2012m06_m11"
+    - "w07_2012m07_m12"
+    - "w08_2012m08_2013m01"
+
+execution_gate:
+  require_clean_worktree: true
+  require_protocol_tag_at_head: true
+  require_annotated_protocol_tag: true
+  require_fresh_output_directories: true
+  require_implementation_hash_stability: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  immutability: "hard_no_overwrite_choose_fresh_run_tag"
+  cell_table: "binary_phase_census.csv"
+  summary: "binary_phase_census_summary.json"
+  execution_receipt: "execution_receipt.json"
+
+claim_boundary:
+  retrospective: true
+  preregistered: false
+  confirmatory: false
+  complete_grid_only: true
+  complete_ordered_stratum_summary: true
+  learner_window_permutation_symmetric_summary: true
+  no_stratum_omission_or_selection: true
+  no_named_path_or_winner: true
+  no_evaluation_endpoint_or_target_join: true
+  no_coverage_transport_or_validity_claim: true
+  no_optimization_policy_or_funded_set_claim: true
+  no_unconditional_phase_margin_interpretation: true
+  no_automatic_paper_or_claim_promotion: true
+
+stop_rules:
+  stop_on_source_hash_mismatch: true
+  stop_on_source_role_mismatch: true
+  stop_on_preexisting_output_path: true
+  stop_on_protocol_gate_failure: true
+  stop_on_implementation_drift: true
+  stop_on_incomplete_or_asymmetric_grid: true
+  stop_on_duplicate_key_or_fit_id: true
+  stop_on_invalid_domain_score_label_count_or_rank: true
+  stop_on_empty_calibration_class: true
+  stop_on_threshold_or_tie_reconciliation_failure: true
+  stop_on_exact_identity_failure: true
