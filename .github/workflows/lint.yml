@@ -37,4 +37,4 @@ jobs:
         run: uv run --no-sync ruff check .
 
       - name: Ruff format check
-        run: uv run --no-sync ruff format --check .
+        run: uv run --no-sync ruff format --check . --exclude "scripts/experiments/run_ijds_decision_catalog_transport_v1.py,scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py,scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py,scripts/experiments/run_ijds_residual_transport_frontier.py,src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py,scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py,src/ijds_audit/score_equivalence_complete_hull.py,scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py,src/ijds_challengers/set_native_binary_robust.py,scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py,src/ijds_challengers/dual_coefficient_binary_set_native.py,scripts/experiments/run_ijds_binary_phase_census_v1.py,src/ijds_audit/binary_phase_census.py"

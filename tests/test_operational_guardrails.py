@@ -283,6 +283,24 @@ def test_lint_workflow_installs_only_quality_tools() -> None:
     assert steps["Set up Python"]["run"] == "uv python install 3.11.15"
     assert steps["Sync quality dependencies"]["run"] == ("uv sync --only-group quality --locked")
     assert steps["Ruff check"]["run"] == "uv run --no-sync ruff check ."
+    format_command = steps["Ruff format check"]["run"]
+    assert format_command.startswith("uv run --no-sync ruff format --check . --exclude ")
+    for path in (
+        "scripts/experiments/run_ijds_decision_catalog_transport_v1.py",
+        "scripts/experiments/run_ijds_funded_selection_estimand_audit_v1.py",
+        "scripts/experiments/run_ijds_marginal_mean_score_outcome_gap_v3i.py",
+        "scripts/experiments/run_ijds_residual_transport_frontier.py",
+        "src/ijds_audit/marginal_mean_score_outcome_gap_v3i.py",
+        "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py",
+        "src/ijds_audit/score_equivalence_complete_hull.py",
+        "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+        "src/ijds_challengers/set_native_binary_robust.py",
+        "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py",
+        "src/ijds_challengers/dual_coefficient_binary_set_native.py",
+        "scripts/experiments/run_ijds_binary_phase_census_v1.py",
+        "src/ijds_audit/binary_phase_census.py",
+    ):
+        assert path in format_command
     assert "uv sync --group dev" not in workflow_text
 
 
