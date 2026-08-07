@@ -10,7 +10,7 @@ paper and reproducibility bundle, not a production service.
 
 ## Authority Snapshot
 
-Research authority is current through 2026-08-01. The active claim registry
+Research authority is current through 2026-08-06. The active claim registry
 remains the sole paper-facing claim authority; exact theory overrides a
 conflicting summary. The complete-hull score-equivalence and set-native binary
 robust-counterpart lineages are sealed Git-native July-31 audits. The clean
@@ -70,6 +70,8 @@ Read first:
 44. `docs/SCOPE_AND_GOVERNANCE.md`
 45. `CONTRIBUTING.md`
 46. `EXTRACTION_MANIFEST.md`
+47. `docs/research/ijds_literature_corpus_ledger_2026-07-30.md`
+48. `docs/research/ijds_pending_scientific_work_disposition_2026-08-01.md`
 
 Active evidence:
 
@@ -344,6 +346,31 @@ merely because it occupies pages. Final page compression, anonymity packaging,
 and final DVC/reproducibility presentation are freeze-stage tasks; they must not
 block present scientific improvement or relax current provenance and claim
 gates.
+
+## Literature and Dependency Refresh
+
+Treat version discovery, document intake, citation, and claim revision as four
+separate gates. Check every paper-facing and reserve key against a primary
+version record; retain superseded local PDFs under exact versioned filenames;
+strict-parse, hash, and visually inspect formulas or tables before citation;
+then state which theorem assumptions transfer and which do not. A newer version
+or close neighbor never activates a method, claim, or rerun by itself. Record
+accepted objects and dispositions in the literature-corpus ledger, update only
+the master `paper/references.bib`, and regenerate deterministic active/reserve
+views.
+
+For born-digital academic PDFs, try bounded structural parsing after the strict
+all-file pass. If parallel Docling workers fail with native allocation errors
+such as `std::bad_alloc`, stop the fan-out and replay sequentially with one
+thread, batch size one, OCR/enrichment disabled, and the `pypdfium2` backend.
+Do not interpret low aggregate CPU/RAM as proof that parser-native memory,
+single-threaded decompression, storage latency, or process churn is absent.
+
+Upgrade the current lock only for an identified advisory or concrete tooling
+benefit. Keep historical protocol locks immutable, avoid scientific-runtime
+changes in the same batch, run `uv sync --group dev --locked`,
+`just dependency-audit`, targeted compatibility tests, and the ordinary gates,
+and record why the current lock may differ from hash-pinned historical locks.
 
 ## Long-run Execution Contract
 

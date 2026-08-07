@@ -43,6 +43,31 @@ The central decision is simple:
 > contexts. Page compression, anonymity, rights packaging, and final DVC
 > presentation wait for the real submission freeze.
 
+### 2026-08-06 decision addendum
+
+The exact-version and nearest-neighbor literature refresh does not change that
+boundary or justify another archive-grid run. The successor order is now
+resolved rather than left as an undifferentiated menu:
+
+1. **Primary next contribution:** equal-notional fixed-$K$ JOMI on genuinely
+   new, same-population contexts, with a frozen deterministic
+   permutation-equivariant selector and complete focal reference sets.
+2. **Required transport gate:** obtain an actual sampling/dependence authority
+   for those new contexts; PSI, KS, residual gaps, rolling origins, and the new
+   multi-source conformal paper are not substitutes.
+3. **Second contribution if monthly decision loss is pursued:** use LTT for a
+   frozen finite reoptimized policy catalog. Classical CRC remains eligible
+   only if a different ordered family is proved pointwise monotone before any
+   risk-calibration outcome is opened.
+4. **Deferred:** bounded fractional exposure follows only after fixed-$K$ JOMI;
+   independent calibrator selection, external V2, and constraint-native
+   redesign remain optional separate studies.
+
+Birbil--Chi's local violation certificate, Yang--Jin's declared-source-family
+validity, and Zheng--Jin's online selective construction sharpen the related-
+work boundary but do not supply CRPTO's missing temporal sampling contract,
+unique stable LP basis, or exposure-weighted funded-set estimand.
+
 ## 2. Literal crosswalk of the five screenshots
 
 The table preserves the wording and ordering of the screenshots. Repeated items

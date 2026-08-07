@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import copy
+import hashlib
+import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -159,6 +161,19 @@ def test_complete_loader_verifies_all_three_lineages(
         "funded_or_selected_set_validity": False,
         "causal_or_prospective_claim": False,
     }
+
+
+def test_implementation_provenance_uses_the_protocol_blob_not_the_current_lock() -> None:
+    freeze = json.loads(_registered()["set_native_phase_a_freeze"].read_text(encoding="utf-8"))
+    descriptor = freeze["implementation_provenance"]["source_files"]["uv.lock"]
+
+    assert hashlib.sha256((ROOT / "uv.lock").read_bytes()).hexdigest() != descriptor["sha256"]
+    module._require_implementation_provenance(
+        freeze,
+        commit=module._SET_P1_COMMIT,
+        repo_root=ROOT,
+        label="test set-native Phase-A freeze",
+    )
 
 
 def test_score_equivalence_publication_table_is_five_disjoint_rows(

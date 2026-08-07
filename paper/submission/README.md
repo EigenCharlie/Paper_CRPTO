@@ -131,23 +131,23 @@ overlap, and table or figure legibility.
 
 ## QA Record
 
-The previous pre-freeze bundle was rebuilt and audited on 2026-07-29. This
-record predates the calibrator-family integration and must be replaced after
-the 45-table evidence build:
+The current pre-freeze bundle was rebuilt and audited on 2026-08-06:
 
-- official INFORMS PDF: 36 pages, with references beginning on page 32 (31
+- official INFORMS PDF: 64 pages, with references beginning on page 57 (56
   pre-reference pages; the final-freeze page cap was deliberately not run);
-- browser body preview: 26 pages;
-- browser supplement preview: 52 pages;
-- abstract: exactly 255 words in one paragraph, with normalized source-to-PDF
+- browser body preview: 46 pages;
+- browser supplement preview: 79 pages;
+- abstract: exactly 290 words in one paragraph, with normalized source-to-PDF
   equality;
-- all 114 rendered pages: US Letter, no blank pages, no identity or artifact
-  fingerprints, and visually inspected for clipping, overlap, formula rendering,
-  and table/figure legibility;
-- headless figure replay: the builder pins `Agg`; two independent prior
-  40-file
-  staging builds were byte-identical, and promotion changed only the expected
-  builder and regenerated Figure 4 descriptors in the evidence manifest;
+- all 189 rendered pages: US Letter, no blank pages, no identity or artifact
+  fingerprints, and visually inspected from final Poppler renders for clipping,
+  overlap, formula rendering, and table/figure legibility;
+- one over-wide construction-map display found during visual QA was split into
+  semantic lines and the clean 64-page official PDF was recompiled and
+  re-inspected;
+- the sealed-parent extension reproduced the 45-table/10-figure manifest with
+  unavailable historical DVC bytes pinned to their unchanged descriptors;
+  `publication-integrity` and a second bytewise extension check passed;
 - official compiler scan: converged, with no undefined citation, reference, or
   rerun request; and
 - machine-readable supplement: rebuilt from the active evidence surface and

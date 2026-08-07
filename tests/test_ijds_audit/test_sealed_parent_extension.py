@@ -90,9 +90,10 @@ def test_extension_recomputes_the_two_git_native_results_byte_identically() -> N
 
 
 def test_extension_promotes_only_the_two_additive_tables() -> None:
-    assert frozenset(
-        extension.TABLE_TARGETS[name] for name in extension.NEW_TABLE_KEYS
-    ) == extension.PROMOTED_EXTENSION_TARGETS
+    assert (
+        frozenset(extension.TABLE_TARGETS[name] for name in extension.NEW_TABLE_KEYS)
+        == extension.PROMOTED_EXTENSION_TARGETS
+    )
     assert {path.suffix for path in extension.PROMOTED_EXTENSION_TARGETS} == {".csv"}
 
 

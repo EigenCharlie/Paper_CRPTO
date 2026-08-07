@@ -1,4 +1,4 @@
-"""Generate the IJDS chronology and physical-information-boundary figure.
+"""Generate the IJDS primary-allocation chronology and outcome-join figure.
 
 This is a code-native editorial figure: it contains no empirical computation
 and introduces no evidence beyond the active protocol chronology.  The output
@@ -148,7 +148,7 @@ def build_figure() -> plt.Figure:
     ax.text(
         0.5,
         0.965,
-        "Active chronology and physical information boundary",
+        "Primary allocation chronology and keyed outcome join",
         transform=ax.transAxes,
         ha="center",
         va="top",
@@ -159,7 +159,7 @@ def build_figure() -> plt.Figure:
     ax.text(
         0.5,
         0.919,
-        "OUTCOME-INACCESSIBLE CONSTRUCTION",
+        "TARGET-EVALUATION-OUTCOME-FREE PRIMARY CONSTRUCTION",
         transform=ax.transAxes,
         ha="center",
         va="center",

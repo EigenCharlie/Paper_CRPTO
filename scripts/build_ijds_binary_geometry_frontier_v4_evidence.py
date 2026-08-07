@@ -1591,7 +1591,7 @@ def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
         arrowprops={"arrowstyle": "->", "color": MID},
         fontsize=8,
     )
-    figure.suptitle("Observed CatBoost S3 finite-sample phase coordinate")
+    figure.suptitle("Post-inspection CatBoost S3 finite-sample illustration")
     figure.tight_layout()
     return _save_figure(figure, FIGURE_STEMS["phase_transition"], output_dir=output_dir)
 
@@ -1626,7 +1626,7 @@ def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, 
                 axis.text(
                     column,
                     row,
-                    {1: "+", 0: "0", -1: "-"}[value],
+                    {1: "+", 0: "×", -1: "-"}[value],
                     ha="center",
                     va="center",
                     color=INK if value == 0 else "white",
@@ -1636,12 +1636,12 @@ def _envelope_figure(envelopes: pd.DataFrame, *, output_dir: Path) -> dict[str, 
     axes[-1].set_xticks(np.arange(8), [f"W{index}" for index in range(1, 9)])
     axes[-1].set_xlabel("Residual window")
     figure.suptitle(
-        "Guardrail-minus-point envelopes at registered development-admissible cap values"
+        "Full-upper-score minus point-score envelopes at registered development-admissible cap values"
     )
     figure.text(
         0.5,
         0.015,
-        "- guardrail lower; 0 envelope crosses zero; + guardrail higher. Default crosses zero in every cell.",
+        "- full-upper-score lower; × envelope contains zero; + full-upper-score higher. Default contains zero in every cell.",
         ha="center",
         fontsize=8,
         color=MID,

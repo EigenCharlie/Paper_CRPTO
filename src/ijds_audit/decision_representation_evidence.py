@@ -899,7 +899,6 @@ def _require_implementation_provenance(
     commit: str,
     repo_root: Path,
     label: str,
-    cache: dict[tuple[str, int, str], Path],
 ) -> None:
     provenance = _mapping(payload, "implementation_provenance", label=label)
     if provenance.get("hash_algorithm") != "sha256":
@@ -911,13 +910,7 @@ def _require_implementation_provenance(
         if not isinstance(relative, str):
             raise TypeError(f"{label} implementation key must be text.")
         descriptor = _exact_descriptor(raw, label=f"{label} implementation {relative}")
-        path = _descriptor_path(
-            descriptor,
-            repo_root=repo_root,
-            label=f"{label} implementation {relative}",
-            cache=cache,
-        )
-        if path != (repo_root / relative).resolve():
+        if descriptor["path"] != relative:
             raise RuntimeError(f"{label} implementation key and path disagree.")
         _require_git_blob_descriptor(
             commit=commit,
@@ -1255,7 +1248,6 @@ def _load_score_equivalence(
         commit=_SCORE_PROTOCOL_COMMIT,
         repo_root=repo_root,
         label="score-equivalence summary",
-        cache=cache,
     )
 
     artifact_descriptors = _mapping(summary, "artifacts", label="score-equivalence summary")
@@ -1833,7 +1825,6 @@ def _load_set_native(
             commit=commit,
             repo_root=repo_root,
             label=label,
-            cache=cache,
         )
     if _mapping(phase_a_freeze, "environment", label="Phase-A freeze") != _mapping(
         evaluation_manifest, "environment", label="evaluation manifest"
@@ -2351,7 +2342,6 @@ def _load_dual_coefficient(
         commit=_DUAL_PROTOCOL_COMMIT,
         repo_root=repo_root,
         label="dual-coefficient freeze",
-        cache=cache,
     )
 
     official_freeze = _mapping(freeze, "official_artifacts", label="dual-coefficient freeze")

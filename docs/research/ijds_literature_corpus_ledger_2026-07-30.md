@@ -1,4 +1,4 @@
-# IJDS literature corpus ledger (through 2026-08-01)
+# IJDS literature corpus ledger (through 2026-08-06)
 
 Status: documentary literature-provenance record; not an empirical evidence
 source and not an entry in the active-evidence registry.
@@ -6,15 +6,20 @@ source and not an entry in the active-evidence registry.
 ## Scope and authority
 
 This is the cumulative receipt for the five last-mile literature objects
-materialized on 2026-07-30, two distinct intakes audited on 2026-07-31, and the
-four-object theory-neighbor intake audited on 2026-08-01. The 2026-07-31
+materialized on 2026-07-30, two distinct intakes audited on 2026-07-31, the
+four-object theory-neighbor intake audited on 2026-08-01, and the exact-version
+and nearest-neighbor refresh audited on 2026-08-06. The 2026-07-31
 frontier intake consists of five newly materialized PDFs plus the already-local
 non-monotonic conformal-risk-control preprint. The active-citation gap intake
 materialized 19 PDFs from primary or official open-access surfaces and left
 four works as metadata-only citations because no suitable primary/open full
 text was verified. The 2026-08-01 intake adds exact versions for non-monotone
 CRC, generalized Venn calibration, temperature scaling before conformal
-prediction, and conformal mixed-integer constraint learning. Together these
+prediction, and conformal mixed-integer constraint learning. The 2026-08-06
+refresh archives three superseded preprint objects beside their current
+versions and adds two close neighbors on local predict-then-optimize violation
+certification and online selective conformal prediction. It changes literature
+boundaries, not active empirical evidence. Together these
 receipts close the byte-level gaps recorded in
 `conformal_decision_sota_lastmile_2026-07-26.md` and
 `conformal_optimization_v3_corpus_addendum_2026-07-26.md`. The earlier audits
@@ -44,6 +49,13 @@ objects, 5,533 pages, and 319,875,860 bytes. A fresh full-corpus strict-PyPDF
 and SHA-256 pass found 155 distinct hashes, no duplicate object, no encrypted
 object, and no parse error. The four new objects contribute 125 pages and
 9,544,915 bytes.
+
+After the 2026-08-06 refresh, `Papers_tesis` contains 160 PDF objects, 5,715
+pages, and 328,833,054 bytes. A fresh strict-PyPDF and SHA-256 pass found 160
+distinct hashes, no duplicate object, no encrypted object, and no parse error.
+The three current preprint versions and two new neighbors add 182 pages and
+8,957,194 bytes; the three superseded versions remain archived under exact
+`v1` filenames rather than being overwritten.
 
 ## Exact-object ledger
 
@@ -225,6 +237,65 @@ structure. Contact sheets are noncanonical scratch under
 | Dabah--Tirer | 1, 3, 7, 12 | Proceedings identity; marginal-versus-conditional coverage distinction; Theorem 4.1 and Proposition 4.3; proof page | The coverage distinction, temperature-dependent cumulative-softmax results, and proof equations are legible and agree with extraction. |
 | Ovalle et al. | 1, 5, 6, 17 | Proceedings identity; Theorem 3.1; Assumption 4.1 and Theorem 4.1; Mondrian theorem and main proof | The set-native MIP formulation, conditional-independence assumption, group-conditional statement, and proof are legible and agree with extraction. Poppler emitted missing-display-font warnings for `Symbol` and `ArialUnicode`, but the inspected formulas and glyphs showed no visible corruption. |
 
+## Exact-version and nearest-neighbor refresh — 2026-08-06
+
+The active and reserve bibliography was compared against primary arXiv version
+records. The 92 pre-refresh paper-facing references were already current. Three reserve
+preprints had newer exact versions, so the former generic local objects were
+renamed as `v1`, their `v2` objects were added, and the bibliography now points
+to `v2`. Two close neighbors were added after full-text review. No current
+CRPTO theorem or empirical claim was invalidated.
+After the refresh and restoration of the HiGHS method citation, the 191-entry
+master partitions into 96 active body-or-supplement references and 95 reserve
+entries; the two views are complete and disjoint.
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Citation surface | Disposition |
+|---|---|---:|---:|---|---|---|---|
+| Baesens et al., *Foundation Models for Credit Risk Prediction: A Game Changer?*, arXiv:2605.18147v1 | `Papers_tesis/supplement/Baesens et al 2026 - Foundation Models for Credit Risk Prediction - arXiv 2605.18147v1.pdf` | 682,996 | 25 | `2927baa9d8489d8c7ee480c6ffa96d9d54f27391ee1a486fcb74806e44ee3993` | historical object for `baesens2026foundation_credit_risk` | Archive only | Retained so the version transition is auditable; it is not the citation target. |
+| Baesens et al., same title, arXiv:2605.18147v2, revised 2026-07-15 | `Papers_tesis/supplement/Baesens et al 2026 - Foundation Models for Credit Risk Prediction - arXiv 2605.18147v2.pdf` | 517,402 | 25 | `3575c332ba11c969e220f7d7e86e1b948fd33aeb38e8e8f0aaf521a749428491` | `baesens2026foundation_credit_risk` | Reserve | Current exact object; it supplies credit-model context, not a learner leaderboard or CRPTO transport claim. |
+| Peng and Lessmann, *Incorporating Data Drift to Perform Survival Analysis on Credit Risk*, arXiv:2601.20533v1 | `Papers_tesis/supplement/Peng Lessmann 2026 - Incorporating Data Drift to Perform Survival Analysis on Credit Risk - arXiv 2601.20533v1.pdf` | 463,981 | 27 | `e1dbfc375635978ac606ba5a8fc190b28dd60e573b56c5448c534bd5b5c61ae8` | historical object for `peng2026drift_survival` | Archive only | Retained so the expanded revision is not mistaken for the inspected version. |
+| Peng and Lessmann, same title, arXiv:2601.20533v2, revised 2026-07-31 | `Papers_tesis/supplement/Peng Lessmann 2026 - Incorporating Data Drift to Perform Survival Analysis on Credit Risk - arXiv 2601.20533v2.pdf` | 500,679 | 37 | `9e894b7c10208998f4a2e431a0610ecec56f32152a3168b22c4acaac02300b49` | `peng2026drift_survival` | Body and supplement boundary | Retain as a drift-aware dynamic survival design. Its event-time, longitudinal-marker, and simulated-drift estimand does not repair CRPTO's terminal-label transport problem. |
+| Yang and Jin, *Multi-Distribution Robust Conformal Prediction*, arXiv:2601.02998v1 | `Papers_tesis/supplement/Yang Jin 2026 - Multi-Distribution Robust Conformal Prediction - arXiv 2601.02998v1.pdf` | 2,898,333 | 45 | `db0f357ff71934b01384d10c711e4549adc56b44c58c03d7134bcfd2304d1af3` | historical object for `yang2026multidistribution` | Archive only | Retained as exact provenance for the pre-ICML revision. |
+| Yang and Jin, same title, arXiv:2601.02998v2 / ICML 2026 | `Papers_tesis/supplement/Yang Jin 2026 - Multi-Distribution Robust Conformal Prediction - arXiv 2601.02998v2.pdf` | 2,802,348 | 55 | `73bdfb452e834f899b6a61ff4644c1d4632f3b45826e55fa37b79d1e2724c457` | `yang2026multidistribution` | Body and supplement | Retain for finite-sample marginal coverage uniformly for an independent test draw from any declared source or arbitrary mixture. It does not identify an unseen chronological target or validate a funded subset. |
+| Birbil and Chi, *Local Violation Certification for Linear Predict-Then-Optimize Pipelines*, arXiv:2608.04474v1 | `Papers_tesis/supplement/Birbil Chi 2026 - Local Violation Certification for Linear Predict-Then-Optimize Pipelines - arXiv 2608.04474v1.pdf` | 641,124 | 24 | `c1ed24bccb951e4a21478478bc45cf26e325b8ceadce9832ba460313ec56219e` | `birbil2026local_violation` | Body and supplement | **A-boundary.** Closest new theory neighbor: an affine prediction enters the LP right-hand side with fixed costs and matrix; a unique nondegenerate local basis, a linear violation event, and Gaussian perturbations give exact half-space sampling for one basis and a local full-pipeline approximation with a basis-exit error. CRPTO satisfies none of those transfer conditions by default. |
+| Zheng and Jin, *Online Selective Conformal Prediction with Asymmetric Rules: A Permutation Test Approach*, arXiv:2602.10018v1 | `Papers_tesis/supplement/Zheng Jin 2026 - Online Selective Conformal Prediction with Asymmetric Rules - arXiv 2602.10018v1.pdf` | 4,495,641 | 41 | `f42482d872576b23cab2b20a469f21380710674693e333350af17d6da3bb2627` | `zheng2026online_selective` | Body and supplement boundary | **A-boundary.** Retain for permutation-equivariant asymmetric online selection. Exchangeability remains essential, and the method does not solve long label delay or exposure-weighted funded coverage. |
+
+### Parser and text-layer QA — 2026-08-06
+
+All five newly added objects are born-digital and unencrypted. Their individual
+all-page text-layer pass found no empty page and no page below 200 extracted
+characters. The later full-corpus strict pass confirmed 160 readable objects,
+160 distinct SHA-256 values, and no encryption or parse failure; PyPDF repaired
+four non-zero-indexed cross-reference tables while reading them.
+
+Docling 2.110.0 initially attempted parallel standard-pipeline conversion and
+all workers terminated with `std::bad_alloc`. A bounded sequential replay with
+the `pypdfium2` backend, one thread, batch size one, OCR and enrichment disabled,
+and table extraction enabled completed every object. This failure/recovery is
+important operational evidence: parser-native allocations and serialized PDF
+decompression can make the desktop sluggish without exhausting aggregate CPU
+or RAM.
+
+| Object | JSON bytes | Section headings | Formula items | Tables | Pictures | Result |
+|---|---:|---:|---:|---:|---:|---|
+| Baesens et al. v2 | 1,657,520 | 26 | — | 5 | 11 | Complete |
+| Peng--Lessmann v2 | 1,172,356 | 31 | 23 | 29 | 3 | Complete |
+| Yang--Jin v2 | 3,195,975 | 65 | 123 | 12 | 35 | Complete |
+| Birbil--Chi v1 | 554,685 | — | 49 | 3 | 3 | Complete |
+| Zheng--Jin v1 | 953,494 | 48 | 126 | — | 13 | Complete |
+
+### Manual visual QA — 2026-08-06
+
+Poppler renders were compared with the extracted text and Docling structure.
+Baesens pages 1 and 24, Peng pages 1, 3, and 23, Yang pages 1, 3, and 9,
+Birbil--Chi pages 1, 8, 11, and 12, and Zheng--Jin pages 1 and 7 were inspected.
+Titles, version identities, assumptions, theorem/formula layouts, result tables,
+and interpretation boundaries were legible. Peng--Lessmann emitted `Symbol` and
+`ArialUnicode` display-font warnings during rendering, but the targeted pages
+showed no visible glyph or formula corruption. Scratch parser and render outputs
+remain noncanonical under
+`.tmp_pdf_intake_benchmark/literature-intake-20260806/`.
+
 ## Bibliography and use boundary
 
 `paper/references.bib` now pins Zhao and Zhou--Zhu to their exact v3 URLs and
@@ -238,7 +309,10 @@ was not duplicated.
 
 The 2026-08-01 exact keys are `aldirawi2026nonmonotone_crc`,
 `vanderlaan2025generalized_venn`, `dabah2025temperature_conformal`, and
-`ovalle2025cmicl`. The master remains `paper/references.bib`. Deterministic
+`ovalle2025cmicl`. The 2026-08-06 refresh pins
+`baesens2026foundation_credit_risk`, `peng2026drift_survival`, and
+`yang2026multidistribution` to v2 and adds `birbil2026local_violation` and
+`zheng2026online_selective`. The master remains `paper/references.bib`. Deterministic
 active and reserve views plus their complete, disjoint partition receipt are
 generated by `scripts/build_ijds_bibliography_views.py`; the views are never
 edited as independent bibliographies.

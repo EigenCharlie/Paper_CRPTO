@@ -219,8 +219,23 @@ def test_clean_clone_workflow_runs_the_publication_capsule_and_suite() -> None:
     job = workflow["jobs"]["clean-clone"]
     assert job["runs-on"] == "windows-latest"
     steps = {step.get("name", step.get("uses")): step for step in job["steps"]}
-    checkout = next(step for step in job["steps"] if step.get("uses") == "actions/checkout@v5")
-    assert checkout["with"] == {"fetch-depth": 0, "fetch-tags": True}
+    checkout = next(
+        step
+        for step in job["steps"]
+        if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    )
+    assert checkout["with"] == {
+        "fetch-depth": 0,
+        "fetch-tags": True,
+        "persist-credentials": False,
+    }
+    assert workflow["permissions"] == {"contents": "read"}
+    assert steps["Install uv"]["with"] == {
+        "version": "0.12.2",
+        "enable-cache": True,
+        "prune-cache": True,
+    }
+    assert steps["Set up Python"]["run"] == "uv python install 3.11.15"
     assert steps["Install just"]["with"]["just-version"] == "1.56.0"
     assert steps["Install Quarto"]["with"]["version"] == "1.9.38"
     assert steps["Pull publication DVC capsule"]["run"] == "just ijds-pull-publication"
@@ -245,11 +260,30 @@ def test_clean_clone_workflow_runs_the_publication_capsule_and_suite() -> None:
 
 
 def test_lint_workflow_installs_only_quality_tools() -> None:
-    workflow = _text(".github/workflows/lint.yml")
+    workflow_text = _text(".github/workflows/lint.yml")
+    workflow = yaml.safe_load(workflow_text)
+    job = workflow["jobs"]["ruff"]
+    steps = {step.get("name", step.get("uses")): step for step in job["steps"]}
+    checkout = next(
+        step
+        for step in job["steps"]
+        if step.get("uses") == "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    )
 
-    assert "uv sync --only-group quality --locked" in workflow
-    assert "uv run --no-sync ruff check ." in workflow
-    assert "uv sync --group dev" not in workflow
+    assert workflow["permissions"] == {"contents": "read"}
+    assert checkout["with"] == {"persist-credentials": False}
+    assert steps["Install uv"]["uses"] == (
+        "astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9"
+    )
+    assert steps["Install uv"]["with"] == {
+        "version": "0.12.2",
+        "enable-cache": True,
+        "prune-cache": True,
+    }
+    assert steps["Set up Python"]["run"] == "uv python install 3.11.15"
+    assert steps["Sync quality dependencies"]["run"] == ("uv sync --only-group quality --locked")
+    assert steps["Ruff check"]["run"] == "uv run --no-sync ruff check ."
+    assert "uv sync --group dev" not in workflow_text
 
 
 def test_dependency_audit_is_cross_platform() -> None:

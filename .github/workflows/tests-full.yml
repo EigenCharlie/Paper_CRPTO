@@ -25,6 +25,9 @@ concurrency:
   group: clean-clone-reproducibility-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   clean-clone:
     runs-on: windows-latest
@@ -39,28 +42,31 @@ jobs:
       AWS_ENDPOINT_URL: https://dagshub.com/EigenCharlie94/Paper_CRPTO.s3
       CRPTO_REQUIRE_DVC_ARTIFACTS: "1"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           fetch-tags: true
+          persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
+          version: "0.12.2"
           enable-cache: true
+          prune-cache: true
 
       - name: Install just
-        uses: extractions/setup-just@v4
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
         with:
           just-version: "1.56.0"
 
       - name: Install Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
+        uses: quarto-dev/quarto-actions/setup@8a96df13519ee81fd526f2dfca5962811136661b # v2
         with:
           version: "1.9.38"
 
       - name: Set up Python
-        run: uv python install 3.11
+        run: uv python install 3.11.15
 
       - name: Sync deps
         run: uv sync --group dev --locked
@@ -123,7 +129,7 @@ jobs:
 
       - name: Upload coverage
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: pytest-output
           path: |
