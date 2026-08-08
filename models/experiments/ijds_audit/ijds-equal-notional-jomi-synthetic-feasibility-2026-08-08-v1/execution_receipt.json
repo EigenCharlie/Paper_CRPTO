@@ -1,0 +1,171 @@
+{
+  "schema_version": "2026-08-08.1",
+  "status": "complete_protocol_tagged_synthetic_execution_receipt",
+  "run_tag": "ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1",
+  "started_at_utc": "2026-08-08T07:02:51.901005+00:00",
+  "completed_at_utc": "2026-08-08T07:03:29.391089+00:00",
+  "runtime_seconds": 37.49523550004233,
+  "phase_seconds": {
+    "validating_controls": 3.620777999982238,
+    "fitting_frozen_model": 0.09219610004220158,
+    "computing_primary_replications": 32.7123269001022,
+    "validating_scientific_state": 0.23626699997112155,
+    "staging": 0.40712829993572086
+  },
+  "protocol_tag": "protocol/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1",
+  "protocol_commit": "ea5883c9969d66e98cdd7ff429fdb146b529f505",
+  "planned_artifact_tag": "artifacts/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1",
+  "summary": {
+    "path": "models/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/jomi_synthetic_summary.json",
+    "bytes": 14744,
+    "sha256": "31b5b150c35274fbaa0422528b3891e2402020fc096f18a46043166785a22c64"
+  },
+  "artifacts": {
+    "replications.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/replications.parquet",
+      "bytes": 29799,
+      "sha256": "9fee4c93ed00da4667da97aa48c09d3d60acddc12839f9a20da9feb9df4af341"
+    },
+    "focal_results.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/focal_results.parquet",
+      "bytes": 472867,
+      "sha256": "e0fc0c8eff21f4f280cc0d4c64d989a84ecd39a7a906e0321b9d9107de12ec68"
+    },
+    "analytic_reference_frontier.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/analytic_reference_frontier.parquet",
+      "bytes": 11413,
+      "sha256": "2e00dffbe801ada5034385d23cb7c93872c54133466fca0b44db2f3279c547cf"
+    },
+    "oracle_reconciliation.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/oracle_reconciliation.parquet",
+      "bytes": 27225,
+      "sha256": "2a1d662f14b28970bc5ddcb5c0bd6121953091c1b7623044bf7acbd3e2a7626d"
+    },
+    "scale_fixtures.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/scale_fixtures.parquet",
+      "bytes": 6819,
+      "sha256": "22ca9da00cf61bcd0b0309cce680b05c83c2e0504965f495464c26a107139a8e"
+    },
+    "crc_ltt_feasibility.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/crc_ltt_feasibility.parquet",
+      "bytes": 11557,
+      "sha256": "80e808a4fbb4080f6103b48461b8553b4cf21e944c372cd6e298a3c2f992a1c1"
+    },
+    "monotonicity_counterexample.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/monotonicity_counterexample.parquet",
+      "bytes": 8812,
+      "sha256": "9c6844d106aef756ea4d6878b0d6b5b463626801988a64cc603dbf6179c7a4f3"
+    }
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_equal_notional_jomi_synthetic_feasibility_2026-08-08_v1.yaml": {
+        "path": "configs/experiments/ijds_equal_notional_jomi_synthetic_feasibility_2026-08-08_v1.yaml",
+        "bytes": 6983,
+        "sha256": "012017acebeb91a44ec52bd146bf5850af9be65b905c02264b4cf3399c120aee"
+      },
+      "docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md": {
+        "path": "docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md",
+        "bytes": 16336,
+        "sha256": "f22de34f45c6fc9a61f63af73d931f17744049783b9c2a9d8256c3bdbbccc2cf"
+      },
+      "src/ijds_audit/jomi_fixed_k.py": {
+        "path": "src/ijds_audit/jomi_fixed_k.py",
+        "bytes": 23434,
+        "sha256": "506549a56108dc7147f612d9e9795aaaba7a908606263e1600c7b555b6b5fdcb"
+      },
+      "scripts/experiments/run_ijds_equal_notional_jomi_synthetic_feasibility_v1.py": {
+        "path": "scripts/experiments/run_ijds_equal_notional_jomi_synthetic_feasibility_v1.py",
+        "bytes": 92455,
+        "sha256": "3e86bde7dbe8e4bbce08577e05df98cfbf3a756f6cce0002bed0c2d12fa242eb"
+      },
+      "tests/test_ijds_jomi_fixed_k.py": {
+        "path": "tests/test_ijds_jomi_fixed_k.py",
+        "bytes": 12264,
+        "sha256": "1fd598bb1056caca5aea547d8fd2c38b6d1bc081e91d9865213ecb12ccbdbc8a"
+      },
+      "tests/test_ijds_equal_notional_jomi_synthetic_feasibility_v1.py": {
+        "path": "tests/test_ijds_equal_notional_jomi_synthetic_feasibility_v1.py",
+        "bytes": 15404,
+        "sha256": "267d69317a48590f5ee7fea243d029e0410ba1436975e47f792f61860abad43b"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/long_run_observer.py": {
+        "path": "src/utils/long_run_observer.py",
+        "bytes": 43151,
+        "sha256": "ad16c21734014f07ecbddb49fd89bfcb4d00af6f9bea1fab4f587429c864b297"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10768,
+        "sha256": "cd7343d0f23360d80548a86f08664bfc14d84385f44ff6e1b8d1ed615253fbf6"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430180,
+        "sha256": "4fc5a027a6b76c7f64514ee33cb9c7654aacd44325b8d2112a52b1a9e5545a11"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "initial_git": {
+    "commit": "ea5883c9969d66e98cdd7ff429fdb146b529f505",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "final_prewrite_git": {
+    "commit": "ea5883c9969d66e98cdd7ff429fdb146b529f505",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "4fc5a027a6b76c7f64514ee33cb9c7654aacd44325b8d2112a52b1a9e5545a11"
+  },
+  "runtime": {
+    "observer": "LongRunObserver",
+    "atomic_units_completed": 2000,
+    "resume_used": false,
+    "resume_authorized": false,
+    "workers": 1,
+    "process_priority_state": "below_normal_applied",
+    "absolute_runtime_path_serialized": false
+  },
+  "promotion_boundary": "Synthetic theorem-to-code validation only; one direct-child artifact commit and annotated artifact tag remain pending. No active-paper or real-data selected-set validity is promoted.",
+  "protected_stages_run": [],
+  "protected_artifacts_read": [],
+  "protected_artifacts_written": []
+}

@@ -1,0 +1,399 @@
+{
+  "schema_version": "2026-08-08.1",
+  "status": "complete_synthetic_theorem_to_code_validation_pending_git_transport",
+  "run_tag": "ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1",
+  "protocol_tag": "protocol/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1",
+  "protocol_commit": "ea5883c9969d66e98cdd7ff429fdb146b529f505",
+  "planned_artifact_tag": "artifacts/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1",
+  "protocol": {
+    "path": "docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md",
+    "bytes": 16336,
+    "sha256": "f22de34f45c6fc9a61f63af73d931f17744049783b9c2a9d8256c3bdbbccc2cf"
+  },
+  "config": {
+    "path": "configs/experiments/ijds_equal_notional_jomi_synthetic_feasibility_2026-08-08_v1.yaml",
+    "bytes": 6983,
+    "sha256": "012017acebeb91a44ec52bd146bf5850af9be65b905c02264b4cf3399c120aee"
+  },
+  "design": {
+    "alpha": 0.1,
+    "repetitions": 2000,
+    "master_seed": 20260808,
+    "train_size": 50000,
+    "design_size": 20000,
+    "calibration_size": 5000,
+    "test_size": 2000,
+    "selected_k": 100,
+    "budget_units": 1.0,
+    "allocation_per_selected_unit": 0.01,
+    "feature_count": 8,
+    "candidate_labels": [
+      0,
+      1
+    ],
+    "selector": "highest_synthetic_expected_margin_top_k",
+    "taxonomy": "exact_selected_size_k",
+    "tie_rule": "independent_continuous_priority_preassigned_before_labels",
+    "nonconformity_score": "absolute_binary_residual_abs_y_minus_q",
+    "learner": "linear_logistic_regression_deliberately_misspecified",
+    "calibrator": "independent_design_split_platt_on_frozen_logit",
+    "learner_solver": "lbfgs",
+    "learner_c": 1.0,
+    "learner_max_iter": 500,
+    "platt_solver": "lbfgs",
+    "platt_c": 1000000.0,
+    "platt_max_iter": 500,
+    "learner_fit_once_then_frozen": true,
+    "deterministic_jomi_only": true,
+    "vanilla_split_conformal_diagnostic_only": true,
+    "rng_streams": [
+      "training_features",
+      "training_labels",
+      "design_features",
+      "design_labels",
+      "replication_calibration_features",
+      "replication_calibration_labels",
+      "replication_test_features",
+      "replication_test_labels",
+      "replication_tie_priorities"
+    ],
+    "primary_dgp": {
+      "feature_law": "eight_independent_standard_gaussians",
+      "true_logit": "-1.4 + 1.2*x0 - 0.8*x1 + 0.65*x2*x3 + 0.9*sin(x4) + 0.7*I(x5>0) - 0.35*x6^2 + 0.2*x7",
+      "synthetic_rate": "0.04 + 0.08*sigmoid(0.6*x1 - 0.3*x2 + 0.2*x7)",
+      "synthetic_lgd": 0.45,
+      "selection_utility": "(1-q)*synthetic_rate - q*synthetic_lgd"
+    }
+  },
+  "primary_results": {
+    "mean_replication_jomi_fcp": 0.09994000000000001,
+    "one_sided_999_hoeffding_lower_bound": 0.058383546593272266,
+    "hoeffding_radius": 0.04155645340672775,
+    "mean_replication_vanilla_fcp": 0.02307,
+    "minimum_reference_size": 166.0,
+    "maximum_reference_size": 360.0,
+    "mean_reference_size": 252.492
+  },
+  "control_census": {
+    "oracle_rows": 6166,
+    "analytic_frontier_rows": 18,
+    "scale_fixture_rows": 30,
+    "crc_ltt_rows": 28,
+    "counterexample_rows": 4
+  },
+  "model": {
+    "fingerprint_sha256": "f1d2991dbb9d1da861bed114e98095a728ad2a3eb03b56d09402cbfbc2030196",
+    "learner_coefficients": [
+      [
+        1.0556775963358909,
+        -0.7441846489207301,
+        0.011721835323111909,
+        0.009712365314909602,
+        0.46990311720164263,
+        0.27015654623391205,
+        -0.004717093433595595,
+        0.16509997350104236
+      ]
+    ],
+    "learner_intercept": [
+      -1.2417280698928992
+    ],
+    "platt_coefficients": [
+      [
+        1.0006922756516021
+      ]
+    ],
+    "platt_intercept": [
+      -0.00859959079648592
+    ],
+    "fit_once_then_frozen": true
+  },
+  "artifacts": {
+    "replications.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/replications.parquet",
+      "bytes": 29799,
+      "sha256": "9fee4c93ed00da4667da97aa48c09d3d60acddc12839f9a20da9feb9df4af341"
+    },
+    "focal_results.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/focal_results.parquet",
+      "bytes": 472867,
+      "sha256": "e0fc0c8eff21f4f280cc0d4c64d989a84ecd39a7a906e0321b9d9107de12ec68"
+    },
+    "analytic_reference_frontier.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/analytic_reference_frontier.parquet",
+      "bytes": 11413,
+      "sha256": "2e00dffbe801ada5034385d23cb7c93872c54133466fca0b44db2f3279c547cf"
+    },
+    "oracle_reconciliation.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/oracle_reconciliation.parquet",
+      "bytes": 27225,
+      "sha256": "2a1d662f14b28970bc5ddcb5c0bd6121953091c1b7623044bf7acbd3e2a7626d"
+    },
+    "scale_fixtures.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/scale_fixtures.parquet",
+      "bytes": 6819,
+      "sha256": "22ca9da00cf61bcd0b0309cce680b05c83c2e0504965f495464c26a107139a8e"
+    },
+    "crc_ltt_feasibility.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/crc_ltt_feasibility.parquet",
+      "bytes": 11557,
+      "sha256": "80e808a4fbb4080f6103b48461b8553b4cf21e944c372cd6e298a3c2f992a1c1"
+    },
+    "monotonicity_counterexample.parquet": {
+      "path": "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/monotonicity_counterexample.parquet",
+      "bytes": 8812,
+      "sha256": "9c6844d106aef756ea4d6878b0d6b5b463626801988a64cc603dbf6179c7a4f3"
+    }
+  },
+  "frame_schemas": {
+    "replications.parquet": {
+      "rows": 2000,
+      "columns": 11,
+      "dtypes": {
+        "replication_id": "int64",
+        "reference_size": "int64",
+        "selected_count": "int64",
+        "jomi_miss_count": "int64",
+        "jomi_count_fcp": "float64",
+        "jomi_dollar_fcp": "float64",
+        "jomi_average_set_size": "float64",
+        "vanilla_miss_count": "int64",
+        "vanilla_count_fcp": "float64",
+        "vanilla_dollar_fcp": "float64",
+        "vanilla_average_set_size": "float64"
+      }
+    },
+    "focal_results.parquet": {
+      "rows": 200000,
+      "columns": 16,
+      "dtypes": {
+        "replication_id": "int64",
+        "selected_rank": "int64",
+        "test_index": "int64",
+        "reference_size": "int64",
+        "jomi_threshold": "float64",
+        "jomi_include_0": "bool",
+        "jomi_include_1": "bool",
+        "jomi_set_size": "int64",
+        "outcome": "int64",
+        "jomi_miss": "int64",
+        "vanilla_threshold": "float64",
+        "vanilla_include_0": "bool",
+        "vanilla_include_1": "bool",
+        "vanilla_set_size": "int64",
+        "vanilla_miss": "int64",
+        "allocation": "float64"
+      }
+    },
+    "analytic_reference_frontier.parquet": {
+      "rows": 18,
+      "columns": 15,
+      "dtypes": {
+        "row_type": "str",
+        "calibration_size": "int64",
+        "test_size": "int64",
+        "selected_k": "int64",
+        "alpha": "float64",
+        "resolution_size": "int64",
+        "probability_target": "float64",
+        "pmf_mass": "float64",
+        "mean_reference_size": "float64",
+        "variance_reference_size": "float64",
+        "resolution_probability": "float64",
+        "failure_probability_below_resolution": "float64",
+        "log_failure_probability_below_resolution": "float64",
+        "resolution_probability_saturated_at_one": "bool",
+        "minimum_search_succeeded": "bool"
+      }
+    },
+    "oracle_reconciliation.parquet": {
+      "rows": 6166,
+      "columns": 14,
+      "dtypes": {
+        "fixture_kind": "str",
+        "fixture_id": "str",
+        "calibration_size": "int64",
+        "test_size": "int64",
+        "selected_k": "int64",
+        "focal_rank": "int64",
+        "focal_index": "int64",
+        "candidate_label": "int64",
+        "reference_size": "int64",
+        "shortcut_equals_oracle": "bool",
+        "calibration_permutation_invariant": "bool",
+        "test_permutation_equivariant": "bool",
+        "visible_id_reversal_invariant": "bool",
+        "repeat_invariant": "bool"
+      }
+    },
+    "scale_fixtures.parquet": {
+      "rows": 30,
+      "columns": 10,
+      "dtypes": {
+        "fixture_index": "int64",
+        "calibration_size": "int64",
+        "test_size": "int64",
+        "selected_k": "int64",
+        "selected_size": "int64",
+        "reference_size": "int64",
+        "resolution_size": "int64",
+        "finite_threshold_possible": "bool",
+        "outcome_rows_read": "int64",
+        "repeat_invariant": "bool"
+      }
+    },
+    "crc_ltt_feasibility.parquet": {
+      "rows": 28,
+      "columns": 16,
+      "dtypes": {
+        "study": "str",
+        "method": "str",
+        "risk_bound_mode": "str",
+        "catalog_size": "int64",
+        "target_risk": "float64",
+        "loss_lower_bound": "float64",
+        "loss_upper_bound": "float64",
+        "empirical_loss": "float64",
+        "margin_or_excess_target": "float64",
+        "multiplicity_route": "str",
+        "nominal_tail_probability": "str",
+        "per_policy_tail_probability": "str",
+        "required_contexts": "int64",
+        "bound_at_required_contexts": "float64",
+        "pointwise_zero_loss_terminal_required": "bool",
+        "power_guarantee": "bool"
+      }
+    },
+    "monotonicity_counterexample.parquet": {
+      "rows": 4,
+      "columns": 14,
+      "dtypes": {
+        "lambda_index": "int64",
+        "loan_id": "str",
+        "prediction_set": "str",
+        "set_size": "int64",
+        "objective_value": "float64",
+        "worst_label_coefficient": "float64",
+        "upper_cap": "float64",
+        "feasible": "bool",
+        "selected": "bool",
+        "allocation": "float64",
+        "realized_label": "int64",
+        "unit_miss": "int64",
+        "portfolio_loss_contribution": "float64",
+        "portfolio_loss": "float64"
+      }
+    }
+  },
+  "interpretation": {
+    "synthetic_only": true,
+    "active_empirical_evidence": false,
+    "lendingclub_validity_claimed": false,
+    "temporal_transport_claimed": false,
+    "fractional_lp_validity_claimed": false,
+    "joint_label_coverage_claimed": false,
+    "prospective_confirmation_claimed": false,
+    "permitted_claims": [
+      "theorem_to_code_reconciliation_under_enumerated_top_k_cases",
+      "exact_equal_notional_count_and_dollar_fcp_identity",
+      "beta_binomial_reference_size_finite_threshold_corollary_under_iid_continuous_scores",
+      "monte_carlo_behavior_under_the_single_locked_synthetic_iid_dgp"
+    ]
+  },
+  "implementation_provenance": {
+    "source_files": {
+      "configs/experiments/ijds_equal_notional_jomi_synthetic_feasibility_2026-08-08_v1.yaml": {
+        "path": "configs/experiments/ijds_equal_notional_jomi_synthetic_feasibility_2026-08-08_v1.yaml",
+        "bytes": 6983,
+        "sha256": "012017acebeb91a44ec52bd146bf5850af9be65b905c02264b4cf3399c120aee"
+      },
+      "docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md": {
+        "path": "docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md",
+        "bytes": 16336,
+        "sha256": "f22de34f45c6fc9a61f63af73d931f17744049783b9c2a9d8256c3bdbbccc2cf"
+      },
+      "src/ijds_audit/jomi_fixed_k.py": {
+        "path": "src/ijds_audit/jomi_fixed_k.py",
+        "bytes": 23434,
+        "sha256": "506549a56108dc7147f612d9e9795aaaba7a908606263e1600c7b555b6b5fdcb"
+      },
+      "scripts/experiments/run_ijds_equal_notional_jomi_synthetic_feasibility_v1.py": {
+        "path": "scripts/experiments/run_ijds_equal_notional_jomi_synthetic_feasibility_v1.py",
+        "bytes": 92455,
+        "sha256": "3e86bde7dbe8e4bbce08577e05df98cfbf3a756f6cce0002bed0c2d12fa242eb"
+      },
+      "tests/test_ijds_jomi_fixed_k.py": {
+        "path": "tests/test_ijds_jomi_fixed_k.py",
+        "bytes": 12264,
+        "sha256": "1fd598bb1056caca5aea547d8fd2c38b6d1bc081e91d9865213ecb12ccbdbc8a"
+      },
+      "tests/test_ijds_equal_notional_jomi_synthetic_feasibility_v1.py": {
+        "path": "tests/test_ijds_equal_notional_jomi_synthetic_feasibility_v1.py",
+        "bytes": 15404,
+        "sha256": "267d69317a48590f5ee7fea243d029e0410ba1436975e47f792f61860abad43b"
+      },
+      "src/utils/isolated_experiment.py": {
+        "path": "src/utils/isolated_experiment.py",
+        "bytes": 9329,
+        "sha256": "490100a7ebe13eb0693761a3b148eeb595d661c9e2baf885de823f6bd04acd65"
+      },
+      "src/utils/long_run_observer.py": {
+        "path": "src/utils/long_run_observer.py",
+        "bytes": 43151,
+        "sha256": "ad16c21734014f07ecbddb49fd89bfcb4d00af6f9bea1fab4f587429c864b297"
+      },
+      "src/utils/pipeline_runtime.py": {
+        "path": "src/utils/pipeline_runtime.py",
+        "bytes": 4932,
+        "sha256": "8b3f447cb56dba68c806fa08e79f1d1c619f9e12c70c51558f50309a177d5285"
+      },
+      "pyproject.toml": {
+        "path": "pyproject.toml",
+        "bytes": 10768,
+        "sha256": "cd7343d0f23360d80548a86f08664bfc14d84385f44ff6e1b8d1ed615253fbf6"
+      },
+      "uv.lock": {
+        "path": "uv.lock",
+        "bytes": 430180,
+        "sha256": "4fc5a027a6b76c7f64514ee33cb9c7654aacd44325b8d2112a52b1a9e5545a11"
+      }
+    },
+    "hash_algorithm": "sha256"
+  },
+  "environment": {
+    "python": "3.11.14 (main, Feb  3 2026, 22:51:29) [MSC v.1944 64 bit (AMD64)]",
+    "executable": "C:\\Users\\carlos\\Documents\\Paper_CRPTO\\.venv\\Scripts\\python.exe",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "betacal": "1.1.0",
+      "catboost": "1.2.10",
+      "highspy": "1.15.1",
+      "numpy": "2.4.6",
+      "optbinning": "0.21.0",
+      "pandas": "3.0.3",
+      "pyarrow": "25.0.0",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.17.1",
+      "venn-abers": "1.5.3"
+    },
+    "solver_environment": {
+      "HIGHS_NATIVE_FALLBACK_SCIPY": null,
+      "HIGHS_PARALLEL": null,
+      "HIGHS_PRESOLVE": null,
+      "HIGHS_RESET_GLOBAL_SCHEDULER": null,
+      "HIGHS_SIMPLEX_STRATEGY": null,
+      "HIGHS_SOLVER": null
+    },
+    "uv_lock_sha256": "4fc5a027a6b76c7f64514ee33cb9c7654aacd44325b8d2112a52b1a9e5545a11"
+  },
+  "initial_git": {
+    "commit": "ea5883c9969d66e98cdd7ff429fdb146b529f505",
+    "dirty": false,
+    "dirty_entries": 0,
+    "dirty_paths": []
+  },
+  "artifact_commit_status": "pending_single_direct_child_commit_and_annotated_tag",
+  "protected_stages_run": [],
+  "protected_artifacts_read": [],
+  "protected_artifacts_written": []
+}
