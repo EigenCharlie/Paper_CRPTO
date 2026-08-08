@@ -77,6 +77,9 @@ jobs:
       - name: Pull publication DVC capsule
         run: just ijds-pull-publication
 
+      - name: Active DVC-materialized IJDS contract
+        run: just ijds-active-dvc-tests
+
       - name: Protected extraction hash regression
         run: uv run --locked pytest tests/test_manifest_regression.py -v
 

@@ -209,4 +209,4 @@ claims require exchangeable decision contexts or a specifically modeled
 non-exchangeable sequence. CRPTO has 376,890 candidate loans but only 11 common
 development menus, and the action is a coupled monthly allocation. The full
 applicability contract is recorded in
-`docs/research/ijds_decision_method_applicability_2026-07-12.md`.
+[`ijds_decision_loss_aligned_conformal_design_2026-07-30.md`](ijds_decision_loss_aligned_conformal_design_2026-07-30.md).

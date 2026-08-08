@@ -13,6 +13,8 @@ from src.ijds_audit.sensitivity_evidence import (
     load_endpoint_sensitivity_evidence,
 )
 
+pytestmark = pytest.mark.requires_dvc_materialized
+
 ROOT = Path(__file__).resolve().parents[2]
 SUMMARY = (
     ROOT

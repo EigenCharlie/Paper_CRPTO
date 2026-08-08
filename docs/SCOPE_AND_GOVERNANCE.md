@@ -114,5 +114,10 @@ just submission-check
 just ijds-dvc-verify-remote
 ```
 
+The ordinary `test` and `ijds-active-check` recipes are Git-native and exclude
+the explicit `requires_dvc_materialized` tier. Final freeze and closeout pull
+the active DVC capsule before running that tier; it is not an ordinary
+pre-freeze dependency.
+
 The project remains `prefreeze_active`; a clean closeout is not a submission
 freeze.

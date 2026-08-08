@@ -218,6 +218,7 @@ def test_clean_clone_workflow_runs_the_publication_capsule_and_suite() -> None:
     workflow = yaml.safe_load(_text(".github/workflows/tests-full.yml"))
     job = workflow["jobs"]["clean-clone"]
     assert job["runs-on"] == "windows-latest"
+    step_names = [step.get("name", step.get("uses")) for step in job["steps"]]
     steps = {step.get("name", step.get("uses")): step for step in job["steps"]}
     checkout = next(
         step
@@ -239,6 +240,10 @@ def test_clean_clone_workflow_runs_the_publication_capsule_and_suite() -> None:
     assert steps["Install just"]["with"]["just-version"] == "1.56.0"
     assert steps["Install Quarto"]["with"]["version"] == "1.9.38"
     assert steps["Pull publication DVC capsule"]["run"] == "just ijds-pull-publication"
+    assert steps["Active DVC-materialized IJDS contract"]["run"] == ("just ijds-active-dvc-tests")
+    assert step_names.index("Pull publication DVC capsule") < step_names.index(
+        "Active DVC-materialized IJDS contract"
+    )
     derived = steps["Rebuild derived policy-support evidence"]["run"]
     assert "just ijds-tie-evidence ijds-policy-support-evidence" in derived
     for path in (

@@ -140,13 +140,15 @@ Known transitive advisories and their containment rules are recorded in
 ## Main Commands
 
 ```powershell
-just test                    # complete retained test suite
-just coverage                # complete suite plus branch coverage XML
+just test                    # complete local/Git-native suite; no DVC bytes required
+just coverage                # local/Git-native suite plus branch coverage XML
 just lint                    # Ruff check and format check
 just type-check              # mypy
 just type-check-fast         # blocking ty check on the active surface
 just publication-integrity   # source, claim, and artifact contracts
 just drift-gate              # read-only PD/conformal/evidence regression
+just ijds-active-science-tests # auto-discovered IJDS tests that need no DVC bytes
+just ijds-active-dvc-tests   # materialized IJDS tier; run only after just ijds-pull
 just ijds-active-check       # scientific and manuscript synchronization
 just submission-build       # evidence, HTML, TeX, PDFs, previews
 just submission-check       # pre-freeze read-only gates; no page cap

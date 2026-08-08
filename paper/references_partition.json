@@ -1,8 +1,8 @@
 {
   "citation_sources": [
     {
-      "citation_key_count": 88,
-      "citation_key_sha256": "3b41d5fb812759dc327badbbab67d39051ba8857c0b630dfcdb269695656ef85",
+      "citation_key_count": 96,
+      "citation_key_sha256": "8a4e564547a2ad87a086a3f5d7e84b3482d34452b83ab1c122d6f2e72bbcca5d",
       "citation_keys": [
         "aior2025lendingclub",
         "aldirawi2026nonmonotone_crc",
@@ -26,6 +26,7 @@
         "chen2026polyhedral_conformal_ro",
         "chenreddy2024",
         "cortesgomez2025utility",
+        "cpc2026",
         "dabah2025temperature_conformal",
         "das2023creditgraph",
         "ding2023",
@@ -33,6 +34,7 @@
         "donti2017",
         "duchi2025sampleconditional",
         "elmachtoub2022",
+        "fannjiang2022feedback",
         "fernandezloria2022causaldecision",
         "gazin2024transductive",
         "gazin2025batch",
@@ -47,10 +49,12 @@
         "im2025spor",
         "jin2025focal",
         "johnstone2021",
+        "kato2025",
         "kiyani2025",
         "kleinberg2018human",
         "kull2017",
         "lakkaraju2017selective",
+        "lekeufack2023cdt",
         "lessmann2015",
         "li2023online_loans",
         "liu2021riskbounds",
@@ -64,11 +68,13 @@
         "patel2024",
         "peng2026drift_survival",
         "platt2000",
+        "prinster2024feedback",
         "prokhorenkova2018catboost",
         "sadinle2019lac",
         "schutte2024robust",
         "serrano2016profitscoring",
         "shekhar2026decision_calibrated_pacing",
+        "stanton2023feedback",
         "stratigakos2026decision_calibrated_sets",
         "sun2024ptc",
         "tibshirani2019covshift",
@@ -77,6 +83,7 @@
         "vovk2005",
         "vovk2012conditional",
         "vovk2014",
+        "wang2026optimal_decision_prediction_sets",
         "wei2024adjustability",
         "wiberg2025ai_or",
         "xu2024profit_risk_credit",
@@ -90,14 +97,15 @@
         "zhao2024cpp",
         "zheng2026counterfactual_decision_sets",
         "zheng2026online_selective",
+        "zhou2025credo",
         "zhou2026creme",
         "ziliaskopoulos2026dva"
       ],
       "path": "paper/CRPTO_ijds.qmd"
     },
     {
-      "citation_key_count": 66,
-      "citation_key_sha256": "7195f57e833dbf1a496b187dd63c600f9d01da447f009b090510acad4123a1a0",
+      "citation_key_count": 72,
+      "citation_key_sha256": "d383f4caf00f9a071fe1f664a6708368555c7e43707cd5a8f9337dd493d7c094",
       "citation_keys": [
         "aldirawi2026nonmonotone_crc",
         "angelopoulos2024risk",
@@ -113,12 +121,14 @@
         "chen2026polyhedral_conformal_ro",
         "chi2019p2p",
         "cortesgomez2025utility",
+        "cpc2026",
         "dabah2025temperature_conformal",
         "das2023creditgraph",
         "ding2023",
         "donti2017",
         "duchi2025sampleconditional",
         "elmachtoub2022",
+        "fannjiang2022feedback",
         "gazin2025batch",
         "gazin2025informative",
         "gibbs2024online",
@@ -132,6 +142,7 @@
         "johnstone2021",
         "kato2025",
         "kull2017",
+        "lekeufack2023cdt",
         "lessmann2015",
         "li2023online_loans",
         "liu2021riskbounds",
@@ -144,10 +155,12 @@
         "patel2024",
         "peng2026drift_survival",
         "platt2000",
+        "prinster2024feedback",
         "prokhorenkova2018catboost",
         "schutte2024robust",
         "serrano2016profitscoring",
         "shekhar2026decision_calibrated_pacing",
+        "stanton2023feedback",
         "sun2024ptc",
         "tibshirani2019covshift",
         "vanderlaan2025generalized_venn",
@@ -163,6 +176,7 @@
         "zhao2024cpp",
         "zheng2026counterfactual_decision_sets",
         "zheng2026online_selective",
+        "zhou2025credo",
         "zhou2026creme",
         "ziliaskopoulos2026dva"
       ],
@@ -171,7 +185,7 @@
   ],
   "generated_by": "scripts/build_ijds_bibliography_views.py",
   "master_bibliography": {
-    "entry_count": 191,
+    "entry_count": 195,
     "keys": [
       "angelopoulos2023",
       "angelopoulos2024risk",
@@ -264,6 +278,10 @@
       "zadrozny2002",
       "zhao2025robust",
       "zhou2025credo",
+      "fannjiang2022feedback",
+      "stanton2023feedback",
+      "prinster2024feedback",
+      "cpc2026",
       "zhou2026creme",
       "cresswell2024",
       "zhou2024",
@@ -366,7 +384,7 @@
       "zheng2026online_selective"
     ],
     "path": "paper/references.bib",
-    "sha256": "f1f65f0bb11708c3dfd040823ce3adb3faf91ed0bd82f0ff787700a50ba0af60"
+    "sha256": "b2d5a0a03e73cf0b746b5752f30c4f85614ad3c4aee86f59452937c9de4d8c25"
   },
   "schema_version": "1.0",
   "validation": {
@@ -378,7 +396,7 @@
   },
   "views": {
     "active": {
-      "entry_count": 96,
+      "entry_count": 102,
       "keys": [
         "angelopoulos2023",
         "angelopoulos2024risk",
@@ -403,6 +421,7 @@
         "johnstone2021",
         "kato2025",
         "kiyani2025",
+        "lekeufack2023cdt",
         "kull2017",
         "lessmann2015",
         "mandi2024",
@@ -416,6 +435,11 @@
         "yeh2025training",
         "yeh2026",
         "zadrozny2002",
+        "zhou2025credo",
+        "fannjiang2022feedback",
+        "stanton2023feedback",
+        "prinster2024feedback",
+        "cpc2026",
         "zhou2026creme",
         "tibshirani2019covshift",
         "schutte2024robust",
@@ -478,10 +502,10 @@
         "zheng2026online_selective"
       ],
       "path": "paper/references_active.bib",
-      "sha256": "1846486c074274f2b13fe72781e4948b5b53f0210ed46b1a360232c39b57e735"
+      "sha256": "477d01d9f748a718527513a55f3d907b00d953af64359428a04c43ceeac0bfd2"
     },
     "reserve": {
-      "entry_count": 95,
+      "entry_count": 93,
       "keys": [
         "athey2019",
         "ayari2026",
@@ -517,7 +541,6 @@
         "hardt2016",
         "ifrsboard2024",
         "iutzeler2025dro",
-        "lekeufack2023cdt",
         "kumar2019",
         "kupiec1995",
         "liu2026portfolio",
@@ -537,7 +560,6 @@
         "winkler1972",
         "xia2017",
         "zhao2025robust",
-        "zhou2025credo",
         "cresswell2024",
         "zhou2024",
         "rockafellar2000cvar",
@@ -580,7 +602,7 @@
         "lyocsa2022profit"
       ],
       "path": "paper/references_reserve.bib",
-      "sha256": "d4816bdc6a762301885129af61d0ec87e59b506f942b9fb4f2e23c275ee619ff"
+      "sha256": "7cbacbefc84e6d96ca2fb68b9021ff3be4a458feb023dfeb6ef82c2f79472b30"
     }
   }
 }

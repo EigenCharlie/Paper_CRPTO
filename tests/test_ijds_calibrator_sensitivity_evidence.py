@@ -22,6 +22,8 @@ from src.ijds_audit.calibrator_sensitivity_evidence import (
 )
 from src.ijds_audit.publication_sources import load_verified_source_registry
 
+pytestmark = pytest.mark.requires_dvc_materialized
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "configs/ijds_active_evidence_sources.yaml"
 P = "808827926eff5030b3cb28d2b89a87a0e6210b2e"

@@ -20,6 +20,7 @@ def _evidence() -> dict[str, Any]:
     return payload
 
 
+@pytest.mark.requires_dvc_materialized
 def test_policy_support_evidence_build_is_byte_idempotent() -> None:
     build()
     first = sha256_file(EVIDENCE_PATH), sha256_file(MEMO_PATH)

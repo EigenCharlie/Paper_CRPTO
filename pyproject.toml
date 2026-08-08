@@ -167,6 +167,7 @@ addopts = "-q --tb=short --strict-markers --strict-config"
 markers = [
     "slow: marks tests as slow",
     "integration: marks integration tests",
+    "requires_dvc_materialized: requires active DVC capsule bytes to be present locally",
 ]
 filterwarnings = [
     "ignore::DeprecationWarning:catboost.*",

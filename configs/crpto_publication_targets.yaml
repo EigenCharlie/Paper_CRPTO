@@ -82,6 +82,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_binary_phase_census_v1.py
     support_tools:
       - scripts/build_ijds_bibliography_views.py
+      - scripts/build_ijds_literature_corpus_manifest.py
       - scripts/extend_ijds_evidence_from_sealed_parent_2026_08_01.py
       - scripts/build_ijds_policy_support_tie_evidence.py
       - scripts/build_ijds_policy_support_optimal_face_evidence.py

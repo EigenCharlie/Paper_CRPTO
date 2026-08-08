@@ -303,7 +303,7 @@ SURFACES = (
             "0.842485",
             "0.897726",
             "12,076",
-            "no endpoint has a universal status-indexed outcome ordering",
+            "no path-end contrast has a universal status-indexed outcome ordering",
             "31/40",
             "0.879120",
         ),

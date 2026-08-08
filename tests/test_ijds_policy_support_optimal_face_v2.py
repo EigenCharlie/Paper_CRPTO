@@ -212,6 +212,7 @@ def test_solver_identity_persists_effective_highs_contract() -> None:
     assert identity["zero_all_clocks_available"] is False
 
 
+@pytest.mark.requires_dvc_materialized
 def test_v1_census_descriptor_is_hash_locked_and_complete() -> None:
     config = load_config(DEFAULT_CONFIG_PATH)
     census = _load_v1_census(config, repo_root=ROOT)
@@ -256,6 +257,7 @@ def test_v1_census_schema_preflight_covers_every_late_consumed_field() -> None:
         _validate_v1_census_frame(nonboolean, contract=config["census"])
 
 
+@pytest.mark.requires_dvc_materialized
 def test_parent_v4_config_is_hash_locked_by_the_verified_parent_freeze() -> None:
     config = load_config(DEFAULT_CONFIG_PATH)
     freeze_path = ROOT / str(config["parent"]["protocol_freeze"]["path"])

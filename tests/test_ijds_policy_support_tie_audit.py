@@ -78,6 +78,7 @@ def test_cap_classification_rejects_reversed_domain() -> None:
         )
 
 
+@pytest.mark.requires_dvc_materialized
 def test_parent_cap_census_is_complete_and_tolerance_deduplicated() -> None:
     records = pd.read_parquet(PARENT_PORTFOLIO / "outcome_free_solve_records.parquet")
     support = pd.read_parquet(PARENT_PORTFOLIO / "development_comparator_support.parquet")

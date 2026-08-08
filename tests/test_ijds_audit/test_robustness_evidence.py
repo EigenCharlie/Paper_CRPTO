@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from src.ijds_audit.publication_sources import load_verified_source_registry
 from src.ijds_audit.robustness_evidence import (
     allocation_granularity_publication_table,
@@ -11,6 +13,8 @@ from src.ijds_audit.robustness_evidence import (
     load_allocation_granularity_evidence,
     load_fit_label_completion_evidence,
 )
+
+pytestmark = pytest.mark.requires_dvc_materialized
 
 REPO = Path(__file__).resolve().parents[2]
 REGISTRY = REPO / "configs/ijds_active_evidence_sources.yaml"

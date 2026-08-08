@@ -1,4 +1,4 @@
-# IJDS literature corpus ledger (through 2026-08-06)
+# IJDS literature corpus ledger (through 2026-08-07)
 
 Status: documentary literature-provenance record; not an empirical evidence
 source and not an entry in the active-evidence registry.
@@ -7,8 +7,9 @@ source and not an entry in the active-evidence registry.
 
 This is the cumulative receipt for the five last-mile literature objects
 materialized on 2026-07-30, two distinct intakes audited on 2026-07-31, the
-four-object theory-neighbor intake audited on 2026-08-01, and the exact-version
-and nearest-neighbor refresh audited on 2026-08-06. The 2026-07-31
+four-object theory-neighbor intake audited on 2026-08-01, the exact-version
+and nearest-neighbor refresh audited on 2026-08-06, and the decision-feedback
+and exact-version refresh audited on 2026-08-07. The 2026-07-31
 frontier intake consists of five newly materialized PDFs plus the already-local
 non-monotonic conformal-risk-control preprint. The active-citation gap intake
 materialized 19 PDFs from primary or official open-access surfaces and left
@@ -18,7 +19,9 @@ CRC, generalized Venn calibration, temperature scaling before conformal
 prediction, and conformal mixed-integer constraint learning. The 2026-08-06
 refresh archives three superseded preprint objects beside their current
 versions and adds two close neighbors on local predict-then-optimize violation
-certification and online selective conformal prediction. It changes literature
+certification and online selective conformal prediction. The same audit also
+canonicalizes the already-local exact Kato v2 portfolio paper and records its
+previously missing object-level receipt. It changes literature
 boundaries, not active empirical evidence. Together these
 receipts close the byte-level gaps recorded in
 `conformal_decision_sota_lastmile_2026-07-26.md` and
@@ -27,35 +30,100 @@ remain the authority for theorem interpretation; this ledger is the authority
 for local PDF version, byte identity, parser route, visual QA, citation key, and
 paper-facing disposition.
 
-The canonical local corpus is the repository-relative
-`Papers_tesis/supplement`. PDF objects are ignored by Git. No pre-existing PDF
-was overwritten, `EXTRACTION_MANIFEST.json` was not modified, and no protected
-DVC stage was invoked.
+The canonical local corpus root is repository-relative `Papers_tesis`; new
+decision/conformal literature is placed in `Papers_tesis/supplement`, while
+the older `paper`, `tesis`, and root objects remain part of the complete
+inventory. PDF objects are ignored by Git. No PDF bytes were overwritten,
+`EXTRACTION_MANIFEST.json` was not modified, and no protected DVC stage was
+invoked.
 
-After the 2026-07-31 intake, `Papers_tesis` contains 132 PDF objects and 4,924
+**Historical snapshot, 2026-07-31.** After that intake, `Papers_tesis`
+contained 132 PDF objects and 4,924
 pages, versus 122 objects and 4,673 pages at the 2026-07-21 checksum. A
 full-file inventory found 132 distinct full SHA-1 values and no duplicate PDF
 object; the receipts below additionally use SHA-256. That dated SHA-1 result is
 retained here as a historical receipt; no `.tmp_pdf_intake_benchmark` object is
 required to reconstruct or validate the current inventory.
 
-After the 2026-07-31 active-citation gap intake, `Papers_tesis` contains 151 PDF
+**Historical snapshot, 2026-07-31 active-citation gap intake.** The corpus then
+contained 151 PDF
 objects, 5,408 pages, and 310,330,945 bytes. A full strict-parser and SHA-256
 pass found 151 distinct hashes, no duplicate object, no encrypted object, and
 no parse error. The 19 new objects contribute 484 pages and 23,444,014 bytes.
 
-After the 2026-08-01 theory-neighbor intake, `Papers_tesis` contains 155 PDF
+**Historical snapshot, 2026-08-01.** After the theory-neighbor intake, the
+corpus contained 155 PDF
 objects, 5,533 pages, and 319,875,860 bytes. A fresh full-corpus strict-PyPDF
 and SHA-256 pass found 155 distinct hashes, no duplicate object, no encrypted
 object, and no parse error. The four new objects contribute 125 pages and
 9,544,915 bytes.
 
-After the 2026-08-06 refresh, `Papers_tesis` contains 160 PDF objects, 5,715
+**Historical snapshot, 2026-08-06.** After that refresh, `Papers_tesis`
+contained 160 PDF objects, 5,715
 pages, and 328,833,054 bytes. A fresh strict-PyPDF and SHA-256 pass found 160
 distinct hashes, no duplicate object, no encrypted object, and no parse error.
 The three current preprint versions and two new neighbors add 182 pages and
 8,957,194 bytes; the three superseded versions remain archived under exact
-`v1` filenames rather than being overwritten.
+`v1` filenames rather than being overwritten. Reclassifying Kato v2 from the
+legacy thesis folder into the canonical supplement corpus changes none of those
+counts, bytes, or hashes.
+
+**Current snapshot, 2026-08-07.** `Papers_tesis` contains **164 PDF objects,
+5,862 pages, and 339,488,290 bytes**. All 164 objects have distinct SHA-256
+values, pass strict PyPDF page-tree traversal, and are unencrypted. The four
+new decision-feedback objects add 147 pages and 10,655,236 bytes. Renaming the
+already-local CREDO, Chen--Zhou--Zhu, Wang--Dobriban, and Utility-Directed CP
+objects to expose their exact version or venue changes no bytes or counts.
+
+The 195-entry master bibliography currently partitions into **102 active**
+body-or-supplement citations and **93 reserve** entries. Of the 195 keys, 143
+have one current local PDF and 52 are metadata-only. The only four active
+metadata-only exceptions remain `holm1979`, `manski2003partial`, `platt2000`,
+and `vovk2005`; the other 48 metadata-only entries are reserve records whose
+PDF should be acquired only if the work becomes an active citation.
+
+The generated authority for this complete projection is
+`configs/ijds_literature_corpus_manifest.json`, built by
+`scripts/build_ijds_literature_corpus_manifest.py` and checked by
+`tests/test_ijds_literature_corpus_manifest.py`. It records, for every local
+object, its BibTeX key or explicit unkeyed disposition, path, version, status,
+bytes, pages, SHA-256, strict-parser result, and source URL. Its object statuses
+are 143 `current`, four `superseded`, one `companion`, six `watchlist`, four
+`quarantined`, and six `legacy`; bibliography entries without a current PDF
+are separately marked `metadata-only`. Generation fails on an unrecognized
+status, stale explicit mapping, missing cited key, duplicate hash, encrypted or
+malformed PDF, or multiple current objects for one key.
+
+The six formerly implicit legacy objects now have explicit non-claim-bearing
+dispositions in that manifest:
+
+| Local object | Status and reason |
+|---|---|
+| Deprez et al., *Network Analytics for Anti-money Laundering* | `legacy`; domain context not used by the IJDS manuscript. |
+| Fuk--Nagaev, *Probability Inequalities for Sums of Independent Random Variables* | `legacy`; historical probability reference not used by the manuscript. |
+| Hand--Henley, *Statistical Classification Methods in Consumer Credit Scoring* | `legacy`; historical credit-scoring review not used by the manuscript. |
+| Izbicki--Shimizu--Stern, *CD-split and HPD-split* | `legacy`; local conformal reference not used by the manuscript. |
+| Lei et al., *Distribution-Free Predictive Inference for Regression* | `legacy`; local conformal reference not used by the manuscript. |
+| Shafer--Vovk, *A Tutorial on Conformal Prediction* | `legacy`; local tutorial not used by the manuscript. |
+
+## Decision-feedback and exact-version refresh — 2026-08-07
+
+The refresh added four active neighboring works and canonicalized four
+already-local objects against primary or official records. This changes the
+state-of-the-art boundary and future-design discussion; it does not validate
+the historical CRPTO policy, repair temporal transport, or supply funded-set
+coverage.
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Primary/official record and disposition |
+|---|---|---:|---:|---|---|---|
+| Zhou, Orfanoudaki, and Zhu, *Conformalized Decision Risk Assessment*, arXiv:2505.13243v3 / ICLR 2026 | `Papers_tesis/supplement/Zhou Orfanoudaki Zhu 2026 - Conformalized Decision Risk Assessment - arXiv 2505.13243v3.pdf` | 1,487,369 | 41 | `251468168063809ac3b60fc3d3ac129cbf4e6827dcfd452c202dd1ea6a77ddb8` | `zhou2025credo` | [OpenReview ICLR 2026](https://openreview.net/forum?id=xRjOrcj08o) and [arXiv v3](https://arxiv.org/abs/2505.13243v3). Current exact local object; inverse decision-risk assessment is a direct neighbor but does not identify CRPTO's binary-set embedding. |
+| Prinster et al., *Conformal Policy Control*, arXiv:2603.02196v3 / ICML 2026 | `Papers_tesis/supplement/Prinster et al 2026 - Conformal Policy Control - arXiv 2603.02196v3.pdf` | 2,426,953 | 48 | `1a83540c5a770be71b81a4402e42042ac21fcd6100aa0cd21d40171c1a02c28d` | `cpc2026` | [arXiv v3](https://arxiv.org/abs/2603.02196v3), which records ICML 2026. Current exact local object; the safe-reference-policy, density-ratio, bounded-loss, and stability contract is prospective, not available in CRPTO. |
+| Fannjiang et al., *Conformal Prediction under Feedback Covariate Shift for Biomolecular Design*, PNAS 2022; exact local author version arXiv:2202.03613v5 | `Papers_tesis/supplement/Fannjiang et al 2022 - Conformal Prediction Under Feedback Covariate Shift - arXiv 2202.03613v5.pdf` | 3,814,248 | 38 | `1aa9096f151423e1c101c217179c2595f435ebc749123ef52a17d3e99117c4f8` | `fannjiang2022feedback` | [PNAS DOI record](https://doi.org/10.1073/pnas.2204569119) and [arXiv v5](https://arxiv.org/abs/2202.03613v5). The versioned author PDF is explicit rather than being mislabeled as publisher bytes. Feedback-shift weighting requires an evaluable policy-induced law absent from the archive. |
+| Stanton, Maddox, and Wilson, *Bayesian Optimization with Conformal Prediction Sets*, AISTATS 2023 | `Papers_tesis/supplement/Stanton Maddox Wilson 2023 - Bayesian Optimization with Conformal Prediction Sets - AISTATS.pdf` | 1,976,514 | 28 | `32d573387f0bc1c1c39f36b30df0fdbba049ea5c718240fa9335743414637fba` | `stanton2023feedback` | [PMLR 206](https://proceedings.mlr.press/v206/stanton23a.html). Current proceedings object; sequential policy-induced sampling is a design neighbor, not a retrospective repair. |
+| Prinster, Stanton, Liu, and Saria, *Conformal Validity Guarantees Exist for Any Data Distribution (and How to Find Them)*, ICML 2024 | `Papers_tesis/supplement/Prinster Stanton Liu Saria 2024 - Conformal Validity Guarantees for Any Data Distribution - ICML.pdf` | 2,437,521 | 33 | `48e98b614dae0646de30dc28ab4fca9831770ca114e4d37f5cae0dc5cb8e11f8` | `prinster2024feedback` | [PMLR 235](https://proceedings.mlr.press/v235/prinster24a.html). Current proceedings object; general weighted-exchangeability structure still requires known or evaluable weights. |
+| Chen, Zhou, and Zhu, *Learning Polyhedral Conformal Sets for Robust Optimization*, arXiv:2605.08506v2 | `Papers_tesis/supplement/Chen Zhou Zhu 2026 - Learning Polyhedral Conformal Sets for Robust Optimization - arXiv 2605.08506v2.pdf` | 922,696 | 32 | `4e7f1a3e4e007a77a816adb563e06f9b15d1ddfcff2ee837d75d6b0624d0f278` | `chen2026polyhedral_conformal_ro` | [arXiv v2](https://arxiv.org/abs/2605.08506v2). Existing bytes matched the downloaded exact version; filename and bibliography now pin v2. |
+| Wang and Dobriban, *Optimal Decision-Making Based on Prediction Sets*, arXiv:2602.00989v3 | `Papers_tesis/supplement/Wang Dobriban 2026 - Optimal Decision-Making Based on Prediction Sets - arXiv 2602.00989v3.pdf` | 730,446 | 24 | `f3d1f24d4889aca52f25d0d2d86d228be1ae205a78cf7060e3f1d771c5c8bb66` | `wang2026optimal_decision_prediction_sets` | [arXiv v3](https://arxiv.org/abs/2602.00989v3). Existing bytes matched the downloaded exact version; filename and bibliography now pin v3. |
+| Cortes-Gomez et al., *Utility-Directed Conformal Prediction*, ICLR 2025 | `Papers_tesis/supplement/Cortes-Gomez et al 2025 - Utility-Directed Conformal Prediction - ICLR.pdf` | 1,064,166 | 21 | `4f0984da23129e30aca12b18da24ffe9ff409a9e6a9484c37d30e955595d556c` | `cortesgomez2025utility` | [OpenReview ICLR 2025](https://openreview.net/forum?id=iOMnn1hSBO). Existing object was renamed and its bibliography record now uses the official conference surface. |
 
 ## Exact-object ledger
 
@@ -193,7 +261,7 @@ compared with the extracted text:
 
 The four exact local objects below were matched to their arXiv v2, PMLR ICML
 2025, or NeurIPS 2025 primary records. Their inclusion records literature
-identity and interpretation boundaries; it does not promote a new CRPTO method
+identity and interpretation boundaries; it does not introduce a new CRPTO method
 or empirical claim.
 
 | Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | Primary surface / local-use boundary | BibTeX key | Citation surface | Intake grade and disposition |
@@ -296,6 +364,17 @@ showed no visible glyph or formula corruption. Scratch parser and render outputs
 remain noncanonical under
 `.tmp_pdf_intake_benchmark/literature-intake-20260806/`.
 
+### Existing direct-neighbor receipt canonicalized on 2026-08-06
+
+This object already belonged to the 160-PDF corpus and was therefore not a
+sixth newly added paper. The audit moved it without duplication from the legacy
+`Papers_tesis/tesis` folder into the canonical supplement corpus, preserved its
+bytes and hash, pinned the citation to v2, and added the missing receipt.
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Citation surface | Disposition |
+|---|---|---:|---:|---|---|---|---|
+| Kato, *Conformal Predictive Portfolio Selection*, arXiv:2410.16333v2, revised 2025-02-13 | `Papers_tesis/supplement/Kato 2025 - Conformal Predictive Portfolio Selection - arXiv 2410.16333v2.pdf` | 623,160 | 14 | `e5be418e49dda7e473307f66951e986d12634adf8f8b90c1c4099dcd7d02720d` | `kato2025` | Body and supplement | **A-boundary.** For each fixed candidate portfolio, CPPS constructs a return interval and ranks a finite menu by interval bounds. Its dependent-data statement is approximate fixed-portfolio coverage under oracle-score approximation, approximate ergodicity, estimation-error, and density conditions; it gives no simultaneous or post-selection guarantee for the chosen portfolio and no funded-loan validity for CRPTO. |
+
 ## Bibliography and use boundary
 
 `paper/references.bib` now pins Zhao and Zhou--Zhu to their exact v3 URLs and
@@ -312,10 +391,22 @@ The 2026-08-01 exact keys are `aldirawi2026nonmonotone_crc`,
 `ovalle2025cmicl`. The 2026-08-06 refresh pins
 `baesens2026foundation_credit_risk`, `peng2026drift_survival`, and
 `yang2026multidistribution` to v2 and adds `birbil2026local_violation` and
-`zheng2026online_selective`. The master remains `paper/references.bib`. Deterministic
+`zheng2026online_selective`. It also pins the previously generic `kato2025`
+record to arXiv v2 and moves its unchanged local bytes into the canonical
+supplement corpus. The master remains `paper/references.bib`. Deterministic
 active and reserve views plus their complete, disjoint partition receipt are
 generated by `scripts/build_ijds_bibliography_views.py`; the views are never
 edited as independent bibliographies.
+
+The 2026-08-07 refresh keeps the established compatibility key
+`zhou2025credo` while updating its record to ICLR 2026/arXiv v3, and adds
+`cpc2026`, `fannjiang2022feedback`, `stanton2023feedback`, and
+`prinster2024feedback`. It also pins `chen2026polyhedral_conformal_ro` to arXiv
+v2, `wang2026optimal_decision_prediction_sets` to arXiv v3, and
+`cortesgomez2025utility` to the official ICLR 2025 OpenReview record. The
+current master/view counts are 195 total, 102 active, and 93 reserve. The
+separate corpus manifest is regenerated after citation changes so its
+active/reserve projection remains aligned with those deterministic views.
 
 The same metadata pass corrected three older records: Johnstone--Cox now names
 the Tenth Symposium on Conformal and Probabilistic Prediction and Applications

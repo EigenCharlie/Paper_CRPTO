@@ -282,7 +282,7 @@ def build_figure() -> plt.Figure:
         facecolor=TEAL_LIGHT,
         edgecolor=TEAL,
         title="5  Monthly OOT menus",
-        body="primary 2016-04–2017-06\nextension 2017-07–09 (diagnostic)",
+        body="primary 2016-04–2017-06\nextension 2017-07–2017-09 (diagnostic)",
     )
     _rounded_box(
         ax,
@@ -292,7 +292,7 @@ def build_figure() -> plt.Figure:
         facecolor=TEAL_LIGHT,
         edgecolor=TEAL,
         title="6  Physical freeze",
-        body="scores • sets • caps • allocations\nhashed before endpoint access",
+        body="scores • sets • caps • allocations\nhashed before outcome access",
     )
     _arrow(
         ax,
@@ -354,9 +354,9 @@ def build_figure() -> plt.Figure:
         height=join_height,
         facecolor=RED_LIGHT,
         edgecolor=RED,
-        title="7  One keyed endpoint join",
+        title="7  One keyed evaluation-outcome join",
         body=(
-            "resolved endpoints evaluate frozen decisions; all 12,076 unresolved\n"
+            "resolved outcomes evaluate frozen decisions; all 12,076 unresolved\n"
             "primary candidates remain in the sharp outcome bounds"
         ),
         title_color=RED,

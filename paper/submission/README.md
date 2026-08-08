@@ -131,25 +131,28 @@ overlap, and table or figure legibility.
 
 ## QA Record
 
-The current pre-freeze bundle was rebuilt and audited on 2026-08-06:
+The current pre-freeze bundle was rebuilt and audited on 2026-08-08:
 
-- official INFORMS PDF: 64 pages, with references beginning on page 57 (56
+- official INFORMS PDF: 71 pages, with references beginning on page 64 (63
   pre-reference pages; the final-freeze page cap was deliberately not run);
-- browser body preview: 46 pages;
-- browser supplement preview: 79 pages;
-- abstract: exactly 290 words in one paragraph, with normalized source-to-PDF
+- browser body preview: 50 pages;
+- browser supplement preview: 77 pages;
+- abstract: exactly 292 words in one paragraph, with normalized source-to-PDF
   equality;
-- all 189 rendered pages: US Letter, no blank pages, no identity or artifact
-  fingerprints, and visually inspected from final Poppler renders for clipping,
-  overlap, formula rendering, and table/figure legibility;
-- one over-wide construction-map display found during visual QA was split into
-  semantic lines and the clean 64-page official PDF was recompiled and
-  re-inspected;
+- all 198 rendered pages: US Letter, no blank pages, no identity or artifact
+  fingerprints; an adversarial high-resolution inspection covered the dense
+  Related Work table, both theory suites, all principal figures, S12A--S12C,
+  and both S13B panels for clipping, overlap, formula rendering, and
+  table/figure legibility;
+- the supplement's long prose tables were split and wrapped, the envelope
+  image retains accessible alternative text without printing a duplicate
+  caption, and S13B Panel B begins on a fresh page;
 - the sealed-parent extension reproduced the 45-table/10-figure manifest with
   unavailable historical DVC bytes pinned to their unchanged descriptors;
   `publication-integrity` and a second bytewise extension check passed;
 - official compiler scan: converged, with no undefined citation, reference, or
-  rerun request; and
+  rerun request; the remaining 17.54-point `maketitle` overfull warning belongs
+  to the publisher header and has no visible clipping; and
 - machine-readable supplement: rebuilt from the active evidence surface and
   passed its exact-content check.
 

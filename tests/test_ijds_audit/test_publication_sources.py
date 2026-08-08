@@ -272,6 +272,7 @@ def _two_stage_artifact_payload(root: Path) -> tuple[dict[str, Any], dict[str, s
     return payload, commits
 
 
+@pytest.mark.requires_dvc_materialized
 def test_active_evidence_registry_verifies_every_source() -> None:
     payload, sources = load_verified_source_registry(
         ROOT / "configs/ijds_active_evidence_sources.yaml",

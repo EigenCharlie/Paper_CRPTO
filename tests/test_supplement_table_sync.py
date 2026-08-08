@@ -12,6 +12,7 @@ REPO = Path(__file__).resolve().parents[1]
 TABLES = REPO / "reports/crpto/tables"
 BODY = REPO / "paper/CRPTO_ijds.qmd"
 SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
+IJDS_CSS = REPO / "paper/ijds.css"
 
 
 def _rows(name: str) -> list[dict[str, str]]:
@@ -21,6 +22,35 @@ def _rows(name: str) -> list[dict[str, str]]:
 
 def _normalize(text: str) -> str:
     return re.sub(r"\s+", " ", text.lower())
+
+
+def test_wide_prose_tables_keep_the_pdf_overlap_mitigation() -> None:
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    css = IJDS_CSS.read_text(encoding="utf-8")
+    wrapped_blocks = re.findall(
+        r"^::: \{\.wide-prose-table\}\s*(.*?)^:::\s*$",
+        supplement,
+        flags=re.MULTILINE | re.DOTALL,
+    )
+
+    required_captions = (
+        "**Table S12A.**",
+        "**Table S12B.**",
+        "**Table S12C.**",
+        "**Table S13B, Panel A.**",
+        "**Table S13B, Panel B.**",
+    )
+    for caption in required_captions:
+        assert supplement.count(caption) == 1
+        assert any(caption in block for block in wrapped_blocks)
+
+    assert "**Table S12, Panel" not in supplement
+    assert ".supplement-ijds .wide-prose-table table" in css
+    assert "table-layout: fixed !important;" in css
+    assert "width: 100% !important;" in css
+    assert ".supplement-ijds .wide-prose-table td" in css
+    assert "overflow-wrap: anywhere;" in css
+    assert "white-space: normal !important;" in css
 
 
 def test_all_primary_coverage_bounds_are_visible_in_supplement() -> None:
@@ -276,6 +306,7 @@ def test_named_and_exact_direction_counts_are_visible_in_supplement() -> None:
 
 def test_two_ruler_tracks_and_repeated_quarter_contrast_are_visible() -> None:
     rows = _rows("crpto_ijds_v4_table5_two_ruler_tracks.csv")
+    body = BODY.read_text(encoding="utf-8")
     supplement = SUPPLEMENT.read_text(encoding="utf-8")
 
     assert len(rows) == 6
@@ -291,6 +322,28 @@ def test_two_ruler_tracks_and_repeated_quarter_contrast_are_visible() -> None:
         assert f"{float(row['default_bound_pp_upper_max']):.4f}" in supplement
         assert f"{float(row['payoff_identification_width_usd_min']):,.0f}" in supplement
         assert f"{float(row['payoff_identification_width_usd_max']):,.0f}" in supplement
+
+    table_start = body.index("| Ruler / coordinate |")
+    table_end = body.index("\n\n: Six protocol-locked path-end tracks", table_start)
+    body_table_lines = body[table_start:table_end].splitlines()
+    assert len(body_table_lines[2:]) == 6
+    ruler_labels = {
+        "objective_matched": "Objective matched",
+        "normalized_score": "Normalized score",
+    }
+    for row in rows:
+        coordinate = f"{float(row['coordinate']):.2f}".removeprefix("0")
+        expected = (
+            f"| {ruler_labels[row['ruler']]} {coordinate} "
+            f"| [{float(row['payoff_bound_usd_lower_min']):,.2f}, "
+            f"{float(row['payoff_bound_usd_upper_max']):,.2f}] "
+            f"| [{float(row['default_bound_pp_lower_min']):.4f}, "
+            f"{float(row['default_bound_pp_upper_max']):.4f}] "
+            f"| [{float(row['miscoverage_bound_pp_lower_min']):.4f}, "
+            f"{float(row['miscoverage_bound_pp_upper_max']):.4f}] |"
+        )
+        assert expected in body_table_lines
+
     normalized = re.sub(r"\s+", " ", supplement.lower())
     assert "44 loan-month positions" in normalized
     assert "155,937.27" in normalized
@@ -339,8 +392,8 @@ def test_endpoint_availability_grid_is_visible_and_kept_separate() -> None:
         assert expected in supplement
 
     normalized = re.sub(r"\s+", " ", supplement.lower())
-    assert "fit-label-by-endpoint combinations had been evaluated" in normalized
-    assert "active six-month result remains the declared endpoint" in normalized
+    assert "fit-label-by-outcome-availability combinations had been evaluated" in normalized
+    assert "active six-month result remains the declared outcome-availability" in normalized
 
 
 def test_complete_portfolio_structure_grid_is_visible_in_supplement() -> None:

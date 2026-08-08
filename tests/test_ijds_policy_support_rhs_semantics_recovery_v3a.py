@@ -167,6 +167,7 @@ def test_coverage_table_distinguishes_initial_gap_from_final_connected_cover() -
     assert bool(coverage.loc[0, "registered_support_covered"]) is True
 
 
+@pytest.mark.requires_dvc_materialized
 def test_real_v2_source_hashes_and_gap_census_reconcile() -> None:
     config = load_config(DEFAULT_CONFIG_PATH)
     summary, paths = verify_v2_source(config)

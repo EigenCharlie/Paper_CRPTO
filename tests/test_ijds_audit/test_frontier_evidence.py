@@ -11,6 +11,8 @@ import src.ijds_audit.frontier_evidence as frontier_module
 from src.ijds_audit.frontier_evidence import load_frontier_evidence
 from src.ijds_audit.publication_sources import load_verified_source_registry
 
+pytestmark = pytest.mark.requires_dvc_materialized
+
 REPO = Path(__file__).resolve().parents[2]
 REGISTRY = REPO / "configs/ijds_active_evidence_sources.yaml"
 

@@ -44,10 +44,10 @@ complexity-report:
     uv run --locked python scripts/run_complexity_report.py
 
 test:
-    uv run --locked pytest -q
+    uv run --locked pytest -q -m "not requires_dvc_materialized"
 
 coverage:
-    uv run --locked pytest -q --cov=src --cov-branch --cov-report=term-missing --cov-report=xml
+    uv run --locked pytest -q -m "not requires_dvc_materialized" --cov=src --cov-branch --cov-report=term-missing --cov-report=xml
 
 # Known exceptions are documented in docs/security/DEPENDENCY_RISK_REGISTER.md.
 # Any advisory not named here fails the audit.
@@ -112,10 +112,17 @@ ijds-allocation-granularity PHASE CONFIG="configs/experiments/ijds_allocation_gr
 ijds-tie-audit CONFIG="configs/experiments/ijds_policy_support_tie_audit_2026-07-12.yaml":
     uv run --locked python scripts/experiments/run_ijds_policy_support_tie_audit.py --config "{{ CONFIG }}"
 
+# Convention-based IJDS test tiers. The ordinary tier needs only Git-native
+# sources; the DVC tier is reserved for freeze/closeout after capsule pull.
+ijds-active-science-tests:
+    uv run --locked python -m src.ijds_audit.active_test_runner --tier local
+
+ijds-active-dvc-tests:
+    uv run --locked python -m src.ijds_audit.active_test_runner --tier dvc
+
 # Read-only gate over all registered lineages and current paper surfaces.
-ijds-active-check: publication-integrity
-    uv run --locked pytest -q tests/test_ijds_anonymity.py tests/test_ijds_active_claim_sync.py tests/test_ijds_v4_claim_sync.py tests/test_ijds_rolling_origin_protocol.py tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_book_active_companion.py tests/test_ijds_machine_readable_supplement.py tests/test_ijds_candidate_receipt_index.py
-    uv run --locked pytest -q tests/test_ijds_audit tests/test_ijds_audit_core.py tests/test_ijds_normalized_objective_frontier.py tests/test_ijds_normalized_objective_frontier_v2.py tests/test_ijds_policy_support_tie_audit.py tests/test_ijds_policy_support_tie_evidence.py tests/test_ijds_policy_support_optimal_face_v2.py tests/test_ijds_policy_support_rhs_semantics_recovery_v3a.py tests/test_ijds_policy_support_optimal_face_evidence.py
+ijds-active-check: publication-integrity ijds-active-science-tests
+    uv run --locked pytest -q tests/test_publication_targets.py tests/test_submission_preview_layout.py tests/test_supplement_table_sync.py tests/test_book_active_companion.py
 
 # --- DVC capsule ----------------------------------------------------------
 
@@ -199,9 +206,9 @@ validate-champion-strict:
 
 submission-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit paper-machine-supplement-check lint type-check type-check-fast validate-champion-strict
 
-submission-freeze-check: ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit-freeze paper-machine-supplement-check lint type-check type-check-fast validate-champion-strict
+submission-freeze-check: ijds-pull ijds-active-dvc-tests ijds-active-check drift-gate paper-tex-check paper-official-scan paper-pdf-audit-freeze paper-machine-supplement-check lint type-check type-check-fast validate-champion-strict
 
-submission-closeout: test hooks-check dependency-audit submission-build submission-check ijds-dvc-verify-remote
+submission-closeout: ijds-pull ijds-active-dvc-tests test hooks-check dependency-audit submission-build submission-check ijds-dvc-verify-remote
 
 all: test hooks-check dependency-audit submission-check
     @echo "Read-only checks complete: no evidence-generating or protected stage was executed."

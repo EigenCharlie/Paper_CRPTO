@@ -27,6 +27,7 @@ def _evidence() -> dict[str, Any]:
     return payload
 
 
+@pytest.mark.requires_dvc_materialized
 def test_optimal_face_evidence_build_is_byte_idempotent() -> None:
     build()
     first = sha256_file(EVIDENCE_PATH)
@@ -60,6 +61,7 @@ def test_optimal_face_evidence_verifies_complete_lineage() -> None:
     assert len(lineage["v3a"]["verified_artifacts"]) == 7
 
 
+@pytest.mark.requires_dvc_materialized
 def test_descriptor_verifier_fails_closed_on_hash_drift() -> None:
     descriptor = dict(_evidence()["lineage"]["v2"]["summary"])
     descriptor["sha256"] = "0" * 64

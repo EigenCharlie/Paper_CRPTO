@@ -11,6 +11,10 @@ SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
 OFFICIAL = REPO / "paper/submission/CRPTO_ijds_submission.tex"
 
 
+def _section(text: str, start: str, end: str) -> str:
+    return text[text.index(start) : text.index(end)]
+
+
 def test_body_and_generated_tex_share_architecture_citations_and_displays() -> None:
     body = BODY.read_text(encoding="utf-8")
     official = OFFICIAL.read_text(encoding="utf-8")
@@ -53,6 +57,7 @@ def test_body_and_generated_tex_share_architecture_citations_and_displays() -> N
         "tbl-embedding-direction",
         "tbl-calibrator-sensitivity",
         "tbl-phase-census",
+        "tbl-related-calibrated-objects",
         "tbl-set-native-direction",
     }
     assert official.count(r"\begin{longtable}") == len(body_table_ids)
@@ -76,7 +81,8 @@ def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
         assert "constant-score" not in surface
         assert re.search(r"varying scores|scores vary", surface)
         assert "not a confidence interval" in surface
-        assert "not a promoted operating policy" in surface
+        assert "not a selected operating policy" in surface
+        assert "not a promoted operating policy" not in surface
         assert "not independent replications" in surface
     assert "not a prospective trial, preregistration, or causal estimate" in body_normalized
     assert "not a causal identified set" in supplement
@@ -91,6 +97,65 @@ def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
     for surface in (body_normalized, supplement_normalized):
         assert "simulation claim" not in surface
         assert "no portfolio claim uses this simulation" not in surface
+
+
+def test_related_work_is_ordered_by_calibrated_object() -> None:
+    body = BODY.read_text(encoding="utf-8")
+    related = _section(body, "# Related Work", "# Data and Locked Evaluation Design")
+
+    assert re.findall(r"^## (.+)$", related, flags=re.MULTILINE) == [
+        "Probability calibration",
+        "Conformal membership and temporal transport",
+        "Selection, false-coverage rate, and selective labels",
+        "Decision loss and risk calibration",
+        "Robust constraints and predictive ambiguity sets",
+        "Credit outcomes, censoring, and portfolio value",
+    ]
+    assert "Conformal Predictive Portfolio Selection" in related
+    assert "@kato2025" in related
+    assert "@lakkaraju2017selective" in related
+    assert "@kleinberg2018human" in related
+
+
+def test_theory_has_two_suites_and_sequential_propositions() -> None:
+    body = BODY.read_text(encoding="utf-8")
+    method = _section(body, "# Method", "# Audit Theory and Estimands")
+    theory = _section(body, "# Audit Theory and Estimands", "# Results")
+
+    assert re.findall(r"^## (.+)$", theory, flags=re.MULTILINE) == [
+        "Prediction geometry and partial identification",
+        "Decision geometry",
+    ]
+    proposition_numbers = [
+        int(value) for value in re.findall(r"^\*\*Proposition (\d+)", theory, flags=re.MULTILINE)
+    ]
+    assert proposition_numbers == list(range(1, 9))
+
+    joint_block = "## Joint-block combined-rank reference diagnostic"
+    assert method.count(joint_block) == 1
+    assert joint_block not in theory
+    assert body.index(joint_block) < body.index("# Audit Theory and Estimands")
+
+
+def test_secondary_theory_claims_remain_as_results_bridges_only() -> None:
+    body = BODY.read_text(encoding="utf-8")
+    results = _section(body, "# Results", "# Discussion")
+
+    markers = (
+        "<!-- claim:theory.sharp_directional_residual_frontier -->",
+        "<!-- claim:theory.selection_weight_covariance_identity -->",
+        "<!-- claim:theory.monotone_catalog_completion -->",
+    )
+    for marker in markers:
+        assert body.count(marker) == 1
+        assert marker in results
+
+    for formal_statement in (
+        "**Proposition 8 (sharp directional residual-distribution bounds).**",
+        "**Identity 1 (count versus exposure weighting).**",
+        "**Lemma 2 (monotone finite-catalog completion).**",
+    ):
+        assert formal_statement not in body
 
 
 def test_review_surfaces_do_not_expose_exact_v4_identifiers() -> None:

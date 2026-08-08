@@ -68,6 +68,67 @@ validity, and Zheng--Jin's online selective construction sharpen the related-
 work boundary but do not supply CRPTO's missing temporal sampling contract,
 unique stable LP basis, or exposure-weighted funded-set estimand.
 
+### 2026-08-07 P2 closure and adversarial audit addendum
+
+The clarity/theory/state-of-the-art pass changed exposition and governance, not
+the empirical estimand or any frozen scientific number:
+
+1. the active theory is now two sequential suites---prediction geometry and
+   partial identification, then decision geometry---with Propositions 1--8 and
+   one named lemma; the joint-block diagnostic is in Methods, while the CDF,
+   covariance, and finite-catalog identities are proved in the supplement;
+2. Related Work is organized by the object actually calibrated and now
+   separates static covariate shift, feedback covariate shift, selected-unit
+   coverage/FCR, decision risk, policy control, prescribed-decision assessment,
+   constraint calibration, and learned predictive ambiguity sets;
+3. Kato is scoped as a fixed-portfolio-return neighbor; CREDO as an
+   expectation-wise decide-then-assess neighbor with its stated approximation
+   or additive correction; and Conformal Policy Control as a prospective
+   selected-policy-risk route requiring a safe policy, density-ratio,
+   regularity, stability, and exact-weight contract;
+4. endpoint terminology now distinguishes administrative outcomes, path-end
+   contrasts, and lower/upper bound endpoints; normative “guardrail” and
+   unqualified “robust counterpart” language is absent from the manuscript;
+5. long claim-boundary and neighboring-work tables are split and wrapped for
+   print; independent visual inspection found no remaining overlap or clipping;
+   and
+6. the active IJDS test gate is convention-discovered and divided explicitly
+   into Git-native and DVC-materialized tiers, so new active-lineage tests can no
+   longer disappear from a hand-maintained recipe.
+
+The adversarial reconciliation found no numerical, sign, unit, theorem, or
+claim-ledger contradiction. It did find and correct one wording overreach:
+unresolved outcomes are accounted for through sharp completion bounds; they are
+not themselves identified. It also found no scientific reason for another run
+of the inspected grid. The next study still begins with fresh contexts and an
+explicit sampling authority. Equal-notional fixed-$K$ JOMI remains first if the
+target is funded-unit validity; LTT/CRC remains the context-loss route; CPC is a
+separate policy-risk route only if a defensible stochastic safe policy and its
+full online law exist. CREDO is a useful comparison or future inverse audit,
+not a replacement for any of those validity contracts.
+
+### 2026-08-08 pre-freeze delivery receipt
+
+The regenerated reviewer surfaces contain 71 official-template pages (63
+before references), a 50-page browser body preview, and a 77-page supplement;
+the one-paragraph abstract has 292 words. The page cap remains intentionally
+disabled. Machine inspection found no blank, non-Letter, identity-bearing, or
+stale page. Independent high-resolution inspection found no P0/P1 visual
+defect in the dense Related Work table, the two theory suites, the phase,
+common-panel, or envelope figures, Tables S12A--S12C, or either S13B panel.
+
+The convention-discovered active IJDS tier finished with 930 passes, three
+expected skips, and 59 genuinely DVC-materialized tests excluded from the
+pre-freeze local tier. The repository-wide non-DVC suite selected 1,244 tests
+and finished with zero failures and five expected skips. Publication integrity,
+sealed-parent regeneration, bibliography and corpus-manifest checks, compiler
+scan, PDF audit, lint, Ruff formatting, mypy, ty, dependency audit, smoke,
+drift, ordinary manifest validation, and hook configuration all passed. The 53
+active DVC pointers are available in the configured remote. The separate final
+freeze tier remains deliberately unexecuted because its protected bytes and
+submission-only gates were deferred; no protected scientific stage ran in this
+P2 pass.
+
 ## 2. Literal crosswalk of the five screenshots
 
 The table preserves the wording and ordering of the screenshots. Repeated items
@@ -86,7 +147,7 @@ scientific obligations.
 | Screenshot 1/2 row 8: continuous cap frontier / optimal face | C6 and N6 | **C/N** | Completed exactly for the new dual-coefficient set-native model; a brute-force continuous replay of the old LP remains NO-GO. |
 | Screenshot 3 item 1: redraw chronology and information frontiers | C1 | **C** | Materialized in the body and supplement with the physical outcome firewall. |
 | Screenshot 3 item 2: add score → residual → candidate set → embedding → funded decision map | C1 | **C** | Materialized as the organizing handoff and claim taxonomy. |
-| Screenshot 3 item 3: restructure Related Work into four fronts | C1/C8 | **C** | Materialized and updated against the exact literature corpus. |
+| Screenshot 3 item 3: restructure Related Work into four fronts | C1/C8 | **C** | Materialized as five calibrated-object fronts plus domain context and updated against the exact literature corpus. |
 | Screenshot 3 item 4: put intuition and a three-loan example before invariance theory | C1 | **C** | Materialized in the main theory exposition. |
 | Screenshot 3 item 5: compact claim-boundary card while retaining exhaustive S12 | C1 | **C** | Materialized; the body gives the compact handoff card and the supplement retains the exhaustive boundary. |
 | Screenshot 3 item 6: say Platt is protocol-fixed and Venn--Abers was not refuted or a transport repair | C2/C9 | **C** | Materialized explicitly; neither map is declared a winner. |
@@ -114,7 +175,7 @@ scientific obligations.
 |---|:---:|---|
 | Audit every historical change and recover valid material removed for page pressure | **C** | C1, C7, C9 and the pre-freeze editorial rule below |
 | Audit all theory, claims, narrative, and state of the art adversarially | **C** | C7 and the active claim/claim-ledger synchronization |
-| Download and organize the new literature | **C** | C8; 155 unique PDFs and deterministic bibliography views |
+| Download and organize the new literature | **C** | C8; 164 unique PDFs, a complete generated corpus manifest, and deterministic bibliography views |
 | Remove dependence on temporary parser output | **C** scientifically | C8/C11; canonical PDFs and tracked receipts are independent of scratch |
 | Improve the CRPTO skill and repository governance | **C** | [The skill](../../.codex/skills/crpto/SKILL.md) encodes authority ordering, pre-freeze mode, the long-run contract, and the promoted August lineages; the Gate-0 authority check passed |
 | Create new run tags, touch fresh artifacts, and update the paper-facing manifest | **C** for the approved phase and dual lineages | C3/C6 and Gate 0; both direct-child tag pairs and the generated evidence transaction exist, and no protected historical artifact was rewritten |
@@ -135,10 +196,11 @@ scientific obligations.
 
 **Materialized object.** The active body
 [`paper/CRPTO_ijds.qmd`](../../paper/CRPTO_ijds.qmd) now organizes the study
-around the physical chronology, the score-to-decision handoff, four related-
-work fronts, a three-loan invariance example, and a compact claim-boundary card.
+around the physical chronology, the score-to-decision handoff, five
+calibrated-object related-work fronts plus domain context, a three-loan
+invariance example, and a compact claim-boundary card.
 The [online supplement](../../paper/supplement_ijds.qmd) retains the exhaustive
-theory, tables, proofs, and Table S12 boundary.
+theory, tables, proofs, and Tables S12A--S12C claim boundaries.
 
 **Scientific value.** This is not cosmetic. It separates model fitting,
 probability calibration, residual calibration, binary-set membership,
@@ -243,7 +305,7 @@ exposed how coarse the binary risk score is.
 showed that only the risk coefficient was set-native and that the result
 carried no joint product-set coverage or probabilistic robustness guarantee.
 
-**Stop rule.** Do not call GO2 the unique robust counterpart or select it from
+**Stop rule.** Do not call GO2 the unique worst-label counterpart or select it from
 its retrospective signs. Its remaining algebraic gap was C6, not another GO2
 grid.
 
@@ -316,14 +378,24 @@ their receipt are
 [`references_active.bib`](../../paper/references_active.bib),
 [`references_reserve.bib`](../../paper/references_reserve.bib), and
 [`references_partition.json`](../../paper/references_partition.json).
+The complete machine-checkable key--PDF--version--hash--status crosswalk is
+[`ijds_literature_corpus_manifest.json`](../../configs/ijds_literature_corpus_manifest.json),
+generated by
+[`build_ijds_literature_corpus_manifest.py`](../../scripts/build_ijds_literature_corpus_manifest.py).
 
-**Result and value.** The local corpus contains 155 distinct PDFs, 5,533 pages,
-319,875,860 bytes, no duplicate SHA-256, no encrypted object, and no parse
+**Result and value.** The local corpus contains 164 distinct PDFs, 5,862 pages,
+339,488,290 bytes, no duplicate SHA-256, no encrypted object, and no parse
 error. The August intake adds exact versions of Aldirawi--Li--Guo on finite-grid
 non-monotone CRC, Van der Laan--Alaa on generalized Venn, Dabah--Tirer on
 probability scaling versus conformal efficiency, and Ovalle et al. on
-set-native mixed-integer constraint learning. The bibliography partition has
-188 master entries: 92 active and 96 reserve, complete and disjoint.
+set-native mixed-integer constraint learning. The August 6 refresh additionally
+pins three revised preprints, adds the local-violation and online-selective
+neighbors, and canonicalizes Kato's exact v2 portfolio paper without changing
+its bytes. The August 7 pass adds CREDO v3/ICLR 2026, CPC v3/ICML 2026, and the
+three exact feedback-covariate-shift sources; it also resolves every legacy,
+watchlist, quarantine, companion, and superseded corpus object explicitly.
+The bibliography partition has 195 master entries: 102 active and 93
+reserve, complete and disjoint.
 
 **Decision changed.** Aldirawi's excess term makes a current 11- or 15-context
 0.10 retrofit vacuous even at grid size two; the first (n) with
@@ -368,6 +440,17 @@ GiB RAM use was not close to exhausting 64 GiB. The desktop could still feel
 slow because of one hot worker thread, a very large WebView/diff and subagent
 state, Git/file-watcher activity, background applications, and very low free
 space on `C:` in a later diagnostic.
+
+**Post-stop workstation snapshot (2026-08-07).** No scientific worker remained
+CPU- or disk-bound: whole-machine CPU was 4%, the physical-disk queue was zero,
+and 19.52 GiB of 63.92 GiB physical memory remained available. The persistent
+responsiveness risks were elsewhere: `C:` had only 17.34 GiB free of 464.81 GiB
+(3.73%), Memory Compression held 6.94 GiB, and the largest WebView process held
+3.27 GiB with 5,883 handles. `D:` had 245.8 GiB free. Future long-run scratch,
+runtime state, and caches should therefore live on `D:` with one or two workers
+and below-normal priority; deleting the roughly 100 MiB of paper-intake QA
+scratch cannot substitute for freeing tens of GiB on `C:` or closing stale
+browser/WebView state.
 
 **Value and decision change.** The computation was valuable; the repeated chat
 monitoring was not. The runner exposed no scientific unit counter and wrote
@@ -544,6 +627,11 @@ with fixed population, point-in-time features, label-availability chronology,
 complete role assignment, and an independently justified probability-law
 bridge.
 
+Feedback-covariate-shift theory is eligible only if the future algorithm's
+query/action law and its conformal weights are specified and evaluable. A
+historical allocation or optimized dollar exposure cannot be relabeled as that
+law after outcomes.
+
 **Value.** High and load-bearing. D1 and D3 cannot become inferential studies
 without it.
 
@@ -563,7 +651,7 @@ loans while making count FCP and invested-dollar FCP identical?
 [`ijds_selected_exposure_validity_design_2026-07-30.md`](ijds_selected_exposure_validity_design_2026-07-30.md)
 freezes one learner, exact (K), equal exposure (B/K), a deterministic
 permutation-equivariant selector, disjoint policy-construction and final JOMI
-calibration roles, complete endpoints, and complete swap-specific reference
+calibration roles, complete administrative outcomes, and complete swap-specific reference
 sets.
 
 **Why first.** It targets the paper's central unclosed handoff directly and
@@ -578,7 +666,7 @@ calibration/target units, plus an outcome-free reference-set feasibility pilot.
 
 **Stop rule.** Stop before outcomes if any required reference set is empty or
 cannot attain the declared rank, permutations or ID reversal change selection,
-the support is not exactly (K), endpoints are unresolved, or final
+the support is not exactly (K), administrative outcomes are unresolved, or final
 calibration labels affect policy construction.
 
 ### D2. Concentration-bounded fractional exposure
@@ -632,6 +720,14 @@ contract and all theorem routes are in
 4. LTT for a frozen finite reoptimized catalog with valid bounded-loss p-values
    and predeclared FWER control.
 
+Conformal Policy Control is not a fifth interchangeable retrofit. It changes
+the object to the expected risk of a stochastic policy interpolated with a
+predeclared safe policy. Pursue it only under a separate protocol with bounded
+loss, mutual absolute continuity, a uniform density floor, Lipschitz
+regularity, replace-one stability, exact policy-ratio conformal weights, and
+immediate complete feedback; otherwise the $\alpha+K\epsilon/\delta$ bound is
+unavailable.
+
 For finite-grid CRC,
 
 \[
@@ -648,7 +744,7 @@ selected-loan coverage. It is an alternative scientific target to D1, not a
 stronger synonym.
 
 **Stop rule.** Stop if contexts are not defensibly i.i.d./exchangeable under the
-chosen theorem, any endpoint is incomplete, a policy-context loss cell is
+chosen theorem, any administrative outcome is incomplete, a policy-context loss cell is
 missing, monotonicity or stability fails, the finite-grid correction is
 vacuous, no nontrivial policy is certified, or CRC is switched to LTT after
 outcomes without a new protocol.

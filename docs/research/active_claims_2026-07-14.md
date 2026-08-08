@@ -5,7 +5,7 @@ statements must be traceable to
 `reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json`, whose inputs are
 hash-locked by `configs/ijds_active_evidence_sources.yaml`. Earlier
 fixed-taxonomy V1--V3, pool93, compact-v7, selected-policy, and all
-pre-endpoint-correction evaluations are provenance only.
+pre-evaluation-outcome-correction evaluations are provenance only.
 
 ## Editorial Decision
 
@@ -13,7 +13,7 @@ pre-endpoint-correction evaluations are provenance only.
   credit-risk prediction, binary conformal intervals, and constrained monthly
   allocation.
 - **NO-GO:** model or policy superiority, selected-set conformal validity,
-  causal effects, a universal guardrail direction, prospective confirmation,
+  causal effects, a universal upper-score-policy direction, prospective confirmation,
   or deployment claims.
 - The audit separates five noninterchangeable objects: marginal score level,
   score-calibration map, residual distribution, candidate-set coverage, and the
@@ -49,7 +49,7 @@ pre-endpoint-correction evaluations are provenance only.
   to the exact singleton `{0}` and one to empty, singleton-default, or two-label
   sets. Its outcome-free 1,248-cell frontier passes deterministic, order-
   reversal, independent-solver, and full-budget gates. In the complete 720 by
-  25 primary comparison, pooled robust-minus-V1d default bounds are positive in
+  25 primary comparison, pooled worst-label-minus-V1d default bounds are positive in
   1,196/1,200 cells and never negative, while payoff is negative in 1,065,
   positive in 15, and contains zero in 120. This is an adverse descriptive
   finite-grid result, not a conformal-validity repair, product-set coverage
@@ -89,8 +89,9 @@ pre-endpoint-correction evaluations are provenance only.
   `protocol/ijds-binary-geometry-frontier-v4-2026-07-15-v5`, commit
   `e2bba580a0b07c145bd64ff61440973d6e31349b`.
 - V5 imports and verifies the V1 outcome-free freeze. Relative to the preceding
-  endpoint-corrected evaluation, every shared scientific column reconciles at
-  machine precision; V5 adds an exhaustive endpoint-reason taxonomy and exact
+  administrative-outcome-corrected evaluation, every shared scientific column
+  reconciles at machine precision; V5 adds an exhaustive
+  outcome-availability-reason taxonomy and exact
   identification-width columns.
 
 ### Two-ruler diagnostic
@@ -103,7 +104,7 @@ pre-endpoint-correction evaluations are provenance only.
   `e2bba580a0b07c145bd64ff61440973d6e31349b`.
 - The freeze contains 6,240 solves and 622,455 funded rows. V5 reports 720
   monthly contrasts, 48 window contrasts, 144 metric-direction cells, and eight
-  endpoint-audit rows.
+  outcome-availability-audit rows.
 
 ### Credit-risk controls and data audits
 
@@ -134,7 +135,7 @@ pre-endpoint-correction evaluations are provenance only.
   post-solve lateral reporting before creating outputs. It is immutable failed
   implementation provenance, not evidence.
 
-### Evaluation-endpoint availability sensitivity
+### Evaluation-outcome availability sensitivity
 
 - Complete nonselective run:
   `ijds-endpoint-availability-sensitivity-2026-07-14-v1`, tag
@@ -145,7 +146,7 @@ pre-endpoint-correction evaluations are provenance only.
   supports, rulers, coordinates, and allocations fixed.
 - The archive and exploratory lag results had already been inspected. This is
   retrospectively protocol-locked complete reporting, not preregistration,
-  confirmation, or a basis for choosing an endpoint.
+  confirmation, or a basis for choosing an outcome-availability lag.
 
 ### Portfolio-structure sensitivity
 
@@ -156,7 +157,7 @@ pre-endpoint-correction evaluations are provenance only.
 - It crosses budgets `{0.5,1,2}` million, purpose caps
   `{0.20,0.25,0.30,1.00}`, and LGD `{0.25,0.45,0.65}` while preserving both
   rulers, all three coordinates, eight windows, fifteen monthly menus, and the
-  active six-month endpoint.
+  active six-month administrative-outcome-availability contract.
 - The outcome-free freeze contains all 36 scenarios and 252 hash-described
   shard artifacts. The separately invoked evaluator reports every 1,728
   window contrast and 5,184 metric direction; it selects no scenario.
@@ -404,7 +405,7 @@ pre-endpoint-correction evaluations are provenance only.
   both risk scores and payoff coefficients, so score-only non-equivalence does
   not establish full optimizer non-equivalence or a policy ranking.
 
-### Set-native binary robust counterpart
+### Set-native binary worst-label counterpart
 
 - Phase-A protocol tag
   `protocol/ijds-set-native-binary-robust-counterpart-2026-07-31-v1` resolves
@@ -570,7 +571,7 @@ pre-endpoint-correction evaluations are provenance only.
   `protocol/ijds-allocation-granularity-sensitivity-2026-07-16-v3`, commit
   `fb1a7b1837d1f8ab2b81239533f51c996f41671c`.
 - It floors every positive continuous exposure to a USD 25 lot, holds residual
-  capital as cash, and evaluates all 96 baseline endpoint tracks without
+  capital as cash, and evaluates all 96 baseline path-end tracks without
   reoptimization or selection.
 - Rate perturbations are at most 0.000345 percentage points for payoff, 0.001284
   for default, and 0.001190 for miscoverage. This diagnoses the continuous
@@ -593,8 +594,9 @@ pre-endpoint-correction evaluations are provenance only.
   Outcome-free policy development: 94,885 rows.
 - Primary OOT: 376,890 candidates in 15 monthly menus from April 2016 through
   June 2017. Censored extension: 88,227 candidates from July--September 2017.
-- Primary endpoint census: 364,814 resolved and 12,076 unresolved candidates.
-- The endpoint-reason taxonomy partitions every candidate: 307,842 are Fully
+- Primary administrative-outcome census: 364,814 resolved and 12,076 unresolved
+  candidates.
+- The outcome-availability-reason taxonomy partitions every candidate: 307,842 are Fully
   Paid by the cutoff, 56,972 are Charged Off by the cutoff, 11,551 remain
   nonterminal or unresolved, 47 terminate after the reconstructed cutoff, and
   478 have no reconstructible terminal availability date.
@@ -606,7 +608,7 @@ pre-endpoint-correction evaluations are provenance only.
   dates after the evaluation cutoff. These facts prohibit calling the file a
   contemporaneous administrative snapshot.
 - Candidate membership never uses status. Allocations are frozen before the
-  endpoint panel is joined, and partial ID joins fail.
+  administrative-outcome panel is joined, and partial-ID joins fail.
 
 ## Prediction and Conformal Object
 
@@ -630,7 +632,7 @@ pre-endpoint-correction evaluations are provenance only.
   consecutive six-month residual windows beginning January--August 2012 are
   reported. The windows overlap and are not independent replications.
 - At alpha 0.10, the interval
-  `[max(0,p-c_g), min(1,p+c_g)]` predicts the observed binary endpoint. It is
+  `[max(0,p-c_g), min(1,p+c_g)]` predicts the observed binary outcome. It is
   neither a confidence interval for individual latent PD nor constructed as the
   convex hull of a discrete prediction set; it does not equal that hull in
   general.
@@ -645,6 +647,11 @@ pre-endpoint-correction evaluations are provenance only.
 
 ## Active Exact Statements
 
+The paper-facing numbering below follows the two theory suites in the active
+manuscript. It replaces the accumulated `1`, `1a`, `2`, `2a`, ... labels used
+in earlier editorial revisions; it does not change the scope or authority of
+any claim.
+
 <!-- claim:geometry.binary_threshold_phase_characterization -->
 <!-- claim:theory.coverage_band_identity -->
 <!-- claim:theory.outcome_free_binary_set_bounds -->
@@ -657,27 +664,9 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:theory.monotone_catalog_completion -->
 <!-- claim:theory.basis_endpoint_sufficiency -->
 
-1. **Comparator map.** Positive-affine scores admit translated caps;
-   normalized coordinates preserve positive-affine units; same-cap nesting and
-   C2 funded-moment matching mechanically order only the plug-in objective.
-   None of these facts orders status-indexed payoff, default, or miscoverage.
-1a. **Feasible-difference score equivalence.** On a fixed nonempty convex
-   allocation set, two score vectors induce the same weak ordering of every
-   feasible allocation if and only if their restrictions to the
-   feasible-difference span are positive multiples. Equivalently,
-   `t = kappa*s + h`, with `kappa > 0` and `h` orthogonal to every feasible
-   allocation difference. This gives exact translated-cap, objective-matched,
-   and normalized-ruler invariance under their stated common-floor and
-   common-anchor conditions. Binary-set equality and coordinatewise loan
-   ranking do not imply this relation. Failure of the relation permits but
-   does not require a change at a fixed cell; a common solver output does not
-   establish equality of optimal faces. Locally, one common point is optimal
-   exactly when it is feasible for both problems and the fixed objective lies
-   in both relevant normal cones; equality or uniqueness of complete exposed
-   faces requires the corresponding relative-interior conditions. The
-   full-budget additive-offset corollary does not transfer unchanged to a
-   zero-score cash coordinate.
-2. **Binary threshold geometry.** The calibration residuals of a stratum are the
+### Prediction geometry and partial identification
+
+1. **Exact binary threshold geometry.** The calibration residuals of a stratum are the
    multiset sum of the two mirror samples `{{p_i : Y_i=0}}` and
    `{{1-p_i : Y_i=1}}`, so the fitted threshold is exactly the `k`-th order
    statistic of that union whenever `p_i` lies in `[0,1]` and `k <= n`. With
@@ -689,21 +678,15 @@ pre-endpoint-correction evaluations are provenance only.
    threshold and does not place it below one half. Target-side statements need
    their own support condition, because neither calibration condition constrains
    target scores. Miscoverage remains exactly `1{Y=0,l>0} + 1{Y=1,u<1}`.
-2a. **Coverage response depends on crossed target mass.** For any fixed target
+2. **Exact crossed-band coverage identity.** For any fixed target
    distribution and `0 <= c_L < c_H <= 1`,
    `Cov(c_H)-Cov(c_L) = P(Y=0,c_L<p<=c_H) +
    P(Y=1,1-c_H<=p<1-c_L)`. The identity is exact and nonnegative. It says that
    the change depends on target probability mass in the two crossed score
    bands, not on threshold distance alone; it does not imply continuity or
    preclude an order-one coverage change.
-2b. **Sharp outcome-free fixed-allocation bounds.** For a fixed nonnegative
-   allocation normalized by positive total funded exposure, exposure in empty
-   binary sets is the sharp lower bound on miscoverage over unrestricted binary
-   outcomes; all exposure except that in full `{0,1}` sets is the sharp upper
-   bound. A positive lower endpoint alone is not an outcome-free miss, and
-   exposure with `u=1` is only total-capital-normalized mass capable of covering
-   `Y=1`, not conditional positive-class coverage.
-2c. **Binary-set coverage does not identify the continuous LP endpoint.** For
+**Lemma 1 (binary-set coverage does not identify the continuous decision
+coefficient).** For
    `0<=l<=u<=1`, the induced set identifies whether `l=0` and whether `u=1`,
    but when label one is absent it identifies only `u<1`. In the active
    embedding, replacing `u` by `(1-theta)u+theta*p` on those loans and retaining
@@ -721,9 +704,16 @@ pre-endpoint-correction evaluations are provenance only.
    investment cap. This is a fibre-specific information-loss corollary, not a
    claim that nonidentification must change a decision or that marginal sets
    form a jointly covered Cartesian uncertainty set.
-3. **Sharp common-outcome identification.** Candidate and fixed-allocation
+3. **Sharp outcome-free fixed-allocation bounds.** For a fixed nonnegative
+   allocation normalized by positive total funded exposure, exposure in empty
+   binary sets is the sharp lower bound on miscoverage over unrestricted binary
+   outcomes; all exposure except that in full `{0,1}` sets is the sharp upper
+   bound. A positive lower bound endpoint alone is not an outcome-free miss,
+   and exposure with `u=1` is only total-capital-normalized mass capable of
+   covering `Y=1`, not conditional positive-class coverage.
+4. **Sharp common-outcome partial identification.** Candidate and fixed-allocation
    bounds use binary loan-wise extrema; paired-policy bounds assign each
-   unresolved endpoint once over the funded union.
+   unresolved administrative outcome once over the funded union.
 <!-- claim:theory.binary_identification_width -->
 
    For an additive paired contrast,
@@ -733,14 +723,60 @@ pre-endpoint-correction evaluations are provenance only.
    missingness model. Rate metrics use declared capital normalizers; the
    floor-with-cash diagnostic retains committed capital rather than
    renormalizing away residual cash.
-3a. **Sharp directional residual-distribution frontier.** With one fixed
+### Decision geometry
+
+5. **Feasible-difference score-order equivalence.** On a fixed nonempty convex
+   allocation set, two score vectors induce the same weak ordering of every
+   feasible allocation if and only if their restrictions to the
+   feasible-difference span are positive multiples. Equivalently,
+   `t = kappa*s + h`, with `kappa > 0` and `h` orthogonal to every feasible
+   allocation difference. This gives exact translated-cap, objective-matched,
+   and normalized-ruler invariance under their stated common-floor and
+   common-anchor conditions. Binary-set equality and coordinatewise loan
+   ranking do not imply this relation. Failure of the relation permits but
+   does not require a change at a fixed cell; a common solver output does not
+   establish equality of optimal faces. Locally, one common point is optimal
+   exactly when it is feasible for both problems and the fixed objective lies
+   in both relevant normal cones; equality or uniqueness of complete exposed
+   faces requires the corresponding relative-interior conditions. The
+   full-budget additive-offset corollary does not transfer unchanged to a
+   zero-score cash coordinate.
+6. **Comparator and ruler consequences.** Positive-affine scores admit
+   translated caps; normalized coordinates preserve positive-affine units;
+   same-cap nesting and C2 funded-moment matching mechanically order only the
+   plug-in objective. None of these facts orders status-indexed payoff,
+   default, or miscoverage.
+7. **Conditional binary-set frontier collapse.** Under the exact-budget,
+   no-cash, partition, cap, exposure, rate, LGD, empty-set, feasibility, and
+   singleton-zero-witness assumptions stated in the dual-coefficient section,
+   every maximin optimizer is supported on singleton-zero sets and the optimal
+   face and value are invariant over the continuous cap domain `[0,1]`. This is
+   an algebraic property of the declared worst-label coefficients, not a joint
+   coverage, probabilistic-robustness, funded-set-validity, uniqueness, or
+   policy-selection result.
+8. **Conditional within-basis bound-endpoint sufficiency.** If the optimal
+   allocation is unique and a fixed optimal basis remains valid on a cap range,
+   allocations are affine in the cap and sharp lower/upper bounds are
+   concave/convex, so that range's endpoints suffice for its adverse extrema.
+   Exactness over a continuous interval additionally requires uniqueness
+   throughout and a certified exhaustive partition into all relevant
+   optimal-basis ranges. The active empirical lineage establishes neither
+   condition.
+
+### Supplemental exact identities
+
+The following exact finite-archive identities support the Results and are
+proved in the supplement rather than presented as additional numbered
+propositions in the body.
+
+- **Sharp directional residual-distribution frontier.** With one fixed
    calibration empirical CDF, complete every unresolved target residual as
    either `min(p,1-p)` or `max(p,1-p)`. These two attainable empirical CDFs are
    respectively the pointwise largest and smallest target CDFs. Monotonicity
    then gives the four exact extrema of `sup(F_cal-F_target)` and
    `sup(F_target-F_cal)`. This is cellwise finite-archive identification, not a
    KS test, stochastic dominance, exchangeability, or a shift mechanism.
-3b. **Count--exposure covariance identity.** On one fixed nonempty panel with
+- **Count--exposure covariance identity.** On one fixed nonempty panel with
    nonnegative exposures and positive total exposure, dollar-minus-unweighted
    panel FCP---equivalently unweighted-minus-dollar coverage---equals empirical
    exposure--miss covariance divided by mean exposure. The full candidate menu
@@ -749,21 +785,13 @@ pre-endpoint-correction evaluations are provenance only.
    FCP times the invested share. These identities select no weighting and do
    not by themselves compare policies with different supports; paired support-
    changing contrasts require the union construction in statement 3.
-3c. **Monotone finite-catalog completion.** The maximum over a fixed finite
+- **Monotone finite-catalog completion.** The maximum over a fixed finite
    catalog of coordinatewise nondecreasing binary-completion losses is itself
    nondecreasing, so the common all-zero and all-one unresolved assignments
    attain its sharp endpoints. Funded miscoverage satisfies the condition here
    only because the complete frozen catalog contains no `{1}`-only set. The
    statement neither extends to arbitrary catalogs nor says that every policy
    deteriorated.
-4. **Conditional within-basis endpoint lemma.** If the optimal allocation is
-   unique and a fixed optimal basis remains valid on a cap range, allocations
-   are affine in the cap and sharp endpoints are concave/convex, so that range's
-   endpoints suffice for its adverse extrema. Exactness over a continuous
-   interval additionally requires uniqueness throughout and a certified
-   exhaustive partition into all relevant optimal-basis ranges. The active
-   empirical lineage establishes neither condition.
-
 ## Coverage and Geometry Evidence
 
 <!-- claim:coverage.five_models_all_windows_below_nominal -->
@@ -783,7 +811,7 @@ pre-endpoint-correction evaluations are provenance only.
 <!-- claim:geometry.fit_label_completion_crossing_not_universal -->
 <!-- claim:calibration.closed_family_complete_state -->
 
-Under the declared six-month endpoint contract, all eight all-candidate
+Under the declared six-month administrative-outcome-availability contract, all eight all-candidate
 coverage upper bounds are below 0.90 for every model:
 
 | Specification | Lowest lower bound | Highest upper bound | OOT AUC | OOT Brier |
@@ -924,7 +952,7 @@ the common plug-in objective floor fixed; the normalized-score ruler holds a
 positive-affine-invariant relative score relaxation fixed but does not equalize
 opportunity cost.
 
-| Ruler / coordinate | Payoff endpoint envelope (USD) | Default endpoint envelope (pp) | Miscoverage endpoint envelope (pp) |
+| Ruler / coordinate | Payoff path-end envelope (USD) | Default path-end envelope (pp) | Miscoverage path-end envelope (pp) |
 |---|---:|---:|---:|
 | Objective matched .25 | [-9,134.34, 5,603.66] | [-0.0068, 0.1265] | [-0.0068, 0.1265] |
 | Objective matched .50 | [-82,616.17, -27,958.37] | [0.4572, 1.0973] | [1.0154, 1.9321] |
@@ -937,10 +965,10 @@ The active reason-audited evaluation keeps 12,076 outcomes unrestricted. Of
 these, 11,551 are nonterminal or unresolved, 47 have reconstructed terminal
 availability after the cutoff, and 478 lack a reconstructible terminal
 availability date. The latter two categories together explain the 525-row
-difference from the pre-correction endpoint, but they encode distinct sources
+difference from the pre-correction administrative-outcome census, but they encode distinct sources
 of nonobservability and are never presented as one timing mechanism.
 
-The complete endpoint-availability sensitivity is:
+The complete evaluation-outcome-availability sensitivity is:
 
 | Charged Off lag (months) | Resolved / unresolved | Coverage upper below 0.90 | Maximum upper | Payoff lower / cross | Default higher / cross | Miscoverage higher / cross |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -953,20 +981,20 @@ The complete endpoint-availability sensitivity is:
 - The sole lag-12 coverage exception is the pricing-excluded application
   WOE/IV scorecard in W2. Therefore the 40/40 statement is valid for the active
   six-month contract and lags 0, 3, and 8, but not universally over all tested
-  endpoint lags.
+  outcome-availability lags.
 - After removing the lag column, the six-month row is value-identical to the
   active evaluation for 120 coverage cells, 48 two-ruler contrasts, and 648
-  finite registered-cap endpoint envelopes.
+  finite registered-cap path-end envelopes.
 - No opposite one-sided decision direction appears at 12 months. Payoff and
   default each move one cell from adverse to crossing zero; miscoverage is
   unchanged.
-- The endpoint envelope over the finite registered cap values spanning
-  `[0.05,0.12]` includes zero in all 216 cells at every endpoint lag; no
+- The path-end envelope over the finite registered cap values spanning
+  `[0.05,0.12]` includes zero in all 216 cells at every outcome-availability lag; no
   continuous-support extrema are computed.
   Development-support payoff is 6 lower/66 crossing at lags 0, 3, 6, and 8 and 72
   crossing at lag 12; default is 72 crossing at every lag; miscoverage changes
   from 27 higher/45 crossing at lags 0, 3, 6, and 8 to 26/46 at lag 12.
-- Fit-label timing and evaluation-endpoint timing are separate one-factor
+- Fit-label timing and evaluation-outcome-availability timing are separate one-factor
   sensitivities. The former refits residual recipes; the latter holds recipes
   and allocations fixed. They were not crossed factorially, so no joint lag
   robustness claim is active.
@@ -989,7 +1017,7 @@ The complete endpoint-availability sensitivity is:
   structural conditionality, not a scenario winner, universal adversity,
   structural invariance, or deployment guidance.
 - The USD 25 floor-with-cash diagnostic covers 1,440 portfolios, 143,175
-  positive source exposures, and 96 endpoint tracks. It changes 2,985
+  positive source exposures, and 96 path-end tracks. It changes 2,985
   exposures, leaves at most USD 75 cash per month, and perturbs any evaluated
   rate by at most 0.001284 percentage points. It is not an integer
   reoptimization or a discrete-policy claim.
@@ -1021,15 +1049,15 @@ The complete endpoint-availability sensitivity is:
   comparisons. This is a global score certificate, not proof that every fixed
   cell changes allocation or that calibrator-specific optimal faces differ.
 - The set-native worst-label challenger completes all 1,248 outcome-free cells
-  and all 18,000 monthly/1,200 pooled robust-minus-V1d comparisons. At pooled
+  and all 18,000 monthly/1,200 pooled worst-label-minus-V1d comparisons. At pooled
   level, its default interval is positive in 1,196 cells and never negative;
   payoff is negative in 1,065 and positive in 15; miscoverage is positive in
   1,009 and negative in 120. These finite-grid signs do not confer conformal,
-  joint-set, selected-set, or probabilistic robust validity.
+  joint-set, selected-set, or probabilistic-robustness validity.
 
 - Objective-matched .25 crosses zero for all three metrics in all eight
   windows. Its repeated allocation remains identical across windows, but the
-  12,076 unresolved endpoints eliminate the earlier favorable point claim.
+  12,076 unresolved administrative outcomes eliminate the earlier favorable point claim.
 - Objective-matched .50 is adverse in all eight windows. At .75, payoff and
   default cross zero in seven windows and are adverse in one; miscoverage is
   adverse in all eight.
@@ -1039,7 +1067,7 @@ The complete endpoint-availability sensitivity is:
 - Across all 48 cells, payoff is lower in 32 and crosses zero in 16; default is
   higher in 33 and crosses zero in 15; miscoverage is higher in 40 and crosses
   zero in 8. No opposite one-sided direction survives.
-- The endpoint envelope over the finite registered cap values spanning
+- The path-end envelope over the finite registered cap values spanning
   `[0.05,0.12]` includes zero in all 216 cells; these witnesses do not compute
   continuous-support extrema.
 - Over development-admissible support, terminal default crosses zero in 72/72
@@ -1062,7 +1090,7 @@ The complete endpoint-availability sensitivity is:
 
 ## Permitted Claims
 
-- Under the declared six-month endpoint contract, all 40 candidate-level sharp
+- Under the declared six-month administrative-outcome-availability contract, all 40 candidate-level sharp
   finite-archive coverage upper endpoints are below 0.90. Separately, the
   joint-block combined-rank diagnostic has 31/40 frozen learner-window cell
   reference tail areas meeting locked nominal reporting thresholds; it has no post-selection FWER claim and is
@@ -1096,7 +1124,7 @@ The complete endpoint-availability sensitivity is:
   completion.
 - The score, ruler, and coordinate jointly define the portfolio comparison.
 - Within the finite protocol-locked grid, direction is not invariant to ruler or
-  coordinate and no endpoint has a universal status-indexed outcome ordering.
+  coordinate and no path-end contrast has a universal status-indexed outcome ordering.
 - Across the complete budget--concentration--LGD grid, every scenario retains
   adverse default and miscoverage cells, while neither universal favorability
   nor universal adversity holds.
@@ -1123,7 +1151,7 @@ The complete endpoint-availability sensitivity is:
 - The set-native score uses the exact worst label for nonempty sets and a
   declared fail-closed empty-set value. It is implementable and solver-verified,
   but its complete retrospective comparison establishes no validity repair or
-  uniform endpoint dominance and is descriptively adverse for default in nearly
+  uniform outcome dominance and is descriptively adverse for default in nearly
   every pooled cell.
 - Global score-order invariance on a declared convex allocation set is
   characterized by positive-affine equivalence modulo normals of its affine

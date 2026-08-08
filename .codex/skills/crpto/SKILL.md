@@ -10,10 +10,11 @@ paper and reproducibility bundle, not a production service.
 
 ## Authority Snapshot
 
-Research authority is current through 2026-08-06. The active claim registry
+Research authority is current through 2026-08-07. The active claim registry
 remains the sole paper-facing claim authority; exact theory overrides a
 conflicting summary. The complete-hull score-equivalence and set-native binary
-robust-counterpart lineages are sealed Git-native July-31 audits. The clean
+worst-label lineages (whose historical tags retain `robust-counterpart`) are
+sealed Git-native July-31 audits. The clean
 binary-phase census and conditional dual-coefficient certificate lineage are
 sealed Git-native August-1 audits. Artifact
 existence alone does not promote them into the manuscript: verify that the
@@ -72,6 +73,7 @@ Read first:
 46. `EXTRACTION_MANIFEST.md`
 47. `docs/research/ijds_literature_corpus_ledger_2026-07-30.md`
 48. `docs/research/ijds_pending_scientific_work_disposition_2026-08-01.md`
+49. `configs/ijds_literature_corpus_manifest.json`
 
 Active evidence:
 
@@ -82,7 +84,7 @@ Active evidence:
 - coverage learners: CatBoost/Platt primary plus numeric logistic, monotonic
   CatBoost, platform-signal WOE/IV, and pricing-excluded WOE/IV controls;
 - portfolio learner: primary CatBoost only; no OOT learner is selected;
-- score path: `gamma={0,.25,.50,.75,1}` with endpoint contrast gamma 1 minus
+- score path: `gamma={0,.25,.50,.75,1}` with path-end contrast gamma 1 minus
   gamma 0;
 - objective-matched primary and normalized-score secondary rulers at three
   interior coordinates; there is no selector;
@@ -91,12 +93,12 @@ Active evidence:
 - registered cap support: 3,067 finite values assembled from named caps and
   solver range records; outcome envelopes are exact only at those values;
 - unresolved outcomes: retained with sharp common-outcome bounds.
-- evaluation-endpoint availability: all lags 0, 3, 6, 8, and 12 months are
+- evaluation-outcome availability: all lags 0, 3, 6, 8, and 12 months are
   reported without selection; the 6-month slice reconciles exactly to the
   active evaluation.
 - portfolio structure: all 36 budget--purpose-cap--LGD scenarios are reported
   without selection; the baseline reconciles exactly to the active evaluation.
-- endpoint resolution is partitioned exhaustively into 307,842 fully paid by
+- administrative-outcome resolution is partitioned exhaustively into 307,842 fully paid by
   cutoff, 56,972 charged off by cutoff, 11,551 nonterminal, 47 terminal after
   cutoff, and 478 terminal with missing availability date.
 - three missingness encodings and an individual-age second retrospective
@@ -165,7 +167,8 @@ Active evidence:
 
 Headline evidence:
 
-- under the declared six-month endpoint contract, every CatBoost five-group
+- under the declared six-month administrative-outcome-availability contract,
+  every CatBoost five-group
   OOT upper bound is below 0.90; maximum `0.882597`;
 - every logistic-control upper bound is below 0.90; maximum `0.896222`;
 - monotonic CatBoost, platform WOE, and pricing-excluded WOE maxima are
@@ -197,7 +200,7 @@ Headline evidence:
   prevalence alpha from W7 to W8 and its residual quantile changes from
   `0.888435` to `0.111801`;
 - on the same fixed S3 target panel, the resolved W7--W8 coverage response is
-  `-281/76,495`, and the sharp all-candidate shared-completion endpoint hull is
+  `-281/76,495`, and the sharp all-candidate shared-completion bound hull is
   `[-312,-290]/79,047`; this retrospectively highlighted cell is neither a
   selected winner nor an inferential test;
 - the clean 5-by-8-by-5 phase census reconciles all `200/200` cells. There are
@@ -238,20 +241,20 @@ Headline evidence:
   `r(empty)=1` is a declared fail-closed convention. Only the risk coefficient
   is set-native: the plug-in payoff objective and other optimization components
   retain the point score. Phase B reports all 18,000 monthly and 1,200 pooled
-  robust-minus-V1d contrasts. At pooled scale, standardized-payoff direction is
+  worst-label-minus-V1d contrasts. At pooled scale, standardized-payoff direction is
   `1,065/15/120` negative/positive/crossing, default is `0/1,196/4`, and binary
   miscoverage is `120/1,009/71`; all 600 objective-matched comparisons have
   lower payoff and higher default and miscoverage for the set-native rule.
   These are overlapping retrospective finite-grid contrasts. They establish no
   joint product-set or probabilistic-robustness guarantee, selected policy,
-  universal endpoint dominance, causal effect, or conformal-valid robust
+  universal outcome dominance, causal effect, or conformal-valid robust
   optimization claim;
 - C2 match residual is at most `8.33e-17` and reconciles weak plug-in dominance;
-- all 216 endpoint envelopes over the finite registered cap values spanning
+- all 216 path-end envelopes over the finite registered cap values spanning
   `[0.05,0.12]` include zero; this does not compute continuous-support extrema;
 - default crosses zero in all 72 development-support cells;
 - all 27 W8 development-support envelopes cross zero;
-- the objective-matched endpoint contrast crosses zero at `.25`, is adverse at
+- the objective-matched path-end contrast crosses zero at `.25`, is adverse at
   `.50`, and is mostly unidentified for payoff/default at `.75`;
 - normalized-score `.25` and `.50` are adverse; `.75` has adverse default and
   miscoverage while payoff is adverse in seven windows and crosses in one;
@@ -291,7 +294,7 @@ Preserve these distinctions:
 - finite three-coordinate diagnostics versus a continuous joint frontier;
 - standardized payoff versus cash-flow return, IRR, NPV, or welfare;
 - sharp identification bounds versus sampling confidence intervals;
-- sharp endpoint hull versus a claim that every interior value is attainable;
+- sharp bound hull versus a claim that every interior value is attainable;
 - C2 plug-in dominance versus realized-outcome dominance;
 - exact declared comparator support versus universal baseline invariance;
 - active-upper-row RHS ranging versus basic slack-row activity ranging in
@@ -306,7 +309,7 @@ Preserve these distinctions:
 - class-specific sharp ratio bounds versus gap endpoints that each use a
   shared single-assignment completion for both class ratios (the two endpoint
   completions may differ);
-- conformal-fit label timing versus evaluation-endpoint availability; these
+- conformal-fit label timing versus evaluation-outcome availability; these
   are separate one-factor sensitivities and were not crossed factorially.
 - complete structural conditionality versus a selected scenario, universal
   adversity, or deployment guidance.
@@ -322,9 +325,10 @@ Preserve these distinctions:
   convention versus a calibrated individual probability, an established
   joint-coverage guarantee for the Cartesian product, selected/funded-
   set guarantee, distributionally robust ambiguity set, or unique normative
-  robust counterpart.
+  worst-label counterpart.
 - set-equivalent binary coverage versus invariance of the unidentified
-  continuous endpoint, allocation, or descriptive outcome direction.
+  continuous decision coefficient, allocation, or descriptive outcome
+  direction.
 
 Do not claim a learner, gamma, ruler, coordinate, or policy winner, universal
 direction, selected-set validity, Markov/tail certificate, causal effect, live
@@ -357,7 +361,19 @@ then state which theorem assumptions transfer and which do not. A newer version
 or close neighbor never activates a method, claim, or rerun by itself. Record
 accepted objects and dispositions in the literature-corpus ledger, update only
 the master `paper/references.bib`, and regenerate deterministic active/reserve
-views.
+views. Regenerate `configs/ijds_literature_corpus_manifest.json` with
+`scripts/build_ijds_literature_corpus_manifest.py`; its complete
+key--PDF--version--SHA-256--status crosswalk, not a partial prose table, owns the
+current corpus census. The 2026-08-07 state is 164 unique readable PDFs and 195
+bibliography keys, partitioned into 102 active and 93 reserve keys.
+
+CREDO is a close expectation-wise *decide-then-assess* neighbor whose source
+uses the stated first-order approximation or additive correction; it supplies
+no unconditional finite-sample certificate for CRPTO. Conformal Policy Control
+is a prospective stochastic-policy risk route only under its safe-policy,
+density-ratio, regularity, stability, and exact-weight conditions. Static
+covariate shift and feedback covariate shift are different sampling contracts;
+optimized loan exposures instantiate neither one.
 
 For born-digital academic PDFs, try bounded structural parsing after the strict
 all-file pass. If parallel Docling workers fail with native allocation errors
@@ -407,12 +423,18 @@ just lint
 just type-check
 just type-check-fast
 just test
+just ijds-active-science-tests
 just validate-champion
 just ijds-active-check
 just submission-build
 just submission-check
 just ijds-dvc-status
 ```
+
+The ordinary `test` and `ijds-active-check` surfaces exclude only tests marked
+`requires_dvc_materialized`. Final freeze/closeout must pull the active capsule
+and run `just ijds-active-dvc-tests`; never suppress a missing-byte failure by
+reclassifying a scientific test as Git-native or by fabricating an artifact.
 
 The active builder verifies the V4, two-ruler, raw-data, credit-control,
 endpoint, structural, rolling-primary recovery, conformal-set diagnostic,

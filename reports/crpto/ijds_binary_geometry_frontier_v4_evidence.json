@@ -76055,8 +76055,8 @@
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 25001,
-      "sha256": "1e4c45b4969783fce096968cc96f0a4acd25b8b0dbd3e9306137c2b4d924c6ef"
+      "bytes": 25058,
+      "sha256": "41a4578366092414ff2eda12e30156eb1da3a57aa311d9fca77e8f81a7e00f29"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
@@ -76070,8 +76070,8 @@
     },
     "publication_integrity_checker": {
       "path": "scripts/check_publication_integrity.py",
-      "bytes": 81213,
-      "sha256": "65bb4368b020a4cb75a8e84d74df0dcc4390eb6c235fed18125ff85480738cf8"
+      "bytes": 81222,
+      "sha256": "40f02592bcf43f5c2ee7ee6698983dd0485db148f31fc36094ac7ef195a71369"
     },
     "paper_pdf_auditor": {
       "path": "scripts/inspect_ijds_pdfs.py",
@@ -77635,8 +77635,8 @@
     },
     "sealed_parent_extension_builder": {
       "path": "scripts/extend_ijds_evidence_from_sealed_parent_2026_08_01.py",
-      "bytes": 14648,
-      "sha256": "6754856ac3512f67f82a9de0230e2ec9ad4c61355d78a3ad7f56c5e6b1af4a8a"
+      "bytes": 15313,
+      "sha256": "2d3abfc266be9b7f20800f192fe27330ec62db89c85f309cba1ef275906803d7"
     },
     "binary_phase_census/loader": {
       "path": "src/ijds_audit/binary_phase_census_evidence.py",
@@ -90891,6 +90891,13 @@
       "binary_phase_census",
       "dual_coefficient_binary_set_native"
     ],
+    "editorial_figure_refresh_scope": [
+      "figure/development_envelopes/pdf",
+      "figure/development_envelopes/png",
+      "figure/phase_transition/pdf",
+      "figure/phase_transition/png"
+    ],
+    "editorial_figure_refresh_reason": "label-only P2 clarification: the phase figure is identified as a post-inspection illustration and the envelope figure uses a contains-zero glyph; their source tables and numerical payloads are unchanged",
     "unmaterialized_unchanged_dvc_sources": [
       "allocation_granularity_freeze",
       "allocation_granularity_summary",

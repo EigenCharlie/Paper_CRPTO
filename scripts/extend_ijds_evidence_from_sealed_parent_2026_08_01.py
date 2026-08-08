@@ -63,6 +63,14 @@ EXTENSION_SCHEMA = "2026-08-01.1"
 EXTENSION_STATUS = "active_ijds_v5_phase_and_dual_set_native_paper_facing_evidence"
 NEW_TABLE_KEYS = frozenset({"binary_phase_census", "dual_coefficient_binary_set_native"})
 PROMOTED_EXTENSION_TARGETS = frozenset(TABLE_TARGETS[name] for name in NEW_TABLE_KEYS)
+EDITORIAL_FIGURE_REFRESH_ARTIFACTS = frozenset(
+    {
+        "figure/phase_transition/png",
+        "figure/phase_transition/pdf",
+        "figure/development_envelopes/png",
+        "figure/development_envelopes/pdf",
+    }
+)
 
 
 def _git_blob(commit: str, relative_path: str) -> bytes:
@@ -231,6 +239,12 @@ def _stage_extension(staging_root: Path) -> tuple[Path, dict[Path, Path]]:
                     "binary_phase_census",
                     "dual_coefficient_binary_set_native",
                 ],
+                "editorial_figure_refresh_scope": sorted(EDITORIAL_FIGURE_REFRESH_ARTIFACTS),
+                "editorial_figure_refresh_reason": (
+                    "label-only P2 clarification: the phase figure is identified as a "
+                    "post-inspection illustration and the envelope figure uses a contains-zero "
+                    "glyph; their source tables and numerical payloads are unchanged"
+                ),
                 "unmaterialized_unchanged_dvc_sources": list(missing_dvc),
                 "protected_stages_run": [],
                 "historical_numeric_payload_recomputed": False,

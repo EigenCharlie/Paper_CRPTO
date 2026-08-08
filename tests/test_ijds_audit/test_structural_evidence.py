@@ -6,12 +6,15 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 from src.ijds_audit.publication_sources import load_verified_source_registry
 from src.ijds_audit.structural_evidence import (
     load_structural_sensitivity_evidence,
     structural_publication_table,
 )
+
+pytestmark = pytest.mark.requires_dvc_materialized
 
 REPO = Path(__file__).resolve().parents[2]
 REGISTRY = REPO / "configs/ijds_active_evidence_sources.yaml"

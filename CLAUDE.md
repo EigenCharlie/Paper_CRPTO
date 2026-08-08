@@ -290,6 +290,12 @@ just submission-build
 just submission-check
 ```
 
+`just test` and `just ijds-active-check` exclude tests marked
+`requires_dvc_materialized`. The final `submission-freeze-check` and
+`submission-closeout` recipes first run `just ijds-pull` and then execute that
+materialized tier. Run `just ijds-active-dvc-tests` directly only after the
+active DVC capsule has been pulled.
+
 `submission-check` must retain `validate-champion-strict`. PD or conformal
 implementation changes also require the separately authorized drift gate.
 

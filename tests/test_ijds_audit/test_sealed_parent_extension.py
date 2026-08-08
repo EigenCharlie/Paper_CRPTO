@@ -47,8 +47,23 @@ def test_extension_preserves_every_parent_scientific_payload() -> None:
     assert current["sensitivities"] == parent["sensitivities"]
     assert current["replay_dependencies"] == parent["replay_dependencies"]
 
+    changed_paper_artifacts: set[str] = set()
     for name, descriptor in parent["paper_artifacts"].items():
-        assert current["paper_artifacts"][name] == descriptor
+        if current["paper_artifacts"][name] != descriptor:
+            changed_paper_artifacts.add(name)
+            assert name in extension.EDITORIAL_FIGURE_REFRESH_ARTIFACTS
+            assert current["paper_artifacts"][name]["path"] == descriptor["path"]
+        else:
+            assert name not in extension.EDITORIAL_FIGURE_REFRESH_ARTIFACTS
+    assert changed_paper_artifacts == extension.EDITORIAL_FIGURE_REFRESH_ARTIFACTS
+    assert (
+        current["paper_artifacts"]["table/phase_transition"]
+        == parent["paper_artifacts"]["table/phase_transition"]
+    )
+    assert (
+        current["paper_artifacts"]["table/development_envelopes"]
+        == parent["paper_artifacts"]["table/development_envelopes"]
+    )
     implementation_names = set(PUBLICATION_IMPLEMENTATION_PATHS)
     for name, descriptor in parent["source_artifacts"].items():
         if name not in implementation_names:
@@ -78,6 +93,10 @@ def test_extension_has_exact_new_inventory_and_parent_seal() -> None:
         "extension_scope": [
             "binary_phase_census",
             "dual_coefficient_binary_set_native",
+        ],
+        "editorial_figure_refresh_scope": sorted(extension.EDITORIAL_FIGURE_REFRESH_ARTIFACTS),
+        "editorial_figure_refresh_reason": current["incremental_parent"][
+            "editorial_figure_refresh_reason"
         ],
         "historical_numeric_payload_recomputed": False,
         "protected_stages_run": [],
