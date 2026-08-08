@@ -1,0 +1,165 @@
+schema_version: "2026-08-08.1"
+protocol_status: "locked_synthetic_theorem_to_code_validation_not_active_empirical_evidence"
+protocol_tag: "protocol/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1"
+artifact_tag: "artifacts/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1"
+run_tag: "ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1"
+protocol_path: "docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md"
+
+git_transport:
+  artifact_commit_relationship: "single_direct_child_of_protocol_commit"
+  annotated_tags_required: true
+  exact_output_paths:
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/replications.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/focal_results.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/analytic_reference_frontier.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/oracle_reconciliation.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/scale_fixtures.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/crc_ltt_feasibility.parquet"
+    - "data/processed/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/monotonicity_counterexample.parquet"
+    - "models/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/jomi_synthetic_summary.json"
+    - "models/experiments/ijds_audit/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1/execution_receipt.json"
+
+design:
+  alpha: 0.10
+  repetitions: 2000
+  master_seed: 20260808
+  train_size: 50000
+  design_size: 20000
+  calibration_size: 5000
+  test_size: 2000
+  selected_k: 100
+  budget_units: 1.0
+  allocation_per_selected_unit: 0.01
+  feature_count: 8
+  candidate_labels: [0, 1]
+  selector: "highest_synthetic_expected_margin_top_k"
+  taxonomy: "exact_selected_size_k"
+  tie_rule: "independent_continuous_priority_preassigned_before_labels"
+  nonconformity_score: "absolute_binary_residual_abs_y_minus_q"
+  learner: "linear_logistic_regression_deliberately_misspecified"
+  calibrator: "independent_design_split_platt_on_frozen_logit"
+  learner_solver: "lbfgs"
+  learner_c: 1.0
+  learner_max_iter: 500
+  platt_solver: "lbfgs"
+  platt_c: 1000000.0
+  platt_max_iter: 500
+  learner_fit_once_then_frozen: true
+  deterministic_jomi_only: true
+  vanilla_split_conformal_diagnostic_only: true
+  rng_streams:
+    - "training_features"
+    - "training_labels"
+    - "design_features"
+    - "design_labels"
+    - "replication_calibration_features"
+    - "replication_calibration_labels"
+    - "replication_test_features"
+    - "replication_test_labels"
+    - "replication_tie_priorities"
+  primary_dgp:
+    feature_law: "eight_independent_standard_gaussians"
+    true_logit: "-1.4 + 1.2*x0 - 0.8*x1 + 0.65*x2*x3 + 0.9*sin(x4) + 0.7*I(x5>0) - 0.35*x6^2 + 0.2*x7"
+    synthetic_rate: "0.04 + 0.08*sigmoid(0.6*x1 - 0.3*x2 + 0.2*x7)"
+    synthetic_lgd: 0.45
+    selection_utility: "(1-q)*synthetic_rate - q*synthetic_lgd"
+
+analytic_reference_frontier:
+  finite_threshold_probability_targets: [0.95, 0.99]
+  cells:
+    - {calibration_size: 100, test_size: 100, selected_k: 5}
+    - {calibration_size: 500, test_size: 100, selected_k: 5}
+    - {calibration_size: 500, test_size: 100, selected_k: 10}
+    - {calibration_size: 500, test_size: 100, selected_k: 2}
+    - {calibration_size: 5000, test_size: 2000, selected_k: 100}
+    - {calibration_size: 5000, test_size: 6011, selected_k: 100}
+    - {calibration_size: 5000, test_size: 10000, selected_k: 100}
+    - {calibration_size: 5000, test_size: 28106, selected_k: 100}
+  minimum_calibration_search:
+    - {test_size: 100, selected_k: 5}
+    - {test_size: 100, selected_k: 10}
+    - {test_size: 100, selected_k: 20}
+    - {test_size: 500, selected_k: 25}
+    - {test_size: 500, selected_k: 50}
+  maximum_calibration_size_searched: 10000
+
+oracle_reconciliation:
+  exhaustive_enumeration: "canonical_calibration_test_rank_interleavings_choose_n_plus_m_n"
+  exhaustive_cases:
+    - {calibration_size: 5, test_size: 4, selected_k: 1}
+    - {calibration_size: 6, test_size: 5, selected_k: 2}
+    - {calibration_size: 8, test_size: 4, selected_k: 2}
+  random_cases: 250
+  random_seed: 20260809
+  require_both_candidate_labels: true
+  require_shortcut_equals_swap_oracle: true
+
+scale_fixtures:
+  calibration_size: 5000
+  selected_k: 100
+  test_sizes: [6011, 10000, 28106]
+  repetitions_per_size: 10
+  random_seed: 20260810
+  outcome_free: true
+
+crc_ltt_feasibility:
+  alpha_risk: 0.10
+  ltt_delta_cert: 0.10
+  loss_lower_bound: 0.0
+  loss_upper_bound: 1.0
+  crc_catalog_sizes: [2, 10, 25, 100]
+  crc_excess_targets: [0.10, 0.025]
+  ltt_catalog_size: 10
+  ltt_empirical_losses: [0.0, 0.02, 0.05, 0.075, 0.08]
+  ltt_multiplicity_routes: ["bonferroni", "fixed_sequence"]
+  require_pointwise_zero_loss_terminal: true
+
+runtime:
+  runtime_root_must_be_external: true
+  preferred_runtime_root: "D:/CRPTO/runtime"
+  single_process: true
+  workers: 1
+  heartbeat_seconds: 30
+  wall_deadline_seconds: 1800
+  minimum_free_space_gib: 5
+  resume_authorized: false
+  atomic_unit: "one_complete_replication"
+  partial_scientific_results_in_status: false
+  process_priority: "below_normal_when_supported"
+
+stop_rules:
+  require_clean_exact_annotated_protocol_tag: true
+  hard_no_overwrite: true
+  stop_on_oracle_shortcut_mismatch: true
+  stop_on_calibration_permutation_change: true
+  stop_on_test_permutation_nonequivariance: true
+  stop_on_visible_id_reversal_change: true
+  stop_on_repeat_change: true
+  stop_on_selected_size_not_k: true
+  stop_on_primary_reference_size_below_resolution: true
+  stop_on_missing_or_duplicate_replication: true
+  stop_on_any_nonfinite_value: true
+  stop_on_equal_notional_fcp_inequality: true
+  stop_if_one_sided_999_lower_bound_exceeds_alpha: true
+  stop_on_deadline: true
+  no_parameter_or_dgp_change_after_protocol_tag: true
+
+output:
+  data_root: "data/processed/experiments/ijds_audit"
+  model_root: "models/experiments/ijds_audit"
+  runtime_subdir: "ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1"
+  immutability: "hard_no_overwrite"
+
+interpretation:
+  synthetic_only: true
+  active_empirical_evidence: false
+  lendingclub_validity_claimed: false
+  temporal_transport_claimed: false
+  fractional_lp_validity_claimed: false
+  joint_label_coverage_claimed: false
+  prospective_confirmation_claimed: false
+  permitted_claims:
+    - "theorem_to_code_reconciliation_under_enumerated_top_k_cases"
+    - "exact_equal_notional_count_and_dollar_fcp_identity"
+    - "beta_binomial_reference_size_finite_threshold_corollary_under_iid_continuous_scores"
+    - "monte_carlo_behavior_under_the_single_locked_synthetic_iid_dgp"
