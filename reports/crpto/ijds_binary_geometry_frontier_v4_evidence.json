@@ -76050,13 +76050,13 @@
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 35257,
-      "sha256": "add9550709abe1047b78d88d49986adbb0d97923fde33c3f28affe8e79f534cd"
+      "bytes": 36214,
+      "sha256": "3e5fe2af4dbf515ba3b03cde8bf5d46e7cd2c34dc6ce75e2a0060fb906b36e37"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 25058,
-      "sha256": "41a4578366092414ff2eda12e30156eb1da3a57aa311d9fca77e8f81a7e00f29"
+      "bytes": 25143,
+      "sha256": "518c144e69fa046d26ddbb3b1f04f934b53873a4e43bedc148bdbdfb69d2647a"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
@@ -78004,13 +78004,13 @@
   "protected_stages_run": [],
   "protected_artifacts_written": [],
   "claim_ledger": {
-    "schema_version": "2026-08-01.1",
+    "schema_version": "2026-08-08.1",
     "status": "active_ijds_claim_contract",
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 35257,
-      "sha256": "add9550709abe1047b78d88d49986adbb0d97923fde33c3f28affe8e79f534cd"
+      "bytes": 36214,
+      "sha256": "3e5fe2af4dbf515ba3b03cde8bf5d46e7cd2c34dc6ce75e2a0060fb906b36e37"
     },
     "claims": [
       {
@@ -78404,6 +78404,43 @@
             "body",
             "supplement",
             "registry"
+          ],
+          "allowed": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
+          ]
+        }
+      },
+      {
+        "id": "theory.jomi_top_k_reference_size_law",
+        "status": "active",
+        "kind": "theorem",
+        "lineages": [],
+        "scope": "iid_continuous_calibration_and_test_selection_scores_under_label_free_fixed_top_k_selection_with_one_le_k_lt_m_and_zero_lt_alpha_lt_one_with_the_universal_jomi_reference_set_beta_binomial_reference_size_law_and_exact_finite_cutoff_gate",
+        "rule": "documented",
+        "result_pointer": null,
+        "result": null,
+        "forbidden_inference": [
+          "novelty_priority",
+          "lendingclub_or_real_data_selected_set_validity",
+          "temporal_transport",
+          "finite_cutoff_implies_informative_or_nonempty_set",
+          "joint_label_coverage",
+          "rank_conditional_coverage",
+          "extension_to_ties_without_a_declared_joint_lexicographic_law",
+          "sampling_without_replacement_extension",
+          "fractional_allocation_validity",
+          "coverage_or_fcr_from_reference_size_law_alone",
+          "utility_or_superiority"
+        ],
+        "surfaces": {
+          "required": [
+            "body",
+            "supplement",
+            "registry",
+            "claim_matrix"
           ],
           "allowed": [
             "body",

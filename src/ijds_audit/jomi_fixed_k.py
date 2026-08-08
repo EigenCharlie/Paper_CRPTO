@@ -622,8 +622,9 @@ def deterministic_binary_prediction_sets(
     labels ``(0, 1)`` or an explicit mapping with integer keys ``0`` and ``1``.
     """
 
+    candidate_map: dict[object, object]
     if isinstance(candidate_nonconformity, Mapping):
-        candidate_map = candidate_nonconformity
+        candidate_map = dict(candidate_nonconformity.items())
     else:
         if isinstance(candidate_nonconformity, (str, bytes)):
             raise ValueError("Candidate nonconformity must contain scores for labels 0 and 1.")

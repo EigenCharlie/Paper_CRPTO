@@ -1672,7 +1672,7 @@
     },
     {
       "bibtex_key": "joshi2026risk_controlled_postprocessing",
-      "citation_state": "reserve",
+      "citation_state": "active",
       "corpus_status": "current",
       "current_pdf": "Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf",
       "metadata_only_reason": null,
@@ -4921,8 +4921,8 @@
     },
     "bibliography_entries": 196,
     "citation_state_counts": {
-      "active": 102,
-      "reserve": 94
+      "active": 103,
+      "reserve": 93
     },
     "object_status_counts": {
       "companion": 1,

@@ -310,7 +310,7 @@ def test_transaction_rolls_back_if_second_directory_promotion_fails(
     failed = False
 
     def fail_model_directory_promotion(
-        source: str | bytes | Path, target: str | bytes | Path
+        source: str | os.PathLike[str], target: str | os.PathLike[str]
     ) -> None:
         nonlocal failed
         source_path = Path(source)

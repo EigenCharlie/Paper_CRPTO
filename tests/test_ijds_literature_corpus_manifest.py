@@ -121,7 +121,7 @@ def test_repository_literature_manifest_is_current_and_complete() -> None:
         "active_metadata_only_keys": ["holm1979", "manski2003partial", "platt2000", "vovk2005"],
         "bibliography_corpus_status_counts": {"current": 144, "metadata-only": 52},
         "bibliography_entries": 196,
-        "citation_state_counts": {"active": 102, "reserve": 94},
+        "citation_state_counts": {"active": 103, "reserve": 93},
         "object_status_counts": EXPECTED_STATUS_COUNTS,
         "pdf_bytes": 340_545_318,
         "pdf_objects": 165,
@@ -202,6 +202,5 @@ def test_master_bibliography_contains_the_five_coordinated_keys_and_pinned_urls(
     )
     assert "https://openreview.net/forum?id=iOMnn1hSBO" in entries["cortesgomez2025utility"]
     assert (
-        "https://arxiv.org/abs/2605.06479v1"
-        in entries["joshi2026risk_controlled_postprocessing"]
+        "https://arxiv.org/abs/2605.06479v1" in entries["joshi2026risk_controlled_postprocessing"]
     )

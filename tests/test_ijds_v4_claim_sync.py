@@ -113,8 +113,51 @@ def test_related_work_is_ordered_by_calibrated_object() -> None:
     ]
     assert "Conformal Predictive Portfolio Selection" in related
     assert "@kato2025" in related
+    assert "@joshi2026risk_controlled_postprocessing" in related
     assert "@lakkaraju2017selective" in related
     assert "@kleinberg2018human" in related
+
+
+def test_fixed_top_k_jomi_corollary_keeps_its_exact_boundary() -> None:
+    body = BODY.read_text(encoding="utf-8")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    marker = "<!-- claim:theory.jomi_top_k_reference_size_law -->"
+
+    assert body.count(marker) == 1
+    assert supplement.count(marker) == 1
+    assert r"1\le K<m" in body
+    assert r"1\le K<m" in supplement
+    assert r"\alpha\in(0,1)" in body
+    assert r"\alpha\in(0,1)" in supplement
+    for surface in (body, supplement):
+        normalized = re.sub(r"\s+", " ", surface)
+        assert r"\operatorname{BetaBinomial}(n,K+1,m-K)" in surface
+        assert r"r_\alpha" in surface
+        assert (
+            "not a new beta--binomial law" in normalized
+            or "do not claim a new beta--binomial law" in normalized
+        )
+        assert "finite cutoff" in normalized
+    assert "equal-notional corollary" in supplement.lower()
+    assert "ijds-equal-notional-jomi-synthetic-feasibility" not in body
+    assert "ijds-equal-notional-jomi-synthetic-feasibility" not in supplement
+    assert "0.09994" not in body
+    assert "0.09994" not in supplement
+    assert r"M_{\rm det}" not in supplement
+    assert r"M_{\mathrm{det}}\le M^{*}" in supplement
+
+
+def test_policy_post_processing_neighbor_keeps_quantitative_conditions() -> None:
+    body = BODY.read_text(encoding="utf-8")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    related = _section(body, "# Related Work", "# Data and Locked Evaluation Design")
+
+    for surface in (related, supplement):
+        assert "pointwise exact-safe fallback" in surface
+        assert "exchangeable labeled observations" in surface
+        assert r"p_s<\varepsilon<p_0" in surface
+        assert r"c_Wz^\beta" in surface
+        assert r"F_{\widehat\Delta}" in surface
 
 
 def test_theory_has_two_suites_and_sequential_propositions() -> None:

@@ -423,15 +423,22 @@ InfoSP/InfoSCOP target false-coverage rate under their
 informative-selection contracts \citep{gazin2025informative}, whereas
 Hegazy et al.~preserve coverage when selecting among conformal sets
 through stability \citep{hegazy2025valid_selection_conformal_sets}.
-JOMI's machinery can accommodate coupled batch rules in principle. We do
-not retrofit it because the corresponding validity still requires
-calibration-target exchangeability, which this audit declines to assume,
-and because our estimand is exposure-weighted set coverage over a
-fractional allocation rather than coverage conditional on one binary
-selection event. The 12,076 unresolved target outcomes do not obstruct
-construction of such sets, but they would still make their retrospective
-coverage evaluation partially identified. CRPTO therefore makes no
-selected- or funded-set coverage claim.
+JOMI's machinery can accommodate coupled batch rules in principle. For
+fixed top-\(K\) selection, their Proposition 6 gives one universal
+reference set, while Proposition 9 studies reference-set size only
+through a general asymptotic limit. The exact finite-sample
+beta--binomial size corollary derived below is a narrower, role-reversed
+shared-threshold calculation; it is not stated by either proposition and
+is not a new beta--binomial law \citep{marques2025universal}. We do not
+retrofit JOMI because its coverage guarantee still requires focal
+calibration--target exchangeability and permutation-equivariant
+selection, which this audit does not establish, and because our estimand
+is exposure-weighted set coverage over a fractional allocation rather
+than coverage conditional on one binary selection event. The 12,076
+unresolved target outcomes do not obstruct construction of such sets,
+but they would still make their retrospective coverage evaluation
+partially identified. CRPTO therefore makes no selected- or funded-set
+coverage claim.
 
 Selective-label and reject-inference problems concern outcomes hidden
 because a historical decision withheld the action that would reveal them
@@ -499,6 +506,24 @@ exact in the primary argument while also giving an additive correction
 when that step is not exact. CREDO is therefore a close
 \emph{decide-then-assess} neighbor, not an unconditional finite-sample
 certificate for CRPTO's frozen multi-stage chain.
+
+Risk-controlled policy post-processing instead makes the fallback
+contract explicit \citep{joshi2026risk_controlled_postprocessing}. In
+both regimes, the fitted policies and score are fixed independently of
+the calibration and test observations. With a pointwise exact-safe
+fallback, exchangeable labeled observations \(Z=(X,Y)\) give
+\(\mathbb E[L(Z_{n+1};\widehat\tau)]\le\varepsilon\) without additive
+slack. With a general fitted fallback, for sufficiently large \(n\),
+\(\mathbb E[L(Z_{n+1};\widehat\tau)]\le\varepsilon+O\{\log(n)/n\}\)
+requires i.i.d. labeled observations, an atomless \(\widehat\Delta(X)\),
+\(p_s<\varepsilon<p_0\), where \(p_s\) and \(p_0\) are the fallback- and
+baseline-violation probabilities, and constants \(c_W>0\) and
+\(\beta\ge0\) such that
+\(\mu_W(z)=\mathbb E[W\mid\widehat\Delta(X)=z]\ge c_Wz^\beta\) for
+\(F_{\widehat\Delta}\)-almost every \(z\in(0,1]\), where \(W\) is the
+difference between the baseline and fallback violation indicators.
+Neither regime is available at CRPTO's issue-month level, so the method
+is a prospective redesign rather than a retrospective repair.
 
 Conformal Policy Control (CPC) instead interpolates a safe stochastic
 policy and an optimized policy and controls expected loss through
@@ -732,14 +757,19 @@ stability, and split contracts & CRPTO's fractional exposure vector is
 not the unit-level selection event analyzed by these procedures; no
 bridge is established from their exchangeability, reference-set,
 stability, or split contracts to exposure-weighted FCR \\
-Decision calibration, conformal risk control, and learn-then-test
-\citep{zhao2021decisioncalibration, angelopoulos2024risk, angelopoulos2025ltt, angelopoulos2026nonmonotonic, aldirawi2026nonmonotone_crc}
-& Loss or risk for a declared decision family, algorithm, or catalog &
-Labeled decision contexts or online rounds; the natural CRPTO context
-would be an issue month & Family-relative decision calibration or
-expected, long-run, or catalog risk control & Few dependent contexts,
-incomplete outcomes, and no verified exchangeability, monotonicity,
-stability, safe-candidate, or multiplicity contract \\
+Decision calibration, conformal risk control, learn-then-test, and
+policy post-processing
+\citep{zhao2021decisioncalibration, angelopoulos2024risk, angelopoulos2025ltt, angelopoulos2026nonmonotonic, aldirawi2026nonmonotone_crc, joshi2026risk_controlled_postprocessing}
+& Loss or risk for a declared decision family, algorithm, catalog, or
+baseline--fallback switch & Labeled decision contexts or online rounds;
+the natural CRPTO context would be an issue month & Family-relative
+decision calibration or expected, long-run, catalog, no-slack
+exact-safe-fallback, or \(O\{\log(n)/n\}\) general-fallback risk control
+& Few dependent contexts, incomplete outcomes, and no verified
+monotonicity, stability, multiplicity contract, independently frozen
+fitted objects, exchangeable or i.i.d. labeled observations, pointwise
+exact-safe fallback, \(p_s<\varepsilon<p_0\), or quantitative drift
+lower bound \(\mu_W(z)\ge c_Wz^\beta\) \\
 Selected stochastic-policy risk control \citep{cpc2026} & Expected loss
 of a policy interpolating a declared safe and optimized stochastic
 policy & Online decision contexts with known or evaluable action laws
@@ -2967,15 +2997,47 @@ propagating any bound-estimation failure probability; the present
 KS-like distances, PSI values, rolling origins, and joint-block flags do
 not identify such a bound. For selection-compatible coverage, the clean
 first design is JOMI with exactly \(K\) selected loans and equal
-exposure \(B/K\), so count and invested-dollar FCP coincide
-\citep{jin2025focal}. A fractional extension can be conservative if the
-policy retains exactly \(K\) positive exposures, defines
-\(A=\sum_j a_j>0\), and predeclares and enforces \(a_i/A\le\kappa/K\)
-for a fixed \(\kappa\ge1\): count FCR at level \(\alpha/\kappa\) then
-bounds expected invested-dollar FCP by \(\alpha\). This remains an
-expectation guarantee, not a high-probability statement for one realized
-portfolio, and InfoSP/InfoSCOP answer a different reporting-selection
-problem \citep{gazin2025informative}.
+exposure \(B/K\), so count and invested-dollar FCP coincide pathwise
+\citep{jin2025focal}.
+
+As a prospective feasibility calculation rather than an empirical result
+from this archive, consider \(1\le K<m\) and a top-\(K\) selector with a
+score map frozen without calibration or test labels. Suppose the \(n\)
+calibration selection scores and \(m\) test selection scores are i.i.d.
+and continuous. Proposition 6 of Jin and Ren then gives the universal
+reference count \(R=\sum_{i=1}^{n}\mathbf 1\{S_i>T_{\mathrm{topK}}\}\),
+and the shared random threshold calculation yields
+
+\[
+R\sim\operatorname{BetaBinomial}(n,K+1,m-K),\qquad
+\mathbb E[R]=\frac{n(K+1)}{m+1}.
+\]
+
+For \(\alpha\in(0,1)\), the deterministic conformal cutoff is finite
+exactly when \(R\ge r_\alpha=\lceil1/\alpha-1\rceil\), so its
+pre-outcome probability is the corresponding beta--binomial upper tail.
+This finite-sample corollary complements the general asymptotic
+reference-size analysis in their Proposition 9 and uses the
+shared-threshold mechanism highlighted by Marques
+\citeyearpar{marques2025universal}; it is not derived from Proposition 9
+or claimed as a new beta--binomial law. A finite cutoff still permits an
+empty or otherwise uninformative binary set. Coverage and FCR control
+require the separate JOMI exchangeability, selection, taxonomy, and
+reference-set conditions; the size law alone supplies none of them. With
+those conditions and fixed nonzero \(K\), JOMI's strong
+selection-conditional statement gives count FCR at most \(\alpha\), and
+\(a_i=B/K\) then makes invested-dollar FCP identical to count FCP in
+every realization. Neither step transfers to CRPTO's current fractional
+LP.
+
+A fractional extension can be conservative if the policy retains exactly
+\(K\) positive exposures, defines \(A=\sum_j a_j>0\), and predeclares
+and enforces \(a_i/A\le\kappa/K\) for a fixed \(\kappa\ge1\): count FCR
+at level \(\alpha/\kappa\) then bounds expected invested-dollar FCP by
+\(\alpha\). This remains an expectation guarantee, not a
+high-probability statement for one realized portfolio, and
+InfoSP/InfoSCOP answer a different reporting-selection problem
+\citep{gazin2025informative}.
 
 If the target is instead portfolio decision loss, the exchangeable unit
 must be the complete month or portfolio context. Classical scalar

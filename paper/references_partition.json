@@ -1,8 +1,8 @@
 {
   "citation_sources": [
     {
-      "citation_key_count": 96,
-      "citation_key_sha256": "8a4e564547a2ad87a086a3f5d7e84b3482d34452b83ab1c122d6f2e72bbcca5d",
+      "citation_key_count": 97,
+      "citation_key_sha256": "3701a6bb1433043a8a763c41db8e33c87ebf6b48c79f453ac783bb1bba2768e5",
       "citation_keys": [
         "aior2025lendingclub",
         "aldirawi2026nonmonotone_crc",
@@ -49,6 +49,7 @@
         "im2025spor",
         "jin2025focal",
         "johnstone2021",
+        "joshi2026risk_controlled_postprocessing",
         "kato2025",
         "kiyani2025",
         "kleinberg2018human",
@@ -104,8 +105,8 @@
       "path": "paper/CRPTO_ijds.qmd"
     },
     {
-      "citation_key_count": 72,
-      "citation_key_sha256": "d383f4caf00f9a071fe1f664a6708368555c7e43707cd5a8f9337dd493d7c094",
+      "citation_key_count": 73,
+      "citation_key_sha256": "da939249f70408e95a46b53037b9cdd6a4ca433a2a720417b09ce05ac7209618",
       "citation_keys": [
         "aldirawi2026nonmonotone_crc",
         "angelopoulos2024risk",
@@ -140,6 +141,7 @@
         "im2025spor",
         "jin2025focal",
         "johnstone2021",
+        "joshi2026risk_controlled_postprocessing",
         "kato2025",
         "kull2017",
         "lekeufack2023cdt",
@@ -397,7 +399,7 @@
   },
   "views": {
     "active": {
-      "entry_count": 102,
+      "entry_count": 103,
       "keys": [
         "angelopoulos2023",
         "angelopoulos2024risk",
@@ -461,6 +463,7 @@
         "stratigakos2026decision_calibrated_sets",
         "chen2026polyhedral_conformal_ro",
         "wang2026optimal_decision_prediction_sets",
+        "joshi2026risk_controlled_postprocessing",
         "zheng2026counterfactual_decision_sets",
         "wiberg2025ai_or",
         "navaspalencia2020",
@@ -503,10 +506,10 @@
         "zheng2026online_selective"
       ],
       "path": "paper/references_active.bib",
-      "sha256": "477d01d9f748a718527513a55f3d907b00d953af64359428a04c43ceeac0bfd2"
+      "sha256": "50683606441498439fc38868e67a12aebe3044fd203d44ef0e1cf83eeacf3fa7"
     },
     "reserve": {
-      "entry_count": 94,
+      "entry_count": 93,
       "keys": [
         "athey2019",
         "ayari2026",
@@ -593,7 +596,6 @@
         "sadana2025contextual",
         "farinhas2024nonexchangeable_crc",
         "hullman2025conformal_human_decision",
-        "joshi2026risk_controlled_postprocessing",
         "huang2026oce_rcps",
         "baesens2026foundation_credit_risk",
         "distaso2025business_cycle_losses",
@@ -604,7 +606,7 @@
         "lyocsa2022profit"
       ],
       "path": "paper/references_reserve.bib",
-      "sha256": "0d63c81e809a398f6ecc2639a8f33b92452a8cda40d02952dc8162aa769ae0d6"
+      "sha256": "7cbacbefc84e6d96ca2fb68b9021ff3be4a458feb023dfeb6ef82c2f79472b30"
     }
   }
 }

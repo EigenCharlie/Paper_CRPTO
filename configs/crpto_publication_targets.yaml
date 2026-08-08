@@ -80,6 +80,7 @@ active_scientific_contract:
       - scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py
       - scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py
       - scripts/experiments/run_ijds_binary_phase_census_v1.py
+      - scripts/experiments/run_ijds_equal_notional_jomi_synthetic_feasibility_v1.py
     support_tools:
       - scripts/build_ijds_bibliography_views.py
       - scripts/build_ijds_literature_corpus_manifest.py

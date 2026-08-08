@@ -14,6 +14,7 @@ _RECENT_SEALED_SCIENTIFIC_RUNNERS = {
     "scripts/experiments/run_ijds_dual_coefficient_binary_set_native_v1.py",
     "scripts/experiments/run_ijds_score_equivalence_complete_hull_v1.py",
     "scripts/experiments/run_ijds_set_native_binary_robust_counterpart_v1.py",
+    "scripts/experiments/run_ijds_equal_notional_jomi_synthetic_feasibility_v1.py",
 }
 
 

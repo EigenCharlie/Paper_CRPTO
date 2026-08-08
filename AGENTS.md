@@ -76,6 +76,9 @@ order before changing scientific code or paper claims:
      208-menu logical-certificate census without new optimization.
 16c13. [`docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`](docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md)
    - active clean calibration-only 200-cell exact phase census.
+16c14. [`docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md`](docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md)
+   - sealed theorem-to-code fixed-top-K JOMI feasibility study; its synthetic
+     run is not empirical archive evidence or a validity repair.
 16d. [`docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`](docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md)
    - verified local file identity versus unconfirmed acquisition history.
 16e. [`docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`](docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md)
@@ -138,6 +141,10 @@ counterpart is embedding-invariant in its risk coefficient, with a declared
 fail-closed empty-set value, but establishes neither a joint Cartesian-product
 coverage nor probabilistic-robustness guarantee; its adverse finite-grid default
 census does not select a policy or establish a causal/prospective effect.
+The fixed-top-K JOMI reference-size law is theorem-only and has no empirical
+lineage. Its sealed synthetic run checks implementation under a declared i.i.d.
+design; it supplies no LendingClub, temporal, fractional-LP, selected-set,
+utility, or superiority claim.
 
 The V6 geometry and post-freeze diagnostic replays dated 2026-07-26 are
 non-active candidates in quarantine. Their protocols/configurations were not

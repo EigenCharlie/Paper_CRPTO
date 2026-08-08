@@ -10,7 +10,7 @@ paper and reproducibility bundle, not a production service.
 
 ## Authority Snapshot
 
-Research authority is current through 2026-08-07. The active claim registry
+Research authority is current through 2026-08-08. The active claim registry
 remains the sole paper-facing claim authority; exact theory overrides a
 conflicting summary. The complete-hull score-equivalence and set-native binary
 worst-label lineages (whose historical tags retain `robust-counterpart`) are
@@ -74,6 +74,7 @@ Read first:
 47. `docs/research/ijds_literature_corpus_ledger_2026-07-30.md`
 48. `docs/research/ijds_pending_scientific_work_disposition_2026-08-01.md`
 49. `configs/ijds_literature_corpus_manifest.json`
+50. `docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md`
 
 Active evidence:
 
@@ -161,6 +162,9 @@ Active evidence:
 - The dual-coefficient audit uses protocol `8d0f912` and direct-child artifact
   `79c3783`; its conditional theorem and 208 logical menu certificates run no
   new optimizer and establish neither true risk nor joint set validity.
+- The fixed-top-K JOMI reference-size law has no empirical lineage. Its sealed
+  synthetic run checks theorem-to-code behavior only; it establishes no
+  archive, temporal, fractional-LP, selected-set, utility, or superiority claim.
 - Calibre runs optimized Python (`sys.flags.optimize == 2`): never use
   `assert` as a runtime or scientific guard in `src/**` or `scripts/**`;
   raise an explicit exception so the check survives execution.
@@ -364,8 +368,8 @@ the master `paper/references.bib`, and regenerate deterministic active/reserve
 views. Regenerate `configs/ijds_literature_corpus_manifest.json` with
 `scripts/build_ijds_literature_corpus_manifest.py`; its complete
 key--PDF--version--SHA-256--status crosswalk, not a partial prose table, owns the
-current corpus census. The 2026-08-07 state is 164 unique readable PDFs and 195
-bibliography keys, partitioned into 102 active and 93 reserve keys.
+current corpus census. The 2026-08-08 state is 165 unique readable PDFs and 196
+bibliography keys, partitioned into 103 active and 93 reserve keys.
 
 CREDO is a close expectation-wise *decide-then-assess* neighbor whose source
 uses the stated first-order approximation or additive correction; it supplies

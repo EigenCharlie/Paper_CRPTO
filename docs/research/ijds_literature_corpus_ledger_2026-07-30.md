@@ -81,8 +81,8 @@ CP objects to expose their exact version or venue changed no bytes or counts.
 values, pass strict PyPDF page-tree traversal, and are unencrypted. The Joshi
 et al. v1 object adds 38 pages and 1,057,028 bytes.
 
-The 196-entry master bibliography currently partitions into **102 active**
-body-or-supplement citations and **94 reserve** entries. Of the 196 keys, 144
+The 196-entry master bibliography currently partitions into **103 active**
+body-or-supplement citations and **93 reserve** entries. Of the 196 keys, 144
 have one current local PDF and 52 are metadata-only. The only four active
 metadata-only exceptions remain `holm1979`, `manski2003partial`, `platt2000`,
 and `vovk2005`; the other 48 metadata-only entries are reserve records whose
@@ -116,7 +116,7 @@ dispositions in that manifest:
 
 | Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Primary record, license, and disposition |
 |---|---|---:|---:|---|---|---|
-| Joshi, Wang, Hassani, and Dobriban, *Risk-Controlled Post-Processing of Decision Policies*, arXiv:2605.06479v1 | `Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf` | 1,057,028 | 38 | `1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6` | `joshi2026risk_controlled_postprocessing` | [arXiv v1](https://arxiv.org/abs/2605.06479v1); CC BY 4.0 recorded in the PDF metadata. **A-boundary, reserve.** Exact expected risk control is proved only for an exact-safe fallback under exchangeability. With a general fitted fallback, the paper instead gives an `O(log n/n)` expected excess-risk term under i.i.d. sampling, atomless fitted scores, rank-stability/drift regularity, endpoint feasibility, and fitted objects independent of calibration and test data. Neither regime repairs CRPTO's inspected temporal archive, funded-set validity, or scalar set-to-decision embedding. |
+| Joshi, Wang, Hassani, and Dobriban, *Risk-Controlled Post-Processing of Decision Policies*, arXiv:2605.06479v1 | `Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf` | 1,057,028 | 38 | `1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6` | `joshi2026risk_controlled_postprocessing` | [arXiv v1](https://arxiv.org/abs/2605.06479v1); CC BY 4.0 recorded in the PDF metadata. **A-boundary, active.** In both regimes, the fitted policies and score are fixed independently of calibration and test observations. A pointwise exact-safe fallback and exchangeable labeled observations `Z=(X,Y)` give no-slack expected-risk control. For a general fitted fallback and sufficiently large `n`, the paper instead establishes `E[L] <= epsilon + O(log n/n)` under i.i.d. labeled observations, atomless fitted score `Delta_hat(X)`, `p_s < epsilon < p_0`, and constants `c_W > 0`, `beta >= 0` such that `mu_W(z) >= c_W z^beta` for `F_{Delta_hat}`-almost every `z` in `(0,1]`. Neither regime repairs CRPTO's inspected temporal archive, funded-set validity, or scalar set-to-decision embedding. |
 
 PyPDF 6.15.0 strictly parsed all 38 pages. The object is unencrypted, has no
 empty page or page below 200 extracted characters, and has a median text-layer
@@ -434,7 +434,7 @@ The 2026-08-07 refresh keeps the established compatibility key
 `prinster2024feedback`. It also pins `chen2026polyhedral_conformal_ro` to arXiv
 v2, `wang2026optimal_decision_prediction_sets` to arXiv v3, and
 `cortesgomez2025utility` to the official ICLR 2025 OpenReview record. The
-current master/view counts are 196 total, 102 active, and 94 reserve. The
+master/view counts at that snapshot were 196 total, 102 active, and 94 reserve. The
 separate corpus manifest is regenerated after citation changes so its
 active/reserve projection remains aligned with those deterministic views.
 

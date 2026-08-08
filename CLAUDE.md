@@ -58,6 +58,9 @@ not active evidence.
 19c13. `docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`
    - clean calibration-only 5-by-8-by-5 exact phase census and conditional
      hypothesis boundaries.
+19c14. `docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md`
+   - sealed theorem-to-code feasibility study for fixed-top-K JOMI; its
+     synthetic run is not empirical archive evidence or a validity repair.
 19d. `docs/research/ijds_raw_data_acquisition_provenance_2026-07-21.md`
 19e. `docs/research/ijds_submission_rights_anonymity_audit_2026-07-21.md`
 20. `configs/ijds_active_evidence_sources.yaml`
@@ -105,6 +108,10 @@ The dual-coefficient follow-up and clean binary-phase census use separate
 protocol-to-direct-child-artifact chains. The former is conditional decision
 algebra, not true zero risk or joint set validity; the latter reads no target
 or outcome and supplies no transport conclusion.
+The fixed-top-K JOMI reference-size law is an active theorem with no empirical
+lineage. Its sealed synthetic run checks implementation and resolution under a
+declared i.i.d. design; it establishes no LendingClub, temporal, fractional-LP,
+selected-set, utility, or superiority claim.
 
 The claim registry is the editorial authority. The source registry owns exact
 lineage identities, artifact descriptors, 53 DVC pointers, and 11

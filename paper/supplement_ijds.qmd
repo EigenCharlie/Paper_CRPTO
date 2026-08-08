@@ -1650,7 +1650,9 @@ renormalizing the rounded portfolio upward.
 
 # Appendix D: Exact Statements and Proofs
 
-## D.1 Combined-rank miss law and tie-safe domination
+## D.1 Exact shared-threshold beta--binomial laws
+
+### D.1.1 Combined-rank miss law and tie-safe domination
 
 The tie-free distribution below is the exact finite-batch empirical-coverage
 law of @marques2025universal, written for the complementary strict-miss count.
@@ -1689,11 +1691,11 @@ exchangeability is preserved and the pair ranks are almost surely distinct, so
 their exceedance count $M^*$ obeys the displayed law. The scalar value of the
 $r$-th calibration pair remains the fitted scalar threshold $q$. If $R_j>q$,
 then $(R_j,U_j)$ necessarily exceeds that pair; if $R_j=q$, it may or may not.
-Consequently the deterministic strict-miss count satisfies $M_{\rm det}\le
-M^*$ for every realization. Hence
+Consequently the deterministic strict-miss count satisfies
+$M_{\mathrm{det}}\le M^{*}$ for every realization. Hence
 
 $$
-\Pr(M_{\rm det}\ge t)\le \Pr(M^*\ge t),
+\Pr(M_{\mathrm{det}}\ge t)\le \Pr(M^{*}\ge t),
 $$
 
 so the beta--binomial upper tail is exact in the continuous case and
@@ -1705,6 +1707,88 @@ Bonferroni within each five-stratum cell followed by Holm over 40 cells controls
 the declared familywise level without an independence assumption. Because this
 family and an exploratory flag pattern were inspected before locking, the
 reported cutoffs have no post-selection FWER guarantee.
+
+### D.1.2 Fixed-$K$ top-$K$ JOMI reference-size corollary
+
+<!-- claim:theory.jomi_top_k_reference_size_law -->
+
+Let the $n$ calibration selection scores and the $m$ test selection scores be
+iid from one continuous distribution $F$, with $1\le K<m$, and suppose that
+the selector's score map is frozen without calibration or test labels and
+chooses the $K$ largest test scores. Write
+$T_{\mathrm{topK}}$ for the $(m-K)$-th test order statistic in ascending order.
+Proposition 6 of @jin2025focal identifies the reference set of every selected
+focal unit as
+
+$$
+\mathcal R_{\mathrm{topK}}
+=\{i\in[n]:S_i>T_{\mathrm{topK}}\},
+\qquad
+R:=|\mathcal R_{\mathrm{topK}}|.
+$$
+
+The resulting finite-sample reference-size law is
+
+$$
+R\sim\operatorname{BetaBinomial}(n,K+1,m-K),
+$$
+
+with probability mass function
+
+$$
+\Pr(R=r)
+=\binom nr
+\frac{\mathrm B(r+K+1,n-r+m-K)}
+     {\mathrm B(K+1,m-K)},
+\qquad r=0,\ldots,n,
+$$
+
+and moments
+
+$$
+\mathbb E[R]=\frac{n(K+1)}{m+1},
+\qquad
+\operatorname{Var}(R)
+=\frac{n(K+1)(m-K)(m+1+n)}{(m+1)^2(m+2)}.
+$$
+
+For deterministic conformal level $\alpha\in(0,1)$, define
+
+$$
+r_\alpha=\left\lceil\frac{1}{\alpha}-1\right\rceil.
+$$
+
+The augmented order-statistic cutoff is finite, rather than the appended
+$+\infty$, exactly when $R\ge r_\alpha$. Hence
+
+$$
+\Pr(\text{finite cutoff})
+=1-F_{\mathrm{BB}}
+\bigl(r_\alpha-1;n,K+1,m-K\bigr),
+$$
+
+where $F_{\mathrm{BB}}$ is the beta--binomial CDF, with probability zero when
+$r_\alpha>n$. A finite cutoff does not imply that a binary prediction set is
+informative or even nonempty; set quality requires a separate gate.
+
+**Proof.** By the probability integral transform,
+$F(T_{\mathrm{topK}})\sim\operatorname{Beta}(m-K,K+1)$. Therefore
+$Q:=1-F(T_{\mathrm{topK}})\sim\operatorname{Beta}(K+1,m-K)$. Conditional on
+$Q$, the independent calibration scores exceed the test threshold with common
+probability $Q$, so $R\mid Q\sim\operatorname{Binomial}(n,Q)$. Integrating the
+binomial mass against the beta density gives the displayed beta--binomial mass,
+and the standard beta--binomial moments give its mean and variance. For a
+reference set of size $R$, the deterministic conformal rank is
+$\lceil(1-\alpha)(R+1)\rceil$ in the $R$ finite scores augmented by
+$+\infty$. This rank is at most $R$ if and only if
+$R\ge\lceil1/\alpha-1\rceil$, which proves the cutoff statement. $\square$
+
+This is an elementary role-reversed specialization obtained by combining Jin
+and Ren's exact top-$K$ reference identity with the shared-random-threshold
+beta--binomial mechanism analogous to that highlighted by
+@marques2025universal. It complements, but is not derived from, the asymptotic
+reference-size result in Proposition 9 of @jin2025focal. We do not claim a new
+beta--binomial law, and continuity and iid sampling are load-bearing premises.
 
 ## D.2 Decision-geometry proofs
 
@@ -2181,6 +2265,24 @@ $$
 \operatorname{Coverage}^{B}=1-\frac{A}{B}
 +\frac{A}{B}\operatorname{Coverage}^{\$}.
 $$
+
+**Equal-notional corollary.** If the reporting panel is the selected support,
+that support contains exactly $K$ units, every selected exposure is $a_i=B/K$,
+and all capital is invested, then $N=K$, $A=\sum_i a_i=B$, and, pathwise,
+
+$$
+\operatorname{FCP}^{N}
+=\frac{1}{K}\sum_{i\in\widehat{\mathcal S}}m_i
+=\frac{1}{A}\sum_{i\in\widehat{\mathcal S}}\frac{B}{K}m_i
+=\frac{1}{B}\sum_{i\in\widehat{\mathcal S}}\frac{B}{K}m_i
+=\operatorname{FCP}^{\$}
+=\operatorname{FCP}^{B}.
+$$
+
+This is an accounting identity for a fixed equal-notional support. It does not
+extend a count-FCR guarantee to the active fractional LP, unequal exposures,
+cash states with $A<B$, or a support chosen without the required
+selection-conditional validity contract.
 
 The remaining share $1-A/B$ is cash and has no loan-level miss; the coverage
 complement is accounting notation, not a declaration that cash is a covered
@@ -3089,7 +3191,7 @@ inspected archive.
 | Target estimand | First viable design | Required validity bridge | Stop condition |
 |---|---|---|---|
 | Marginal coverage of one future loan | Freeze chronology, score, taxonomy, temporal weights, and one nonexchangeable-conformal theorem before the target outcome | An external, independent, or design-based upper bound on the theorem's swap, decoupling, or dependence penalty, with any confidence-bound failure probability propagated | The penalty is unbounded, postselected, or vacuous, or its estimation failure probability is omitted; current KS-like distances, PSI, rolling origins, and joint-block flags cannot substitute for it |
-| Selection-conditional coverage and FCR | JOMI with exactly $K$ selected loans and equal exposure $B/K$ [@jin2025focal] | Same-population exchangeability or a proved replacement, permutation-equivariant selection, disjoint policy construction and final calibration, and complete reference sets | Calibration-row permutations or irrelevant ID reversals change the rule, reference sets are too small, or historical target outcomes influence the policy |
+| Selection-conditional coverage and FCR | JOMI with exactly $K$ selected loans and equal exposure $B/K$ [@jin2025focal] | Same-population exchangeability or a proved replacement, permutation-equivariant selection, disjoint policy construction and final calibration, complete reference sets, a predeclared minimum probability that $R\ge r_\alpha$ under a justified iid-continuous score law or a separately proved replacement, and a separate predeclared nonempty-set and set-quality gate | Calibration-row permutations or irrelevant ID reversals change the rule, the finite-cutoff probability misses its gate, any declared nonempty-set or quality gate fails, or historical target outcomes influence the policy; a finite cutoff alone does not make the resulting set informative |
 | Expected fractional exposure-weighted FCP | Exactly $K$ positive exposures, $A=\sum_j a_j>0$, and a predeclared hard concentration bound $a_i/A\le\kappa/K$ | Count FCR calibrated at $\alpha/\kappa$, using the deterministic inequality $\operatorname{FCP}^{\$}\le\kappa\operatorname{FCP}^{N}$ | $\kappa$ is selected post hoc, the portfolio denominator is ambiguous, the bound is written relative to $B$ while cash makes $A<B$, or the adjusted sets are uninformative |
 | Expected risk of a selected stochastic policy | Conformal Policy Control with a predeclared safe policy, optimized policy, bounded loss, action laws, and clipping rule [@cpc2026] | Mutual absolute continuity, a uniform density floor $\delta$, $K$-Lipschitz regularity, $\epsilon$ replace-one stability, and exact policy-ratio conformal weights, giving the source's $\alpha+K\epsilon/\delta$ bound | No defensible safe policy or action density exists, feedback is delayed or incomplete, stability is uncertified, or approximate weights are substituted without a new bound |
 | Next-month portfolio decision risk | Complete issue month as the sampling unit, complete eligible outcomes, bounded loss, and a policy family frozen before risk calibration | Classical conformal risk control (CRC) for an exchangeable monotone family with its finite-sample safe-terminal correction; stability-based CRC for a symmetric non-monotone algorithm only with a valid nonvacuous stability certificate; finite-grid non-monotone CRC with an adjusted level and safe candidate; or Learn-Then-Test (LTT) for a finite reoptimized catalog evaluated on valid contexts [@angelopoulos2024risk; @angelopoulos2026nonmonotonic; @aldirawi2026nonmonotone_crc; @angelopoulos2025ltt] | Too few valid blocks, temporal assumptions fail, an eligible outcome is incomplete, the classical CRC correction, non-monotone stability/reference-risk margin, finite-grid adjusted level or safe-candidate condition, or LTT multiplicity contract fails, or a favorable policy is selected after outcomes |
@@ -3217,7 +3319,7 @@ credit scoring, conformal prediction, or linear programming separately.
 | Censoring-aware, drift-aware, and competing-risk prediction [@candes2023survival; @gui2024adaptive; @li2023online_loans; @peng2026drift_survival] | Lower prediction bounds for time-to-event outcomes under explicit censoring contracts, event-specific default/prepayment modeling, and dynamic landmark survival models under simulated drift | Uses a partially identified terminal binary label; it has neither exact event/censoring times nor a competing-risk estimand, overlap audit, conformal transport bound, or funded-set guarantee |
 | Conformal Predictive Portfolio Selection [@kato2025] | Constructs a return interval separately for each fixed candidate portfolio, then ranks the candidates by interval bounds; its dependent-data result is approximate fixed-portfolio coverage under approximate ergodicity, oracle-score approximation, estimation-error, and density conditions | CRPTO selects fractional loan exposures through a budget-coupled LP; it inherits neither simultaneous nor post-selection coverage for the selected portfolio and has no bridge from return intervals to funded-loan set validity |
 | Conformal uncertainty regions and risk-calibrated optimization [@sun2024ptc; @johnstone2021; @patel2024; @hu2026crc] | Builds conformal or coverage-calibrated uncertainty regions for optimization, or calibrates decision risk under a specified construction | Audits a frozen binary credit score, administrative-outcome reconstruction, and matched comparators; no region, decision-risk, or selected-set guarantee is inherited |
-| Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative; @zheng2026online_selective] | Validity targets tailored to black-box, informative, or asymmetric online selection under their own exchangeability, reference-set, and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans; no method resolves the archive's label delay or exposure-weighted funded estimand, and none is implemented by the monthly optimizer |
+| Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative; @zheng2026online_selective] | Proposition 2 of Jin and Ren transfers strong selection-conditional coverage across disjoint fixed-size taxonomies to $\operatorname{FCR}\le\alpha\Pr(\widehat{\mathcal S}\ne\varnothing)\le\alpha$; Proposition 6 gives $\mathcal R=\{i:S_i>T_{\mathrm{topK}}\}$ for tie-free top-$K$ selection; Proposition 9 gives an asymptotic reference fraction under threshold convergence and a continuous tail-mass map, not a finite beta--binomial law. Related methods target informative or asymmetric online selection under their own exchangeability, reference-set, and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans. The fixed-$K$ reference-size corollary above is prospective algebra under iid continuous scores, not archive validity; none of these methods resolves the archive's label delay or exposure-weighted funded estimand, and none is implemented by the monthly optimizer |
 | Chance-constrained and learned-constraint conformal optimization [@zhao2024cpp; @ovalle2025cmicl] | Calibrates a constraint-function quantile with a second i.i.d. calibration sample, or learns set-native mixed-integer constraints under explicit conditional-independence and group contracts | CRPTO inserts a prediction-set upper bound endpoint as an LP coefficient and supplies neither construction's independent-calibration, conditional-independence, funded-set, zero-threshold, or temporal-transport certificate |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
 | Utility-directed and learned decision-aware conformal sets [@cortesgomez2025utility; @yeh2026; @chen2026polyhedral_conformal_ro] | Incorporate downstream utility into classification-set construction, or learn conditional/polyhedral uncertainty-set geometry against robust decision loss with their own calibration or independent recalibration contracts | Freezes one binary-set lifting instead of learning the predictive object; it lacks those design/recalibration splits and inherits none of their downstream robustness guarantees |
@@ -3237,6 +3339,7 @@ methods.
 | Decision calibration [@zhao2021decisioncalibration; @shekhar2026decision_calibrated_pacing] | Makes predictions indistinguishable to a declared decision class, or calibrates policy impacts uniformly over a finite catalog under its own block assumptions | Probability, conformal, and risk calibration in CRPTO are different objects; no decision-indistinguishability or catalog-uniform certificate is inherited |
 | Conformal Decision Theory [@lekeufack2023cdt] | Couples prediction-set uncertainty to a declared action and loss in order to make a safe autonomous decision under its construction | CRPTO assesses a historical frozen allocation chain and inherits neither the action rule nor its decision guarantee |
 | Conformal Policy Control [@cpc2026] | Interpolates a safe stochastic policy and an optimized policy; under the source's density-floor, Lipschitz, replace-one-stability, and exact policy-ratio-weight conditions, its expected-loss bound is $\alpha+K\epsilon/\delta$ | No known stochastic safe policy, action-density law, immediate-feedback design, or stability certificate exists for CRPTO |
+| Risk-controlled post-processing of decision policies [@joshi2026risk_controlled_postprocessing] | Post-processes a fixed policy toward a fallback with minimal intervention, with fitted policies and score fixed independently of calibration and test observations. A pointwise exact-safe fallback---one whose loss cannot violate the constraint for any $(x,y)$---plus exchangeable labeled observations $Z=(X,Y)$ gives finite-sample expected-risk control without additive slack. A general fitted fallback instead gives $\mathbb E[L(Z_{n+1};\widehat\tau)]\le\varepsilon+O(\log n/n)$, for sufficiently large $n$, under iid labeled observations, atomless $\widehat\Delta(X)$, $p_s<\varepsilon<p_0$, and $\mu_W(z)\ge c_Wz^\beta$ for constants $c_W>0$, $\beta\ge0$, and $F_{\widehat\Delta}$-almost every $z\in(0,1]$; here $p_s$ and $p_0$ are the fallback- and baseline-violation probabilities, and $W$ is the difference between their violation indicators | CRPTO has no pointwise exact-safe fallback, independent iid policy-calibration sample, or verified fitted-fallback drift contract. Neither regime transfers to its chronological fractional LP, repairs temporal transport, or supplies selected-set or funded-exposure conformal validity |
 | Conformalized Decision Risk Assessment (CREDO) [@zhou2025credo] | Forms an inverse region under which a prescribed decision remains optimal and assesses its risk expectation-wise | The source's first-order approximation or additive correction is part of that contract; it is not an unconditional finite-sample certificate for CRPTO's multi-stage, partially identified chain |
 | Decision-focused learning with uncertain constraints [@donti2017; @elmachtoub2022; @liu2021riskbounds; @schutte2024robust; @im2025spor; @mandi2024] | Trains predictions or robust surrogates against downstream decision loss; SPO-RC adds feasibility-sensitive learning with contextual uncertainty sets for uncertain constraints | Preserves the predictor for governance and audits a post-hoc decision layer; it claims neither regret/Fisher consistency nor the SPO-RC constraint guarantee |
 

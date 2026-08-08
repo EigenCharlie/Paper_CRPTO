@@ -654,6 +654,7 @@ any claim.
 
 <!-- claim:geometry.binary_threshold_phase_characterization -->
 <!-- claim:theory.coverage_band_identity -->
+<!-- claim:theory.jomi_top_k_reference_size_law -->
 <!-- claim:theory.outcome_free_binary_set_bounds -->
 <!-- claim:theory.binary_set_embedding_nonidentification -->
 <!-- claim:theory.feasible_difference_score_order_equivalence -->
@@ -765,9 +766,9 @@ coefficient).** For
 
 ### Supplemental exact identities
 
-The following exact finite-archive identities support the Results and are
-proved in the supplement rather than presented as additional numbered
-propositions in the body.
+The following exact identities and finite-sample law support either the Results
+or the prospective-design discussion and are proved in the supplement rather
+than presented as additional numbered propositions in the body.
 
 - **Sharp directional residual-distribution frontier.** With one fixed
    calibration empirical CDF, complete every unresolved target residual as
@@ -776,6 +777,25 @@ propositions in the body.
    then gives the four exact extrema of `sup(F_cal-F_target)` and
    `sup(F_target-F_cal)`. This is cellwise finite-archive identification, not a
    KS test, stochastic dominance, exchangeability, or a shift mechanism.
+- **Fixed-top-K JOMI reference-size law.** Let the `n` calibration and `m` test
+   selection scores be i.i.d. and continuous, let `1 <= K < m`, and apply a
+   label-free fixed-top-K selector. Combining the universal reference-set
+   identity in Proposition 6 of Jin and Ren with the analogous shared-threshold
+   beta--binomial mechanism highlighted by Marques gives, for the
+   `(m-K)`-th ascending test order statistic `T`,
+   `R=#{i:S_i>T} ~ BetaBinomial(n,K+1,m-K)`. For `0 < alpha < 1`, the
+   deterministic conformal cutoff is finite exactly when
+   `R >= r_alpha = ceil(1/alpha-1)`. This complements,
+   and is not derived from, the asymptotic reference-size analysis in
+   Proposition 9 of Jin and Ren; it is not a new beta--binomial law or a
+   novelty-priority claim. As a direct specialization of the count--exposure
+   covariance identity below, exactly `K` equal allocations `a_j=B/K` give
+   dollar FCP equal to count FCP pathwise. Neither identity supplies real-data
+   selected-set validity, temporal transport, joint-label or rank-conditional
+   coverage, fractional-allocation validity, utility, or superiority. A finite
+   cutoff need not yield a nonempty or otherwise informative set, and the
+   beta--binomial law does not automatically extend to ties or sampling without
+   replacement.
 - **Count--exposure covariance identity.** On one fixed nonempty panel with
    nonnegative exposures and positive total exposure, dollar-minus-unweighted
    panel FCP---equivalently unweighted-minus-dollar coverage---equals empirical

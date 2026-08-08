@@ -109,17 +109,18 @@ not a replacement for any of those validity contracts.
 
 ### 2026-08-08 pre-freeze delivery receipt
 
-The regenerated reviewer surfaces contain 71 official-template pages (63
-before references), a 50-page browser body preview, and a 77-page supplement;
+The regenerated reviewer surfaces contain 73 official-template pages (65
+before references), a 51-page browser body preview, and a 79-page supplement;
 the one-paragraph abstract has 292 words. The page cap remains intentionally
 disabled. Machine inspection found no blank, non-Letter, identity-bearing, or
 stale page. Independent high-resolution inspection found no P0/P1 visual
-defect in the dense Related Work table, the two theory suites, the phase,
-common-panel, or envelope figures, Tables S12A--S12C, or either S13B panel.
+defect in the dense Related Work table, the two theory suites, the fixed-top-$K$
+corollary, the phase, common-panel, or envelope figures, Tables S12A--S12C, or
+either S13B panel.
 
-The convention-discovered active IJDS tier finished with 930 passes, three
+The convention-discovered active IJDS tier finished with 957 passes, three
 expected skips, and 59 genuinely DVC-materialized tests excluded from the
-pre-freeze local tier. The repository-wide non-DVC suite selected 1,244 tests
+pre-freeze local tier. The repository-wide non-DVC suite selected 1,271 tests
 and finished with zero failures and five expected skips. Publication integrity,
 sealed-parent regeneration, bibliography and corpus-manifest checks, compiler
 scan, PDF audit, lint, Ruff formatting, mypy, ty, dependency audit, smoke,
@@ -129,6 +130,18 @@ freeze tier remains deliberately unexecuted because its protected bytes and
 submission-only gates were deferred; no protected scientific stage ran in this
 P2 pass.
 
+### 2026-08-08 JOMI theorem-to-code feasibility addendum
+
+The fixed-$K$ JOMI preflight is now completed under the sealed protocol
+`protocol/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1` and its
+exact direct-child artifact tag. It establishes the exact prospective
+reference-size corollary and reconciles its implementation under one declared
+i.i.d. continuous synthetic design. It is not evidence from LendingClub or any
+other credit archive, does not establish temporal or selected-set validity,
+does not cover the fractional LP, and supplies no utility or superiority
+claim. D1 therefore splits into a completed theorem-to-code preflight and a
+still-deferred empirical study requiring untouched, theorem-compatible data.
+
 ## 2. Literal crosswalk of the five screenshots
 
 The table preserves the wording and ordering of the screenshots. Repeated items
@@ -137,7 +150,7 @@ scientific obligations.
 
 | Source item | Canonical package | Disposition | Short decision |
 |---|---|:---:|---|
-| Screenshot 1/2 row 1: equal-notional JOMI with fixed (K) | D1 | **D** | Highest-priority prospective selected-set contribution; requires untouched same-population data and a new protocol. |
+| Screenshot 1/2 row 1: equal-notional JOMI with fixed (K) | D1 | **C/D** | The theorem-to-code synthetic preflight is sealed; a selected-set contribution still requires untouched theorem-compatible data. |
 | Screenshot 1/2 row 2: decision-loss conformal control, CRC or LTT | D3 | **D** | High-value alternative estimand; choose one theorem route before new outcomes. |
 | Screenshot 1/2 row 3: temporal transport bound | D0 | **D** | A prerequisite for D1/D3, not another retrospective diagnostic; PSI/KS cannot substitute. |
 | Screenshot 1/2 row 4: complete Platt/isotonic/beta/Venn--Abers sensitivity | C2 | **C** | Completed over the full frozen four-map family, with no calibrator selection and no optimization. |
@@ -156,7 +169,7 @@ scientific obligations.
 | Screenshot 4 phase 2 item 3: close receipts for cited sources missing obvious PDFs | C8 | **C** | Nineteen exact PDFs were added; four legitimate metadata-only exceptions are documented rather than filled from dubious mirrors. |
 | Screenshot 4 phase 2 item 4: one ledger and active/reserve bibliography partition | C8 | **C** | Completed with one master and deterministic, disjoint active/reserve views. |
 | Screenshot 4 phase 3: one retrospective calibrator rerun | C2 | **C** | Completed; no second calibrator grid is warranted. |
-| Screenshot 4 phase 4: JOMI, then CRC/LTT, separate transport bound, external V2 last | D0--D5 | **D** | This remains the correct value order, conditional on the chosen estimand and fresh data. |
+| Screenshot 4 phase 4: JOMI, then CRC/LTT, separate transport bound, external V2 last | D0--D5 | **C/D** | JOMI feasibility is sealed; empirical validity, CRC/LTT, transport, and external replication still require fresh data and a chosen estimand. |
 | Screenshot 4 stop rule: do not revive a historical number because pages are available | N1 | **N** | Permanent rule; old favorable magnitudes are provenance, not candidates for recovery. |
 | Screenshot 4 stop rule: do not run a protected family or large grid without protocol and permission | N2 | **N** | Permanent fail-closed rule. |
 | Screenshot 4 stop rule: do not use PSI, KS, rolling origins, or joint flags as transport bounds | N3 | **N** | Permanent theorem boundary, now encoded in the temporal contract. |
@@ -164,7 +177,7 @@ scientific obligations.
 | Screenshot 4 stop rule: stop when only post-selection magnitudes change | N5 | **N** | Permanent value rule; no more same-grid winner search. |
 | Screenshot 5 item 1: independent or prospective temporal replication | D0 | **D** | Requires a genuinely later untouched target origin or external sampling authority. |
 | Screenshot 5 item 2: independent split to select and recalibrate calibrators | D4 | **D** | Scientifically valid only as a new four-way chronology; lower priority than closing decision validity. |
-| Screenshot 5 item 3: post-selection validity via fixed-(K), FCR/JOMI, or exposure weighting | D1/D2 | **D** | Equal-notional JOMI first; bounded-concentration extension second. |
+| Screenshot 5 item 3: post-selection validity via fixed-(K), FCR/JOMI, or exposure weighting | D1/D2 | **C/D** | Equal-notional feasibility is complete; real selected-set validity remains first, bounded-concentration extension second. |
 | Screenshot 5 item 4: optimization completely native to sets, not only one coefficient | C5/C6 and D6 | **C/D** | Risk-only and dual-coefficient versions are complete; a jointly valid constraint-native formulation remains a new method. |
 | Screenshot 5 item 5: action-conditional or context-level risk control | D3 | **D** | Fully designed as monthly bounded loss; needs fresh complete contexts. |
 | Screenshot 5 item 6: continuous caps or adjustability with its own model | C6/N6/D7 | **C/N/D** | Exact for one dual model, NO-GO as an old-grid brute-force replay, and conditional future work only with a new exact model. |
@@ -175,7 +188,7 @@ scientific obligations.
 |---|:---:|---|
 | Audit every historical change and recover valid material removed for page pressure | **C** | C1, C7, C9 and the pre-freeze editorial rule below |
 | Audit all theory, claims, narrative, and state of the art adversarially | **C** | C7 and the active claim/claim-ledger synchronization |
-| Download and organize the new literature | **C** | C8; 164 unique PDFs, a complete generated corpus manifest, and deterministic bibliography views |
+| Download and organize the new literature | **C** | C8; 165 unique PDFs, a complete generated corpus manifest, and deterministic bibliography views |
 | Remove dependence on temporary parser output | **C** scientifically | C8/C11; canonical PDFs and tracked receipts are independent of scratch |
 | Improve the CRPTO skill and repository governance | **C** | [The skill](../../.codex/skills/crpto/SKILL.md) encodes authority ordering, pre-freeze mode, the long-run contract, and the promoted August lineages; the Gate-0 authority check passed |
 | Create new run tags, touch fresh artifacts, and update the paper-facing manifest | **C** for the approved phase and dual lineages | C3/C6 and Gate 0; both direct-child tag pairs and the generated evidence transaction exist, and no protected historical artifact was rewritten |
@@ -383,8 +396,8 @@ The complete machine-checkable key--PDF--version--hash--status crosswalk is
 generated by
 [`build_ijds_literature_corpus_manifest.py`](../../scripts/build_ijds_literature_corpus_manifest.py).
 
-**Result and value.** The local corpus contains 164 distinct PDFs, 5,862 pages,
-339,488,290 bytes, no duplicate SHA-256, no encrypted object, and no parse
+**Result and value.** The local corpus contains 165 distinct PDFs, 5,900 pages,
+340,545,318 bytes, no duplicate SHA-256, no encrypted object, and no parse
 error. The August intake adds exact versions of Aldirawi--Li--Guo on finite-grid
 non-monotone CRC, Van der Laan--Alaa on generalized Venn, Dabah--Tirer on
 probability scaling versus conformal efficiency, and Ovalle et al. on
@@ -394,8 +407,9 @@ neighbors, and canonicalizes Kato's exact v2 portfolio paper without changing
 its bytes. The August 7 pass adds CREDO v3/ICLR 2026, CPC v3/ICML 2026, and the
 three exact feedback-covariate-shift sources; it also resolves every legacy,
 watchlist, quarantine, companion, and superseded corpus object explicitly.
-The bibliography partition has 195 master entries: 102 active and 93
-reserve, complete and disjoint.
+The August 8 intake adds Joshi et al.'s exact v1 policy-post-processing paper.
+The bibliography partition has 196 master entries: 103 active and 93 reserve,
+complete and disjoint.
 
 **Decision changed.** Aldirawi's excess term makes a current 11- or 15-context
 0.10 retrofit vacuous even at grid size two; the first (n) with
@@ -664,10 +678,16 @@ removes the count-versus-dollar ambiguity by design:
 **Minimum new input.** Same-population exchangeable or theorem-justified fresh
 calibration/target units, plus an outcome-free reference-set feasibility pilot.
 
-**Stop rule.** Stop before outcomes if any required reference set is empty or
-cannot attain the declared rank, permutations or ID reversal change selection,
-the support is not exactly (K), administrative outcomes are unresolved, or final
-calibration labels affect policy construction.
+**Completed preflight.** The sealed 2026-08-08 synthetic study proves and
+implements the exact fixed-top-$K$ reference-size law and finite-cutoff gate,
+then reconciles the code on a frozen i.i.d. design. Its artifacts are design
+evidence only: they do not answer the real-data selection-validity question.
+
+**Stop rule.** Stop before outcomes if the predeclared probability of attaining
+the finite rank misses its gate, the separate nonempty-set or set-quality gate
+fails, permutations or ID reversal change selection, the support is not exactly
+(K), administrative outcomes are unresolved, or final calibration labels affect
+policy construction. A finite cutoff alone is not an informative set.
 
 ### D2. Concentration-bounded fractional exposure
 

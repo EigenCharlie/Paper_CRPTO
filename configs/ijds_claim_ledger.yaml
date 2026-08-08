@@ -1,4 +1,4 @@
-schema_version: "2026-08-01.1"
+schema_version: "2026-08-08.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -186,6 +186,23 @@ claims:
        comparison_across_different_target_panels]
     surfaces:
       required: [body, supplement, registry]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: theory.jomi_top_k_reference_size_law
+    status: active
+    kind: theorem
+    rule: documented
+    lineages: []
+    scope: iid_continuous_calibration_and_test_selection_scores_under_label_free_fixed_top_k_selection_with_one_le_k_lt_m_and_zero_lt_alpha_lt_one_with_the_universal_jomi_reference_set_beta_binomial_reference_size_law_and_exact_finite_cutoff_gate
+    forbidden_inference:
+      [novelty_priority, lendingclub_or_real_data_selected_set_validity,
+       temporal_transport, finite_cutoff_implies_informative_or_nonempty_set,
+       joint_label_coverage, rank_conditional_coverage,
+       extension_to_ties_without_a_declared_joint_lexicographic_law,
+       sampling_without_replacement_extension, fractional_allocation_validity,
+       coverage_or_fcr_from_reference_size_law_alone, utility_or_superiority]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]
 
   - id: coverage.common_panel_adjacent_response
