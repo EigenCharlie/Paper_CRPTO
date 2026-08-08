@@ -1671,6 +1671,18 @@
       "year": "2026"
     },
     {
+      "bibtex_key": "joshi2026risk_controlled_postprocessing",
+      "citation_state": "reserve",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf"
+      ],
+      "title": "Risk-Controlled Post-Processing of Decision Policies",
+      "year": "2026"
+    },
+    {
       "bibtex_key": "zheng2026counterfactual_decision_sets",
       "citation_state": "active",
       "corpus_status": "current",
@@ -3432,7 +3444,7 @@
       "bibtex_key": "guerdan2024policy_comparison",
       "bytes": 967362,
       "encrypted": false,
-      "match_margin": 0.558333,
+      "match_margin": 0.545833,
       "match_method": "title-author",
       "match_score": 0.7875,
       "note": "Deterministic title-and-author match; unique current object enforced below.",
@@ -3651,6 +3663,22 @@
       "status": "current",
       "strict_pypdf": "pass",
       "version": "unversioned local copy"
+    },
+    {
+      "bibtex_key": "joshi2026risk_controlled_postprocessing",
+      "bytes": 1057028,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Human-adjudicated filename-to-work identity.",
+      "pages": 38,
+      "path": "Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf",
+      "sha256": "1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6",
+      "source_url": "https://arxiv.org/abs/2605.06479v1",
+      "status": "current",
+      "strict_pypdf": "pass",
+      "version": "arXiv:2605.06479v1"
     },
     {
       "bibtex_key": "kato2025",
@@ -4879,7 +4907,7 @@
     "master_bibliography": "paper/references.bib",
     "protected_extraction_manifest_modified": false
   },
-  "snapshot_date": "2026-08-07",
+  "snapshot_date": "2026-08-08",
   "summary": {
     "active_metadata_only_keys": [
       "holm1979",
@@ -4888,26 +4916,26 @@
       "vovk2005"
     ],
     "bibliography_corpus_status_counts": {
-      "current": 143,
+      "current": 144,
       "metadata-only": 52
     },
-    "bibliography_entries": 195,
+    "bibliography_entries": 196,
     "citation_state_counts": {
       "active": 102,
-      "reserve": 93
+      "reserve": 94
     },
     "object_status_counts": {
       "companion": 1,
-      "current": 143,
+      "current": 144,
       "legacy": 6,
       "quarantined": 4,
       "superseded": 4,
       "watchlist": 6
     },
-    "pdf_bytes": 339488290,
-    "pdf_objects": 164,
-    "pdf_pages": 5862,
-    "unique_sha256": 164
+    "pdf_bytes": 340545318,
+    "pdf_objects": 165,
+    "pdf_pages": 5900,
+    "unique_sha256": 165
   },
   "validation": {
     "all_active_keys_current_or_explicit_metadata_only": true,

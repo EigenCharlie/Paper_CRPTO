@@ -29,7 +29,7 @@ CITATION_SOURCES = (
 )
 MANIFEST = ROOT / "configs" / "ijds_literature_corpus_manifest.json"
 
-SNAPSHOT_DATE = "2026-08-07"
+SNAPSHOT_DATE = "2026-08-08"
 ALLOWED_OBJECT_STATUSES = {
     "current",
     "superseded",
@@ -238,7 +238,7 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
     "tesis/Babaei Bamdad 2020 - Multi-Objective Investment Recommendation in P2P Lending.pdf": _override(
         "babaei2020p2p"
     ),
-    # Current exact versions pinned or promoted on 2026-08-07.
+    # Current exact versions pinned or promoted through 2026-08-08.
     "supplement/Zhou Orfanoudaki Zhu 2026 - Conformalized Decision Risk Assessment - arXiv 2505.13243v3.pdf": _override(
         "zhou2025credo",
         version="arXiv:2505.13243v3 / ICLR 2026",
@@ -253,6 +253,11 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
         "wang2026optimal_decision_prediction_sets",
         version="arXiv:2602.00989v3",
         source_url="https://arxiv.org/abs/2602.00989v3",
+    ),
+    "supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf": _override(
+        "joshi2026risk_controlled_postprocessing",
+        version="arXiv:2605.06479v1",
+        source_url="https://arxiv.org/abs/2605.06479v1",
     ),
     "supplement/Prinster et al 2026 - Conformal Policy Control - arXiv 2603.02196v3.pdf": _override(
         "cpc2026",

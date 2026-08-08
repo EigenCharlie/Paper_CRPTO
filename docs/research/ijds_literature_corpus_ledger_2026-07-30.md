@@ -1,4 +1,4 @@
-# IJDS literature corpus ledger (through 2026-08-07)
+# IJDS literature corpus ledger (through 2026-08-08)
 
 Status: documentary literature-provenance record; not an empirical evidence
 source and not an entry in the active-evidence registry.
@@ -9,7 +9,8 @@ This is the cumulative receipt for the five last-mile literature objects
 materialized on 2026-07-30, two distinct intakes audited on 2026-07-31, the
 four-object theory-neighbor intake audited on 2026-08-01, the exact-version
 and nearest-neighbor refresh audited on 2026-08-06, and the decision-feedback
-and exact-version refresh audited on 2026-08-07. The 2026-07-31
+and exact-version refresh audited on 2026-08-07, plus the risk-controlled
+policy-post-processing intake audited on 2026-08-08. The 2026-07-31
 frontier intake consists of five newly materialized PDFs plus the already-local
 non-monotonic conformal-risk-control preprint. The active-citation gap intake
 materialized 19 PDFs from primary or official open-access surfaces and left
@@ -68,15 +69,20 @@ The three current preprint versions and two new neighbors add 182 pages and
 legacy thesis folder into the canonical supplement corpus changes none of those
 counts, bytes, or hashes.
 
-**Current snapshot, 2026-08-07.** `Papers_tesis` contains **164 PDF objects,
-5,862 pages, and 339,488,290 bytes**. All 164 objects have distinct SHA-256
-values, pass strict PyPDF page-tree traversal, and are unencrypted. The four
-new decision-feedback objects add 147 pages and 10,655,236 bytes. Renaming the
-already-local CREDO, Chen--Zhou--Zhu, Wang--Dobriban, and Utility-Directed CP
-objects to expose their exact version or venue changes no bytes or counts.
+**Historical snapshot, 2026-08-07.** `Papers_tesis` contained 164 PDF objects,
+5,862 pages, and 339,488,290 bytes. All 164 objects had distinct SHA-256
+values, passed strict PyPDF page-tree traversal, and were unencrypted. The four
+new decision-feedback objects added 147 pages and 10,655,236 bytes. Renaming
+the already-local CREDO, Chen--Zhou--Zhu, Wang--Dobriban, and Utility-Directed
+CP objects to expose their exact version or venue changed no bytes or counts.
 
-The 195-entry master bibliography currently partitions into **102 active**
-body-or-supplement citations and **93 reserve** entries. Of the 195 keys, 143
+**Current snapshot, 2026-08-08.** `Papers_tesis` contains **165 PDF objects,
+5,900 pages, and 340,545,318 bytes**. All 165 objects have distinct SHA-256
+values, pass strict PyPDF page-tree traversal, and are unencrypted. The Joshi
+et al. v1 object adds 38 pages and 1,057,028 bytes.
+
+The 196-entry master bibliography currently partitions into **102 active**
+body-or-supplement citations and **94 reserve** entries. Of the 196 keys, 144
 have one current local PDF and 52 are metadata-only. The only four active
 metadata-only exceptions remain `holm1979`, `manski2003partial`, `platt2000`,
 and `vovk2005`; the other 48 metadata-only entries are reserve records whose
@@ -88,7 +94,7 @@ The generated authority for this complete projection is
 `tests/test_ijds_literature_corpus_manifest.py`. It records, for every local
 object, its BibTeX key or explicit unkeyed disposition, path, version, status,
 bytes, pages, SHA-256, strict-parser result, and source URL. Its object statuses
-are 143 `current`, four `superseded`, one `companion`, six `watchlist`, four
+are 144 `current`, four `superseded`, one `companion`, six `watchlist`, four
 `quarantined`, and six `legacy`; bibliography entries without a current PDF
 are separately marked `metadata-only`. Generation fails on an unrecognized
 status, stale explicit mapping, missing cited key, duplicate hash, encrypted or
@@ -105,6 +111,30 @@ dispositions in that manifest:
 | Izbicki--Shimizu--Stern, *CD-split and HPD-split* | `legacy`; local conformal reference not used by the manuscript. |
 | Lei et al., *Distribution-Free Predictive Inference for Regression* | `legacy`; local conformal reference not used by the manuscript. |
 | Shafer--Vovk, *A Tutorial on Conformal Prediction* | `legacy`; local tutorial not used by the manuscript. |
+
+## Risk-controlled policy-post-processing intake -- 2026-08-08
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Primary record, license, and disposition |
+|---|---|---:|---:|---|---|---|
+| Joshi, Wang, Hassani, and Dobriban, *Risk-Controlled Post-Processing of Decision Policies*, arXiv:2605.06479v1 | `Papers_tesis/supplement/Joshi Wang Hassani Dobriban 2026 - Risk-Controlled Post-Processing of Decision Policies - arXiv 2605.06479v1.pdf` | 1,057,028 | 38 | `1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6` | `joshi2026risk_controlled_postprocessing` | [arXiv v1](https://arxiv.org/abs/2605.06479v1); CC BY 4.0 recorded in the PDF metadata. **A-boundary, reserve.** Exact expected risk control is proved only for an exact-safe fallback under exchangeability. With a general fitted fallback, the paper instead gives an `O(log n/n)` expected excess-risk term under i.i.d. sampling, atomless fitted scores, rank-stability/drift regularity, endpoint feasibility, and fitted objects independent of calibration and test data. Neither regime repairs CRPTO's inspected temporal archive, funded-set validity, or scalar set-to-decision embedding. |
+
+PyPDF 6.15.0 strictly parsed all 38 pages. The object is unencrypted, has no
+empty page or page below 200 extracted characters, and has a median text-layer
+yield of 2,224.5 characters per page. Docling 2.110.0 ran sequentially with the
+`pypdfium2` backend, one thread, one-page batches, OCR and enrichment disabled,
+and table extraction enabled. It completed without document failure in 91.43
+seconds and emitted 111,165 Markdown bytes and 1,001,994 JSON bytes, including
+49 section headings, 130 formula items, seven tables, two pictures, and nine
+captions. These parser outputs remain noncanonical scratch under
+`.tmp_pdf_intake_benchmark/joshi-intake-20260808/`.
+
+Poppler renders of pages 1, 6--8, 11--12, 16, and 18--21 were compared with
+the text and Docling structure. The title/version banner, Algorithm 1,
+Proposition 4.1, Theorems 4.2, 4.4, and 4.6, experiment tables and captions,
+non-monotone empirical qualification, and appendix formulas were legible and
+consistent with extraction. Poppler emitted missing-display-font warnings for
+`Symbol` and `ArialUnicode`; no visible corruption appeared on the inspected
+pages.
 
 ## Decision-feedback and exact-version refresh — 2026-08-07
 
@@ -404,7 +434,7 @@ The 2026-08-07 refresh keeps the established compatibility key
 `prinster2024feedback`. It also pins `chen2026polyhedral_conformal_ro` to arXiv
 v2, `wang2026optimal_decision_prediction_sets` to arXiv v3, and
 `cortesgomez2025utility` to the official ICLR 2025 OpenReview record. The
-current master/view counts are 195 total, 102 active, and 93 reserve. The
+current master/view counts are 196 total, 102 active, and 94 reserve. The
 separate corpus manifest is regenerated after citation changes so its
 active/reserve projection remains aligned with those deterministic views.
 

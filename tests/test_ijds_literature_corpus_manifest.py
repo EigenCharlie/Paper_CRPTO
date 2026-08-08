@@ -16,7 +16,7 @@ MASTER_BIBLIOGRAPHY = Path("paper/references.bib")
 
 EXPECTED_STATUS_COUNTS = {
     "companion": 1,
-    "current": 143,
+    "current": 144,
     "legacy": 6,
     "quarantined": 4,
     "superseded": 4,
@@ -72,6 +72,12 @@ EXPECTED_VERSIONED_OBJECTS = {
         "sha256": "4f0984da23129e30aca12b18da24ffe9ff409a9e6a9484c37d30e955595d556c",
         "source_url": "https://openreview.net/forum?id=iOMnn1hSBO",
     },
+    "joshi2026risk_controlled_postprocessing": {
+        "version": "arXiv:2605.06479v1",
+        "pages": 38,
+        "sha256": "1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6",
+        "source_url": "https://arxiv.org/abs/2605.06479v1",
+    },
 }
 
 EXPECTED_LEGACY_FILENAMES = {
@@ -113,16 +119,16 @@ def test_repository_literature_manifest_is_current_and_complete() -> None:
     assert build_manifest(check=True)
     assert payload["summary"] == {
         "active_metadata_only_keys": ["holm1979", "manski2003partial", "platt2000", "vovk2005"],
-        "bibliography_corpus_status_counts": {"current": 143, "metadata-only": 52},
-        "bibliography_entries": 195,
-        "citation_state_counts": {"active": 102, "reserve": 93},
+        "bibliography_corpus_status_counts": {"current": 144, "metadata-only": 52},
+        "bibliography_entries": 196,
+        "citation_state_counts": {"active": 102, "reserve": 94},
         "object_status_counts": EXPECTED_STATUS_COUNTS,
-        "pdf_bytes": 339_488_290,
-        "pdf_objects": 164,
-        "pdf_pages": 5_862,
-        "unique_sha256": 164,
+        "pdf_bytes": 340_545_318,
+        "pdf_objects": 165,
+        "pdf_pages": 5_900,
+        "unique_sha256": 165,
     }
-    assert len(pdfs) == 164
+    assert len(pdfs) == 165
     assert payload["validation"] == {
         "all_active_keys_current_or_explicit_metadata_only": True,
         "all_hashes_unique": True,
@@ -195,3 +201,7 @@ def test_master_bibliography_contains_the_five_coordinated_keys_and_pinned_urls(
         "https://arxiv.org/abs/2602.00989v3" in entries["wang2026optimal_decision_prediction_sets"]
     )
     assert "https://openreview.net/forum?id=iOMnn1hSBO" in entries["cortesgomez2025utility"]
+    assert (
+        "https://arxiv.org/abs/2605.06479v1"
+        in entries["joshi2026risk_controlled_postprocessing"]
+    )

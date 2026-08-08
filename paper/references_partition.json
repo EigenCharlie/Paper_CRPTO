@@ -185,7 +185,7 @@
   ],
   "generated_by": "scripts/build_ijds_bibliography_views.py",
   "master_bibliography": {
-    "entry_count": 195,
+    "entry_count": 196,
     "keys": [
       "angelopoulos2023",
       "angelopoulos2024risk",
@@ -334,6 +334,7 @@
       "stratigakos2026decision_calibrated_sets",
       "chen2026polyhedral_conformal_ro",
       "wang2026optimal_decision_prediction_sets",
+      "joshi2026risk_controlled_postprocessing",
       "zheng2026counterfactual_decision_sets",
       "huang2026oce_rcps",
       "baesens2026foundation_credit_risk",
@@ -384,7 +385,7 @@
       "zheng2026online_selective"
     ],
     "path": "paper/references.bib",
-    "sha256": "b2d5a0a03e73cf0b746b5752f30c4f85614ad3c4aee86f59452937c9de4d8c25"
+    "sha256": "43c71782eb242a88ce8d860ed9a3087788249f07cc338fba84acf39aeabddff3"
   },
   "schema_version": "1.0",
   "validation": {
@@ -505,7 +506,7 @@
       "sha256": "477d01d9f748a718527513a55f3d907b00d953af64359428a04c43ceeac0bfd2"
     },
     "reserve": {
-      "entry_count": 93,
+      "entry_count": 94,
       "keys": [
         "athey2019",
         "ayari2026",
@@ -592,6 +593,7 @@
         "sadana2025contextual",
         "farinhas2024nonexchangeable_crc",
         "hullman2025conformal_human_decision",
+        "joshi2026risk_controlled_postprocessing",
         "huang2026oce_rcps",
         "baesens2026foundation_credit_risk",
         "distaso2025business_cycle_losses",
@@ -602,7 +604,7 @@
         "lyocsa2022profit"
       ],
       "path": "paper/references_reserve.bib",
-      "sha256": "7cbacbefc84e6d96ca2fb68b9021ff3be4a458feb023dfeb6ef82c2f79472b30"
+      "sha256": "0d63c81e809a398f6ecc2639a8f33b92452a8cda40d02952dc8162aa769ae0d6"
     }
   }
 }
