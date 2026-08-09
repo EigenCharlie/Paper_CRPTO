@@ -1,8 +1,8 @@
 {
   "citation_sources": [
     {
-      "citation_key_count": 97,
-      "citation_key_sha256": "3701a6bb1433043a8a763c41db8e33c87ebf6b48c79f453ac783bb1bba2768e5",
+      "citation_key_count": 100,
+      "citation_key_sha256": "8b5e29be8ce6a6aa8c16afe054fa909fd2c826b62e8edfd7c88ea086d8fccca2",
       "citation_keys": [
         "aior2025lendingclub",
         "aldirawi2026nonmonotone_crc",
@@ -58,6 +58,7 @@
         "lekeufack2023cdt",
         "lessmann2015",
         "li2023online_loans",
+        "liang2026model_selection_conformal",
         "liu2021riskbounds",
         "lutzow2026mcp",
         "maiapolo2024partial_id_eval",
@@ -90,6 +91,7 @@
         "xu2024profit_risk_credit",
         "xu2025profit_uncertainty_credit",
         "yang2025costaware",
+        "yang2025selection_aggregation_conformal",
         "yang2026multidistribution",
         "yeh2026",
         "zadrozny2002",
@@ -100,13 +102,14 @@
         "zheng2026online_selective",
         "zhou2025credo",
         "zhou2026creme",
+        "zhu2026action_conditional_risk_averse",
         "ziliaskopoulos2026dva"
       ],
       "path": "paper/CRPTO_ijds.qmd"
     },
     {
-      "citation_key_count": 73,
-      "citation_key_sha256": "da939249f70408e95a46b53037b9cdd6a4ca433a2a720417b09ce05ac7209618",
+      "citation_key_count": 76,
+      "citation_key_sha256": "adbc42b907d15f954870c1d072a2180efa97e2fb8ed72ea5afb41c1a0ed7e240",
       "citation_keys": [
         "aldirawi2026nonmonotone_crc",
         "angelopoulos2024risk",
@@ -147,6 +150,7 @@
         "lekeufack2023cdt",
         "lessmann2015",
         "li2023online_loans",
+        "liang2026model_selection_conformal",
         "liu2021riskbounds",
         "lutzow2026mcp",
         "mandi2024",
@@ -170,6 +174,7 @@
         "wang2026optimal_decision_prediction_sets",
         "wei2024adjustability",
         "yang2025costaware",
+        "yang2025selection_aggregation_conformal",
         "yang2026multidistribution",
         "yeh2025training",
         "yeh2026",
@@ -180,6 +185,7 @@
         "zheng2026online_selective",
         "zhou2025credo",
         "zhou2026creme",
+        "zhu2026action_conditional_risk_averse",
         "ziliaskopoulos2026dva"
       ],
       "path": "paper/supplement_ijds.qmd"
@@ -187,7 +193,7 @@
   ],
   "generated_by": "scripts/build_ijds_bibliography_views.py",
   "master_bibliography": {
-    "entry_count": 196,
+    "entry_count": 199,
     "keys": [
       "angelopoulos2023",
       "angelopoulos2024risk",
@@ -384,10 +390,13 @@
       "ovalle2025cmicl",
       "birbil2026local_violation",
       "peng2026drift_survival",
-      "zheng2026online_selective"
+      "zheng2026online_selective",
+      "liang2026model_selection_conformal",
+      "yang2025selection_aggregation_conformal",
+      "zhu2026action_conditional_risk_averse"
     ],
     "path": "paper/references.bib",
-    "sha256": "43c71782eb242a88ce8d860ed9a3087788249f07cc338fba84acf39aeabddff3"
+    "sha256": "ad892c2e444acbdf665e0eadb13495b3c816c4db3271ab7c92ad9a8f7c9da7d4"
   },
   "schema_version": "1.0",
   "validation": {
@@ -399,7 +408,7 @@
   },
   "views": {
     "active": {
-      "entry_count": 103,
+      "entry_count": 106,
       "keys": [
         "angelopoulos2023",
         "angelopoulos2024risk",
@@ -503,10 +512,13 @@
         "ovalle2025cmicl",
         "birbil2026local_violation",
         "peng2026drift_survival",
-        "zheng2026online_selective"
+        "zheng2026online_selective",
+        "liang2026model_selection_conformal",
+        "yang2025selection_aggregation_conformal",
+        "zhu2026action_conditional_risk_averse"
       ],
       "path": "paper/references_active.bib",
-      "sha256": "50683606441498439fc38868e67a12aebe3044fd203d44ef0e1cf83eeacf3fa7"
+      "sha256": "fb6af9d5b66bfd94913c1506144792c1f397566d4d7b99d4daeca3339a344363"
     },
     "reserve": {
       "entry_count": 93,

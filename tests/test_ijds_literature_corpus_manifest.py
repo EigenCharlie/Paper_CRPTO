@@ -16,10 +16,10 @@ MASTER_BIBLIOGRAPHY = Path("paper/references.bib")
 
 EXPECTED_STATUS_COUNTS = {
     "companion": 1,
-    "current": 144,
+    "current": 147,
     "legacy": 6,
-    "quarantined": 4,
-    "superseded": 4,
+    "quarantined": 3,
+    "superseded": 5,
     "watchlist": 6,
 }
 
@@ -78,6 +78,42 @@ EXPECTED_VERSIONED_OBJECTS = {
         "sha256": "1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6",
         "source_url": "https://arxiv.org/abs/2605.06479v1",
     },
+    "liang2026model_selection_conformal": {
+        "version": "arXiv:2408.07066v4 / JASA 2026 online first",
+        "pages": 47,
+        "sha256": "7e707e0afd0a680076d468717c1e7ae4032ce17160115265c93634c26bc4f071",
+        "source_url": "https://arxiv.org/abs/2408.07066v4",
+    },
+    "yang2025selection_aggregation_conformal": {
+        "version": "arXiv:2104.13871v3 / JASA 2025",
+        "pages": 74,
+        "sha256": "e0f7c8246de481ba35e46b13f06ba175ae22c2737404b53f00824d1bd7acca6d",
+        "source_url": "https://arxiv.org/abs/2104.13871v3",
+    },
+    "zhu2026action_conditional_risk_averse": {
+        "version": "arXiv:2606.05551v2",
+        "pages": 38,
+        "sha256": "9b72a0361912b770223980d21390712e8c016272e53b983cf8adbf8cea8a519e",
+        "source_url": "https://arxiv.org/abs/2606.05551v2",
+    },
+    "hegazy2025valid_selection_conformal_sets": {
+        "version": "NeurIPS 2025 proceedings / DOI 10.52202/085713-5812",
+        "pages": 32,
+        "sha256": "e4c1d3841477d5bdb9c2b01fb396c582dde8a024bb8d07eab857229ae5acc6f6",
+        "source_url": "https://proceedings.neurips.cc/paper_files/paper/2025/hash/ff9386992bb2b9cee1dddf0bd5f328de-Abstract-Conference.html",
+    },
+    "bao2025croms": {
+        "version": "arXiv:2507.04716v2",
+        "pages": 104,
+        "sha256": "7692f5ade58b6ec5926f6e18fb4a3fb3e8efe419e3edd7878a794dd1842317ea",
+        "source_url": "https://arxiv.org/abs/2507.04716v2",
+    },
+    "yeh2026": {
+        "version": "arXiv:2409.20534v2 / TMLR December 2025",
+        "pages": 29,
+        "sha256": "4c71398a763e94b75f39d1f99665e57b5a48711b90f3524c20df3735df20a736",
+        "source_url": "https://arxiv.org/abs/2409.20534v2",
+    },
 }
 
 EXPECTED_LEGACY_FILENAMES = {
@@ -119,16 +155,16 @@ def test_repository_literature_manifest_is_current_and_complete() -> None:
     assert build_manifest(check=True)
     assert payload["summary"] == {
         "active_metadata_only_keys": ["holm1979", "manski2003partial", "platt2000", "vovk2005"],
-        "bibliography_corpus_status_counts": {"current": 144, "metadata-only": 52},
-        "bibliography_entries": 196,
-        "citation_state_counts": {"active": 103, "reserve": 93},
+        "bibliography_corpus_status_counts": {"current": 147, "metadata-only": 52},
+        "bibliography_entries": 199,
+        "citation_state_counts": {"active": 106, "reserve": 93},
         "object_status_counts": EXPECTED_STATUS_COUNTS,
-        "pdf_bytes": 340_545_318,
-        "pdf_objects": 165,
-        "pdf_pages": 5_900,
-        "unique_sha256": 165,
+        "pdf_bytes": 343_885_895,
+        "pdf_objects": 168,
+        "pdf_pages": 6_053,
+        "unique_sha256": 168,
     }
-    assert len(pdfs) == 165
+    assert len(pdfs) == 168
     assert payload["validation"] == {
         "all_active_keys_current_or_explicit_metadata_only": True,
         "all_hashes_unique": True,
@@ -147,7 +183,7 @@ def test_promoted_and_pinned_objects_have_exact_versions_hashes_and_sources() ->
     objects = {
         item["bibtex_key"]: item
         for item in _manifest()["objects"]
-        if item["bibtex_key"] in EXPECTED_VERSIONED_OBJECTS
+        if item["status"] == "current" and item["bibtex_key"] in EXPECTED_VERSIONED_OBJECTS
     }
 
     assert set(objects) == set(EXPECTED_VERSIONED_OBJECTS)
@@ -182,7 +218,7 @@ def test_automatic_matches_clear_the_score_and_runner_up_margin_gates() -> None:
     assert all(item["match_margin"] >= MIN_AUTO_MATCH_MARGIN for item in automatic)
 
 
-def test_master_bibliography_contains_the_five_coordinated_keys_and_pinned_urls() -> None:
+def test_master_bibliography_contains_coordinated_keys_and_pinned_urls() -> None:
     entries = {
         entry.key: entry.text
         for entry in parse_bibtex_entries(MASTER_BIBLIOGRAPHY.read_text(encoding="utf-8"))
@@ -204,3 +240,25 @@ def test_master_bibliography_contains_the_five_coordinated_keys_and_pinned_urls(
     assert (
         "https://arxiv.org/abs/2605.06479v1" in entries["joshi2026risk_controlled_postprocessing"]
     )
+    assert "10.1080/01621459.2026.2663588" in entries["liang2026model_selection_conformal"]
+    assert "10.1080/01621459.2024.2344700" in entries["yang2025selection_aggregation_conformal"]
+    assert "https://arxiv.org/abs/2606.05551v2" in entries["zhu2026action_conditional_risk_averse"]
+    assert "10.52202/085713-5812" in entries["hegazy2025valid_selection_conformal_sets"]
+    assert "https://arxiv.org/abs/2507.04716v2" in entries["bao2025croms"]
+    assert "https://openreview.net/forum?id=yM8qkT0f9H" in entries["yeh2026"]
+
+
+def test_hegazy_arxiv_v1_is_retained_as_superseded_provenance() -> None:
+    objects = [
+        item
+        for item in _manifest()["objects"]
+        if item["bibtex_key"] == "hegazy2025valid_selection_conformal_sets"
+    ]
+
+    assert {(item["status"], item["version"]) for item in objects} == {
+        ("current", "NeurIPS 2025 proceedings / DOI 10.52202/085713-5812"),
+        ("superseded", "arXiv:2506.20173v1"),
+    }
+    old = next(item for item in objects if item["status"] == "superseded")
+    assert old["pages"] == 31
+    assert old["sha256"] == "f77dc2b614ee8fbfd6f4c9f886645294b781f9a5771f39ae0065ab66a788a605"

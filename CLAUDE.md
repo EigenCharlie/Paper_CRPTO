@@ -53,8 +53,9 @@ not active evidence.
 19c11. `docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`
    - integrated adversarial theory, literature, run-value, and GO/NO-GO audit.
 19c12. `docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md`
-   - conditional dual-coefficient set-native theorem and complete 208-menu
-     logical-certificate census without a new optimization run.
+   - conditional dual-coefficient set-native theorem and complete census of 208
+     window-by-role-month logical certificates over 26 candidate menus, without
+     a new optimization run.
 19c13. `docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`
    - clean calibration-only 5-by-8-by-5 exact phase census and conditional
      hypothesis boundaries.
@@ -185,9 +186,10 @@ exception; `assert` is test syntax only.
   comparisons also fail. Failure does not force a fixed-cell allocation change
   or identify different optimal faces.
 - The set-native worst-label challenger completes 1,248 outcome-free cells and
-  18,000 monthly/1,200 pooled comparisons. Pooled robust-minus-V1d default is
-  positive in 1,196 cells, negative in none, and contains zero in four. This is
-  descriptive finite-grid evidence. The worst-label identity applies to
+  18,000 monthly/1,200 pooled comparisons. Pooled
+  worst-label-minus-continuous-embedding default is positive in 1,196 cells,
+  negative in none, and contains zero in four. This is descriptive finite-grid
+  evidence. The worst-label identity applies to
   nonempty sets; the empty-set value is declared fail-closed, and only the risk
   coefficient is set-native. No joint-coverage or probabilistic-robustness
   guarantee, selected policy, or causal/prospective result is established.

@@ -9,6 +9,8 @@ REPO = Path(__file__).resolve().parents[1]
 BODY = REPO / "paper/CRPTO_ijds.qmd"
 SUPPLEMENT = REPO / "paper/supplement_ijds.qmd"
 OFFICIAL = REPO / "paper/submission/CRPTO_ijds_submission.tex"
+REGISTRY = REPO / "docs/research/active_claims_2026-07-14.md"
+CLAIM_MATRIX = REPO / "paper/submission/CLAIM_AUDIT_MATRIX.md"
 
 
 def _section(text: str, start: str, end: str) -> str:
@@ -114,8 +116,35 @@ def test_related_work_is_ordered_by_calibrated_object() -> None:
     assert "Conformal Predictive Portfolio Selection" in related
     assert "@kato2025" in related
     assert "@joshi2026risk_controlled_postprocessing" in related
+    assert "@liang2026model_selection_conformal" in related
+    assert "@yang2025selection_aggregation_conformal" in related
+    assert "@zhu2026action_conditional_risk_averse" in related
     assert "@lakkaraju2017selective" in related
     assert "@kleinberg2018human" in related
+    assert "Selecting a predictor or conformal set is a different object" in related
+    assert "finite discrete action space" in related
+
+
+def test_body_wording_preserves_information_and_identification_boundaries() -> None:
+    body = BODY.read_text(encoding="utf-8")
+    normalized = re.sub(r"\s+", " ", body)
+    information = _section(body, "## Information boundary", "## Identification safeguards")
+
+    assert "links a Platt-scaled default score" in normalized
+    assert "calibrated default score" not in normalized
+    assert (
+        "A uniform shortfall across the four calibrators is therefore not established" in normalized
+    )
+    assert "shortfall is therefore not uniform" not in normalized.lower()
+    assert "scores, prediction sets, and strata" in re.sub(r"\s+", " ", information)
+    assert "administrative-outcome panel is joined one-to-one only after" in re.sub(
+        r"\s+", " ", information
+    )
+    assert "scores, administrative outcomes, and strata" not in information
+    assert "Online Supplement Online Supplement" not in body
+    assert "Online Supplement Appendix E.6" in normalized
+    assert "208 window-by-role-month certificates over 26 candidate menus" in normalized
+    assert "208 monthly menus" not in normalized
 
 
 def test_fixed_top_k_jomi_corollary_keeps_its_exact_boundary() -> None:
@@ -132,6 +161,8 @@ def test_fixed_top_k_jomi_corollary_keeps_its_exact_boundary() -> None:
     for surface in (body, supplement):
         normalized = re.sub(r"\s+", " ", surface)
         assert r"\operatorname{BetaBinomial}(n,K+1,m-K)" in surface
+        assert r"Z_i>T_{\mathrm{topK}}" in surface
+        assert r"S_i>T_{\mathrm{topK}}" not in surface
         assert r"r_\alpha" in surface
         assert (
             "not a new beta--binomial law" in normalized
@@ -145,6 +176,19 @@ def test_fixed_top_k_jomi_corollary_keeps_its_exact_boundary() -> None:
     assert "0.09994" not in supplement
     assert r"M_{\rm det}" not in supplement
     assert r"M_{\mathrm{det}}\le M^{*}" in supplement
+
+
+def test_dual_coefficient_certificate_count_names_the_repeated_unit() -> None:
+    for path in (BODY, SUPPLEMENT, REGISTRY, CLAIM_MATRIX):
+        normalized = re.sub(r"\s+", " ", path.read_text(encoding="utf-8"))
+        assert "208 window-by-role-month certificates over 26" in normalized
+        assert "208 monthly menus" not in normalized
+
+    matrix = CLAIM_MATRIX.read_text(encoding="utf-8")
+    assert "Set-native binary worst-label counterpart" in matrix
+    assert "Set-native binary robust counterpart" not in matrix
+    assert "worst-label-minus-continuous-embedding" in matrix
+    assert "robust-minus-V1d" not in matrix
 
 
 def test_policy_post_processing_neighbor_keeps_quantitative_conditions() -> None:

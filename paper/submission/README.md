@@ -131,19 +131,20 @@ overlap, and table or figure legibility.
 
 ## QA Record
 
-The current pre-freeze bundle was rebuilt and audited on 2026-08-08:
+The current pre-freeze bundle was rebuilt and audited on 2026-08-09:
 
-- official INFORMS PDF: 73 pages, with references beginning on page 66 (65
+- official INFORMS PDF: 76 pages, with references beginning on page 68 (67
   pre-reference pages; the final-freeze page cap was deliberately not run);
-- browser body preview: 51 pages;
-- browser supplement preview: 79 pages;
-- abstract: exactly 292 words in one paragraph, with normalized source-to-PDF
+- browser body preview: 52 pages;
+- browser supplement preview: 80 pages;
+- abstract: exactly 298 words in one paragraph, with normalized source-to-PDF
   equality;
-- all 203 rendered pages: US Letter, no blank pages, no identity or artifact
+- all 208 rendered pages: US Letter, no blank pages, no identity or artifact
   fingerprints; an adversarial high-resolution inspection covered the dense
   Related Work table, both theory suites, the fixed-top-K JOMI corollary, all
-  principal figures, S12A--S12C, and both S13B panels for clipping, overlap,
-  formula rendering, and table/figure legibility;
+  principal figures, S12A--S12C, S13A, and both S13B panels---including the new
+  model-selection and action-conditional rows---for clipping, overlap, formula
+  rendering, and table/figure legibility;
 - the supplement's long prose tables were split and wrapped, the envelope
   image retains accessible alternative text without printing a duplicate
   caption, and S13B Panel B begins on a fresh page;

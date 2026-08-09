@@ -254,7 +254,8 @@ def _stage_extension(staging_root: Path) -> tuple[Path, dict[Path, Path]]:
                 + " A clean calibration-only census reconciles exact binary threshold "
                 "geometry in all 200 learner-window-stratum cells; it supplies no target, "
                 "transport, or validity claim. A conditional dual-coefficient theorem and "
-                "208 outcome-free menu certificates show that the maximin full optimal face "
+                "208 window-by-role-month outcome-free certificates over 26 candidate menus "
+                "show that the maximin full optimal face "
                 "collapses to singleton-zero support over cap [0,1]; this is decision algebra, "
                 "not true zero risk, joint conformal validity, outcome dominance, or a policy."
             ),

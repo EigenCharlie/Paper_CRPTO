@@ -379,7 +379,8 @@ The theorem can fail with an inequality budget, cash, overlapping or lower
 group constraints, negative rates, zero LGD, another empty-set convention, or
 insufficient singleton-zero capacity. It proves neither optimizer uniqueness
 nor true-outcome risk. The clean V1 logical audit verifies its stated inherited
-conditions in all 208 monthly menus without a new optimization.
+conditions through 208 window-by-role-month certificates over 26 candidate
+menus without a new optimization.
 
 ---
 

@@ -62,8 +62,9 @@ Two later outcome-free audits close questions that did not require another
 outcome evaluation. A calibration-only phase census reports all 200
 learner--window--ordered-stratum cells and checks the exact half-threshold and
 conditional mirror-sample identities without reading any target or allocation.
-A dual-coefficient binary-set-native audit then verifies, on all 208 primary
-CatBoost--Platt monthly menus, the assumptions of a conditional substitution theorem using existing
+A dual-coefficient binary-set-native audit then verifies, through 208
+window-by-role-month certificates over 26 primary CatBoost--Platt candidate
+menus, the assumptions of a conditional substitution theorem using existing
 hash-pinned solve records and zero new optimizations. Neither audit supplies
 target coverage, joint-set validity, a selected policy, or prospective evidence.
 
@@ -144,8 +145,8 @@ event-specific cumulative incidence functions [@li2023online_loans]. None of
 these results retrospectively identify the binary outcomes used here.
 
 For primary OOT, requested and funded amount differ by only USD 18,000 across
-376,890 loans. The funded-to-requested ratio is 0.999996 and only about two
-loans are partially funded. The optimizer nevertheless names listed loan
+376,890 loans. The funded-to-requested ratio is 0.999996 and exactly two loans
+are partially funded. The optimizer nevertheless names listed loan
 amount as its exposure contract rather than treating the two fields as
 interchangeable by assumption.
 
@@ -1715,14 +1716,14 @@ reported cutoffs have no post-selection FWER guarantee.
 Let the $n$ calibration selection scores and the $m$ test selection scores be
 iid from one continuous distribution $F$, with $1\le K<m$, and suppose that
 the selector's score map is frozen without calibration or test labels and
-chooses the $K$ largest test scores. Write
+chooses the $K$ largest test scores. Write $Z_i$ for selection score $i$ and
 $T_{\mathrm{topK}}$ for the $(m-K)$-th test order statistic in ascending order.
 Proposition 6 of @jin2025focal identifies the reference set of every selected
 focal unit as
 
 $$
 \mathcal R_{\mathrm{topK}}
-=\{i\in[n]:S_i>T_{\mathrm{topK}}\},
+=\{i\in[n]:Z_i>T_{\mathrm{topK}}\},
 \qquad
 R:=|\mathcal R_{\mathrm{topK}}|.
 $$
@@ -2736,7 +2737,7 @@ are not asserted jointly attainable across overlapping tracks.
 
 <!-- claim:decision.complete_hull_score_equivalence_census -->
 
-The global theorem in Appendix B.5.3 is evaluated on the complete candidate
+The global theorem in Appendix D.2.1 is evaluated on the complete candidate
 menu, not on one funded support. For each of the 26 development or primary
 months, the audit verifies the affine-hull identity
 $\operatorname{aff}(A)=\{a:\mathbf 1^\top a=B\}$ by constructing feasible
@@ -2771,8 +2772,8 @@ establish full optimizer equivalence or non-equivalence.
 
 The set-native score is zero only for the exact singleton nondefault set and one
 for the empty, singleton-default, and two-label sets. Empty sets are assigned one
-as an explicit fail-closed convention. Across the 208 repeated
-window--role-month menus, the exact taxonomy counts are 52,311 empty,
+as an explicit fail-closed convention. Across 208 window-by-role-month
+certificates over 26 candidate menus, the exact taxonomy counts are 52,311 empty,
 3,003,924 singleton nondefault, zero singleton default, and 717,965 two-label
 memberships. Thus 3,003,924 candidate-window memberships receive score zero and
 770,276 receive score one. These counts describe the frozen marginal sets; they
@@ -2844,7 +2845,8 @@ reconciliation witnesses, not six independent certificates.
 CSV `crpto_ijds_v4_tableS9O_dual_coefficient_binary_set_native.csv` retains the
 exact two-row role partition, assumption flags, cap domain, no-new-solve count,
 and explicit false uniqueness and validity flags. Together the rows contain 208
-unique primary CatBoost--Platt menu certificates and reconcile all 1,248
+window-by-role-month certificates over 26 primary CatBoost--Platt candidate
+menus and reconcile all 1,248
 predecessor witnesses. Every
 menu directly reconciles a feasible USD 1 million full-budget singleton-zero
 witness. The nonnegative bounded-loan, exact-budget, no-cash, disjoint
@@ -3155,7 +3157,7 @@ claim boundaries.
 | Set-preserving embedding direction census | Among 576 fixed four-$\theta$ tracks, 324 change tolerance category and 77 contain both separated signs; the complete metric counts appear in Table S9L | A universal favorable or adverse direction, causal or prospective effects, confirmation, independent replications, or joint attainability across overlapping tracks |
 | Set-native binary worst-label counterpart | All 1,248 outcome-free cells and all 18,000 monthly/1,200 pooled worst-label-minus-continuous-embedding contrasts are retained; pooled default is positive/negative/contains-zero in 1,196/0/4 cells | Joint coverage of marginal-set products, conformal-validity repair, probabilistic robustness, preferred policy or embedding, causal mechanism, p-value, or prospective validation |
 | Dual-coefficient conditional theorem | Under the exact-budget, no-cash, bounded-loan, disjoint exhaustive upper-purpose-cap polytope, nonnegative rates, positive LGD, fail-closed empty-set completion, and feasible full-budget singleton-zero support, every maximin optimizer is singleton-zero and its complete optimal face and value are invariant over constructed set-risk caps in $[0,1]$ | An unconditional frontier collapse, optimizer uniqueness, true zero risk, joint product-set coverage, probabilistic robustness, selected/funded-set validity, or a preferred policy |
-| Dual-coefficient menu certificates | All 208 menus using the primary CatBoost--Platt specification (88 development and 120 target) pass the structural and existence gates by reconciling 1,248 hash-pinned predecessor witnesses, with zero new LP solves; this is a complete retrospective outcome-free logical reconciliation | Independent replication, a new optimizer comparison, outcome direction, winner, causal or prospective evidence, preregistration, or confirmation |
+| Dual-coefficient menu certificates | All 208 window-by-role-month certificates over 26 candidate menus using the primary CatBoost--Platt specification (88 development and 120 target certificates) pass the structural and existence gates by reconciling 1,248 hash-pinned predecessor witnesses, with zero new LP solves; this is a complete retrospective outcome-free logical reconciliation | Independent replication, a new optimizer comparison, outcome direction, winner, causal or prospective evidence, preregistration, or confirmation |
 | Complete portfolio-structure grid | Every scenario retains adverse default and miscoverage cells; zero scenarios are uniformly favorable or adverse | A scenario winner, structural invariance, universal harm, or deployment guidance |
 | USD 25 floor-with-cash diagnostic | Rate perturbations are at most 0.001284 percentage points in the complete baseline family | Integer optimality, discrete reoptimization, or another lot rule |
 | C0 nesting and 1,080 C2 reconciliations | Plug-in objective dominance under their stated cap constructions | Status-indexed payoff, default, or miscoverage dominance |
@@ -3319,7 +3321,8 @@ credit scoring, conformal prediction, or linear programming separately.
 | Censoring-aware, drift-aware, and competing-risk prediction [@candes2023survival; @gui2024adaptive; @li2023online_loans; @peng2026drift_survival] | Lower prediction bounds for time-to-event outcomes under explicit censoring contracts, event-specific default/prepayment modeling, and dynamic landmark survival models under simulated drift | Uses a partially identified terminal binary label; it has neither exact event/censoring times nor a competing-risk estimand, overlap audit, conformal transport bound, or funded-set guarantee |
 | Conformal Predictive Portfolio Selection [@kato2025] | Constructs a return interval separately for each fixed candidate portfolio, then ranks the candidates by interval bounds; its dependent-data result is approximate fixed-portfolio coverage under approximate ergodicity, oracle-score approximation, estimation-error, and density conditions | CRPTO selects fractional loan exposures through a budget-coupled LP; it inherits neither simultaneous nor post-selection coverage for the selected portfolio and has no bridge from return intervals to funded-loan set validity |
 | Conformal uncertainty regions and risk-calibrated optimization [@sun2024ptc; @johnstone2021; @patel2024; @hu2026crc] | Builds conformal or coverage-calibrated uncertainty regions for optimization, or calibrates decision risk under a specified construction | Audits a frozen binary credit score, administrative-outcome reconstruction, and matched comparators; no region, decision-risk, or selected-set guarantee is inherited |
-| Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative; @zheng2026online_selective] | Proposition 2 of Jin and Ren transfers strong selection-conditional coverage across disjoint fixed-size taxonomies to $\operatorname{FCR}\le\alpha\Pr(\widehat{\mathcal S}\ne\varnothing)\le\alpha$; Proposition 6 gives $\mathcal R=\{i:S_i>T_{\mathrm{topK}}\}$ for tie-free top-$K$ selection; Proposition 9 gives an asymptotic reference fraction under threshold convergence and a continuous tail-mass map, not a finite beta--binomial law. Related methods target informative or asymmetric online selection under their own exchangeability, reference-set, and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans. The fixed-$K$ reference-size corollary above is prospective algebra under iid continuous scores, not archive validity; none of these methods resolves the archive's label delay or exposure-weighted funded estimand, and none is implemented by the monthly optimizer |
+| Selection-conditional coverage and false-coverage-rate control [@jin2025focal; @gazin2025informative; @zheng2026online_selective] | Proposition 2 of Jin and Ren transfers strong selection-conditional coverage across disjoint fixed-size taxonomies to $\operatorname{FCR}\le\alpha\Pr(\widehat{\mathcal S}\ne\varnothing)\le\alpha$; Proposition 6 gives $\mathcal R=\{i:Z_i>T_{\mathrm{topK}}\}$ for tie-free top-$K$ selection scores $Z_i$; Proposition 9 gives an asymptotic reference fraction under threshold convergence and a continuous tail-mass map, not a finite beta--binomial law. Related methods target informative or asymmetric online selection under their own exchangeability, reference-set, and multiplicity contracts | Candidate-level coverage is not transferred to budget-selected loans. The fixed-$K$ reference-size corollary above is prospective algebra under iid continuous scores, not archive validity; none of these methods resolves the archive's label delay or exposure-weighted funded estimand, and none is implemented by the monthly optimizer |
+| Data-dependent predictor or conformal-set selection [@yang2025selection_aggregation_conformal; @hegazy2025valid_selection_conformal_sets; @liang2026model_selection_conformal] | For a finite candidate family under an i.i.d. contract, Yang and Kuchibhotla give a direct minimum-width route with a sample-size- and family-size-dependent approximate-coverage bound, plus a separate split route with finite-sample coverage and near-oracle width under its stated conditions; Hegazy et al. use a stability-based coverage adjustment; Liang et al. use a full-conformal correction over a finite family of pretrained scores, obtaining finite-sample marginal coverage under exchangeability without an additional selection split | CRPTO implements no independent selection--recalibration split, validated stability correction, or full-conformal model-selection construction. These methods neither select one of its four calibrator maps retrospectively nor validate the IVAP scalar, repair temporal transport, or certify its fractional LP or funded set |
 | Chance-constrained and learned-constraint conformal optimization [@zhao2024cpp; @ovalle2025cmicl] | Calibrates a constraint-function quantile with a second i.i.d. calibration sample, or learns set-native mixed-integer constraints under explicit conditional-independence and group contracts | CRPTO inserts a prediction-set upper bound endpoint as an LP coefficient and supplies neither construction's independent-calibration, conditional-independence, funded-set, zero-threshold, or temporal-transport certificate |
 | Decision-optimal and counterfactual prediction sets [@wang2026optimal_decision_prediction_sets; @zheng2026counterfactual_decision_sets] | Couple set construction or coverage to an explicit downstream loss or induced action | Audits an observational accepted-loan archive; no counterfactual funding effect or policy-coupled validity |
 | Utility-directed and learned decision-aware conformal sets [@cortesgomez2025utility; @yeh2026; @chen2026polyhedral_conformal_ro] | Incorporate downstream utility into classification-set construction, or learn conditional/polyhedral uncertainty-set geometry against robust decision loss with their own calibration or independent recalibration contracts | Freezes one binary-set lifting instead of learning the predictive object; it lacks those design/recalibration splits and inherits none of their downstream robustness guarantees |
@@ -3335,9 +3338,10 @@ methods.
 |---|---|---|
 | Multi-variable conformal prediction (MCP) set design [@lutzow2026mcp] | Jointly optimizes prediction-set shape and calibration through scenario optimization; RemMCP provides expected coverage under exchangeability and optimizer regularity, with a dimension-dependent calibration cost | MCP adds an explicit set-design objective and a new algorithm; CRPTO instead audits the bound endpoint of a fixed binary set and inherits no MCP certificate for temporal transport or the selected credit portfolio |
 | Catalog-uniform decision-calibrated conformal pacing [@shekhar2026decision_calibrated_pacing] | Calibrates the support function of forecast errors over a finite policy-sensitivity catalog and selects a robust pacing policy under exchangeable blocks, affine effects, and simultaneous catalog-wide uncertainty contracts | Their method uses neither a binary label set nor a set-equivalent per-loan bound endpoint; CRPTO's chronological archive does not establish those contracts and inherits no selected-policy or funded-loan coverage guarantee |
-| Valid selection and decision-risk calibration [@hegazy2025valid_selection_conformal_sets; @bao2025croms; @yeh2025training; @zhou2026creme] | Stability for selection among conformal sets (Hegazy et al.), conformal-risk model selection in CRO (Bao et al.), optimized-certainty-equivalent/tail-risk training (Yeh et al.), and expected miscoverage--regret assessment with split recalibration after selection (Zhou and Zhu) | Uses ruler sensitivity as a diagnostic; its coupled chronological contexts lack an independent selection/recalibration split, complete decision outcomes, and a compatible iid/exchangeability contract |
+| Decision-risk model and robustness-level selection [@bao2025croms; @yeh2025training; @zhou2026creme] | Conformal-risk model selection in CRO (Bao et al.), optimized-certainty-equivalent/tail-risk training (Yeh et al.), and expected miscoverage--regret assessment with split recalibration after selection (Zhou and Zhu) | Uses ruler sensitivity as a diagnostic; its coupled chronological contexts lack the methods' complete decision outcomes, calibration contracts, and compatible iid or exchangeability law |
 | Decision calibration [@zhao2021decisioncalibration; @shekhar2026decision_calibrated_pacing] | Makes predictions indistinguishable to a declared decision class, or calibrates policy impacts uniformly over a finite catalog under its own block assumptions | Probability, conformal, and risk calibration in CRPTO are different objects; no decision-indistinguishability or catalog-uniform certificate is inherited |
 | Conformal Decision Theory [@lekeufack2023cdt] | Couples prediction-set uncertainty to a declared action and loss in order to make a safe autonomous decision under its construction | CRPTO assesses a historical frozen allocation chain and inherits neither the action rule nor its decision guarantee |
+| Action-conditional risk-averse decision making [@zhu2026action_conditional_risk_averse] | Constructs prediction sets and a max--min value with finite-sample safety conditional on each positive-probability induced action event in a finite discrete action space under exchangeable labeled samples; its upper slack statement adds iid and continuous-score conditions | CRPTO's action is a fractional combinatorial portfolio over few dependent chronological contexts with incomplete outcomes, and it does not execute the action-conditional construction |
 | Conformal Policy Control [@cpc2026] | Interpolates a safe stochastic policy and an optimized policy; under the source's density-floor, Lipschitz, replace-one-stability, and exact policy-ratio-weight conditions, its expected-loss bound is $\alpha+K\epsilon/\delta$ | No known stochastic safe policy, action-density law, immediate-feedback design, or stability certificate exists for CRPTO |
 | Risk-controlled post-processing of decision policies [@joshi2026risk_controlled_postprocessing] | Post-processes a fixed policy toward a fallback with minimal intervention, with fitted policies and score fixed independently of calibration and test observations. A pointwise exact-safe fallback---one whose loss cannot violate the constraint for any $(x,y)$---plus exchangeable labeled observations $Z=(X,Y)$ gives finite-sample expected-risk control without additive slack. A general fitted fallback instead gives $\mathbb E[L(Z_{n+1};\widehat\tau)]\le\varepsilon+O(\log n/n)$, for sufficiently large $n$, under iid labeled observations, atomless $\widehat\Delta(X)$, $p_s<\varepsilon<p_0$, and $\mu_W(z)\ge c_Wz^\beta$ for constants $c_W>0$, $\beta\ge0$, and $F_{\widehat\Delta}$-almost every $z\in(0,1]$; here $p_s$ and $p_0$ are the fallback- and baseline-violation probabilities, and $W$ is the difference between their violation indicators | CRPTO has no pointwise exact-safe fallback, independent iid policy-calibration sample, or verified fitted-fallback drift contract. Neither regime transfers to its chronological fractional LP, repairs temporal transport, or supplies selected-set or funded-exposure conformal validity |
 | Conformalized Decision Risk Assessment (CREDO) [@zhou2025credo] | Forms an inverse region under which a prescribed decision remains optimal and assesses its risk expectation-wise | The source's first-order approximation or additive correction is part of that contract; it is not an unconditional finite-sample certificate for CRPTO's multi-stage, partially identified chain |

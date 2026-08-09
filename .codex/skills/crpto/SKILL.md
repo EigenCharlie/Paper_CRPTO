@@ -160,8 +160,9 @@ Active evidence:
   artifact `17b3614`; all 200 calibration cells are reported, with no target,
   outcome, optimizer, selected stratum, or transport claim.
 - The dual-coefficient audit uses protocol `8d0f912` and direct-child artifact
-  `79c3783`; its conditional theorem and 208 logical menu certificates run no
-  new optimizer and establish neither true risk nor joint set validity.
+  `79c3783`; its conditional theorem and 208 window-by-role-month logical
+  certificates over 26 candidate menus run no new optimizer and establish
+  neither true risk nor joint set validity.
 - The fixed-top-K JOMI reference-size law has no empirical lineage. Its sealed
   synthetic run checks theorem-to-code behavior only; it establishes no
   archive, temporal, fractional-LP, selected-set, utility, or superiority claim.
@@ -211,8 +212,9 @@ Headline evidence:
   87 below-half thresholds distributed `40/40/7/0/0`; the 184 below-half-
   support and 188 no-interleaving applicable identities all pass. These are
   calibration-only statements;
-- all `208/208` dual-coefficient menu certificates satisfy the conditional
-  set-native collapse, split `88/120` across development/primary roles, with
+- all `208/208` dual-coefficient window-by-role-month certificates over 26
+  candidate menus satisfy the conditional set-native collapse, split `88/120`
+  across development/primary roles, with
   zero new LP solves. This is a full-optimal-face theorem under stated
   structural assumptions, not optimizer uniqueness or true zero risk;
 - all five sharp marginal mean-score-minus-prevalence intervals are negative;
@@ -368,8 +370,8 @@ the master `paper/references.bib`, and regenerate deterministic active/reserve
 views. Regenerate `configs/ijds_literature_corpus_manifest.json` with
 `scripts/build_ijds_literature_corpus_manifest.py`; its complete
 key--PDF--version--SHA-256--status crosswalk, not a partial prose table, owns the
-current corpus census. The 2026-08-08 state is 165 unique readable PDFs and 196
-bibliography keys, partitioned into 103 active and 93 reserve keys.
+current corpus census. The 2026-08-09 state is 168 unique readable PDFs and 199
+bibliography keys, partitioned into 106 active and 93 reserve keys.
 
 CREDO is a close expectation-wise *decide-then-assess* neighbor whose source
 uses the stated first-order approximation or additive correction; it supplies

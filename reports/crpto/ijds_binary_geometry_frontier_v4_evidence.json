@@ -76041,7 +76041,7 @@
       "permitted_conclusion": "Within the predeclared finite grid, the gamma endpoint allocation contrast is not invariant to the outcome-free ruler or interior coordinate."
     }
   },
-  "audit_thesis": "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the active six-month endpoint; this deterministic completion statement is not by itself a rejection of conformal validity. A separate retrospectively locked joint-block rank-reference diagnostic places 31 of 40 learner-window cells past the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the usual single-future-point split-conformal condition, and the post-inspection family has no selective-FWER claim. The CatBoost shortfall recurs at two origins with cutoffs 39 months after each issue-month end, under three missing-value encodings, and under four declared fit-label scenarios. A complete label-Mondrian sensitivity redistributes resolved coverage from nondefault toward default but leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below 0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored transport guarantee. A prevalence-threshold crossing explains one observed geometry change but is not invariant to every fit-label scenario. Portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate; USD 25 floor rounding produces only negligible rate perturbations in the evaluated archive. Status-aware numerical basis intervals leave no registered support gap above 1e-10, but scale-aware warnings block any exact or strict numerical uniqueness conclusion. A clean calibration-only census reconciles exact binary threshold geometry in all 200 learner-window-stratum cells; it supplies no target, transport, or validity claim. A conditional dual-coefficient theorem and 208 outcome-free menu certificates show that the maximin full optimal face collapses to singleton-zero support over cap [0,1]; this is decision algebra, not true zero risk, joint conformal validity, outcome dominance, or a policy.",
+  "audit_thesis": "All 40 finite-archive sharp coverage upper endpoints are below 0.90 under the active six-month endpoint; this deterministic completion statement is not by itself a rejection of conformal validity. A separate retrospectively locked joint-block rank-reference diagnostic places 31 of 40 learner-window cells past the locked nominal Bonferroni--Holm thresholds. Its null is stronger than the usual single-future-point split-conformal condition, and the post-inspection family has no selective-FWER claim. The CatBoost shortfall recurs at two origins with cutoffs 39 months after each issue-month end, under three missing-value encodings, and under four declared fit-label scenarios. A complete label-Mondrian sensitivity redistributes resolved coverage from nondefault toward default but leaves 27 of 40 learner-window and 109 of 400 label-stratum upper endpoints below 0.90 while expanding two-label sets to 72.4%--78.5%; it is not a restored transport guarantee. A prevalence-threshold crossing explains one observed geometry change but is not invariant to every fit-label scenario. Portfolio direction is not identified without outcome-free comparator support and is not invariant to the declared ruler or interior coordinate; USD 25 floor rounding produces only negligible rate perturbations in the evaluated archive. Status-aware numerical basis intervals leave no registered support gap above 1e-10, but scale-aware warnings block any exact or strict numerical uniqueness conclusion. A clean calibration-only census reconciles exact binary threshold geometry in all 200 learner-window-stratum cells; it supplies no target, transport, or validity claim. A conditional dual-coefficient theorem and 208 window-by-role-month outcome-free certificates over 26 candidate menus show that the maximin full optimal face collapses to singleton-zero support over cap [0,1]; this is decision algebra, not true zero risk, joint conformal validity, outcome dominance, or a policy.",
   "source_artifacts": {
     "active_source_registry": {
       "path": "configs/ijds_active_evidence_sources.yaml",
@@ -76050,8 +76050,8 @@
     },
     "claim_ledger_contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 36214,
-      "sha256": "3e5fe2af4dbf515ba3b03cde8bf5d46e7cd2c34dc6ce75e2a0060fb906b36e37"
+      "bytes": 36254,
+      "sha256": "4f2325ba914b2795e19441838b5cc8037b0f73519395a09325c72bc702868322"
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
@@ -76060,8 +76060,8 @@
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 277874,
-      "sha256": "dc110bbef47854cc31a80e9544569916392d6b373286524e99f34aab1cc7b656"
+      "bytes": 277929,
+      "sha256": "8381219026552b1ff2ebe86c9a21416fe11b14a32ec15f955a61279c7d430d6a"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",
@@ -77635,8 +77635,8 @@
     },
     "sealed_parent_extension_builder": {
       "path": "scripts/extend_ijds_evidence_from_sealed_parent_2026_08_01.py",
-      "bytes": 15313,
-      "sha256": "2d3abfc266be9b7f20800f192fe27330ec62db89c85f309cba1ef275906803d7"
+      "bytes": 15372,
+      "sha256": "46b9448a45d66efb2fed4e33eb4885d0b879b5597d4937e223e49393da4bf747"
     },
     "binary_phase_census/loader": {
       "path": "src/ijds_audit/binary_phase_census_evidence.py",
@@ -78004,13 +78004,13 @@
   "protected_stages_run": [],
   "protected_artifacts_written": [],
   "claim_ledger": {
-    "schema_version": "2026-08-08.1",
+    "schema_version": "2026-08-09.1",
     "status": "active_ijds_claim_contract",
     "numeric_authority": "parent_evidence_manifest_only",
     "contract": {
       "path": "configs/ijds_claim_ledger.yaml",
-      "bytes": 36214,
-      "sha256": "3e5fe2af4dbf515ba3b03cde8bf5d46e7cd2c34dc6ce75e2a0060fb906b36e37"
+      "bytes": 36254,
+      "sha256": "4f2325ba914b2795e19441838b5cc8037b0f73519395a09325c72bc702868322"
     },
     "claims": [
       {
@@ -78822,7 +78822,7 @@
         "lineages": [
           "dual_coefficient_binary_set_native"
         ],
-        "scope": "complete_retrospective_outcome_free_logical_reconciliation_of_two_hundred_eight_primary_catboost_platt_monthly_menu_certificates_from_the_hash_pinned_set_native_predecessor_without_new_optimization",
+        "scope": "complete_retrospective_outcome_free_logical_reconciliation_of_two_hundred_eight_window_by_role_month_certificates_over_twenty_six_primary_catboost_platt_candidate_menus_from_the_hash_pinned_set_native_predecessor_without_new_optimization",
         "rule": "equals",
         "result_pointer": "/dual_coefficient_binary_set_native/complete_certificate_census_verified",
         "result": true,

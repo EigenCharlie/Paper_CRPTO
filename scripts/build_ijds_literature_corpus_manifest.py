@@ -29,7 +29,7 @@ CITATION_SOURCES = (
 )
 MANIFEST = ROOT / "configs" / "ijds_literature_corpus_manifest.json"
 
-SNAPSHOT_DATE = "2026-08-08"
+SNAPSHOT_DATE = "2026-08-09"
 ALLOWED_OBJECT_STATUSES = {
     "current",
     "superseded",
@@ -126,8 +126,11 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
         version="arXiv:2604.01502v2",
         note=AMBIGUOUS_MATCH_NOTE,
     ),
-    "supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization.pdf": _override(
-        "bao2025croms", version="unversioned local copy", note=AMBIGUOUS_MATCH_NOTE
+    "supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization - arXiv 2507.04716v2.pdf": _override(
+        "bao2025croms",
+        version="arXiv:2507.04716v2",
+        note="Downloaded exact v2 SHA-256 matched the pre-existing local bytes.",
+        source_url="https://arxiv.org/abs/2507.04716v2",
     ),
     "supplement/Farinhas et al 2024 - Non-Exchangeable Conformal Risk Control.pdf": _override(
         "farinhas2024nonexchangeable_crc",
@@ -238,7 +241,40 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
     "tesis/Babaei Bamdad 2020 - Multi-Objective Investment Recommendation in P2P Lending.pdf": _override(
         "babaei2020p2p"
     ),
-    # Current exact versions pinned or promoted through 2026-08-08.
+    # Current exact versions pinned or promoted through 2026-08-09.
+    "supplement/Liang Zhu Barber 2026 - Conformal Prediction after Data-Dependent Model Selection - arXiv 2408.07066v4 JASA.pdf": _override(
+        "liang2026model_selection_conformal",
+        version="arXiv:2408.07066v4 / JASA 2026 online first",
+        source_url="https://arxiv.org/abs/2408.07066v4",
+    ),
+    "supplement/Yang Kuchibhotla 2025 - Selection and Aggregation of Conformal Prediction Sets - arXiv 2104.13871v3 JASA.pdf": _override(
+        "yang2025selection_aggregation_conformal",
+        version="arXiv:2104.13871v3 / JASA 2025",
+        source_url="https://arxiv.org/abs/2104.13871v3",
+    ),
+    "supplement/Zhu Kiyani Pappas Hassani 2026 - Conformal Risk-Averse Decision Making with Action Conditional Guarantee - arXiv 2606.05551v2.pdf": _override(
+        "zhu2026action_conditional_risk_averse",
+        version="arXiv:2606.05551v2",
+        source_url="https://arxiv.org/abs/2606.05551v2",
+    ),
+    "supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - arXiv 2506.20173v1.pdf": _override(
+        "hegazy2025valid_selection_conformal_sets",
+        status="superseded",
+        version="arXiv:2506.20173v1",
+        note="Superseded by the co-located NeurIPS 2025 proceedings object.",
+        source_url="https://arxiv.org/abs/2506.20173v1",
+    ),
+    "supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - NeurIPS 2025.pdf": _override(
+        "hegazy2025valid_selection_conformal_sets",
+        version="NeurIPS 2025 proceedings / DOI 10.52202/085713-5812",
+        source_url="https://proceedings.neurips.cc/paper_files/paper/2025/hash/ff9386992bb2b9cee1dddf0bd5f328de-Abstract-Conference.html",
+    ),
+    "supplement/Yeh et al 2025 - End-to-End Conformal Calibration for Optimization Under Uncertainty - arXiv 2409.20534v2 TMLR.pdf": _override(
+        "yeh2026",
+        version="arXiv:2409.20534v2 / TMLR December 2025",
+        note="Downloaded exact v2 SHA-256 matched the pre-existing TMLR-banner local bytes.",
+        source_url="https://arxiv.org/abs/2409.20534v2",
+    ),
     "supplement/Zhou Orfanoudaki Zhu 2026 - Conformalized Decision Risk Assessment - arXiv 2505.13243v3.pdf": _override(
         "zhou2025credo",
         version="arXiv:2505.13243v3 / ICLR 2026",
@@ -343,12 +379,6 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
     ),
     "supplement/Sesia Svetnik 2025 - Conformal Survival Bands Under Right Censoring.pdf": _override(
         None, "quarantined", "unkeyed local PDF", "C-grade corpus object; supports no active claim."
-    ),
-    "supplement/Zhu Kiyani Pappas Hassani 2026 - Action-Conditional Conformal Decision Making.pdf": _override(
-        None,
-        "quarantined",
-        "unkeyed local PDF",
-        "Adversarial audit failed; supports no active claim.",
     ),
     # Six legacy objects are now explicitly resolved rather than silently orphaned.
     "supplement/Deprez et al 2026 - Network Analytics for Anti-money Laundering.pdf": _override(

@@ -72,8 +72,9 @@ order before changing scientific code or paper claims:
 16c11. [`docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md`](docs/research/ijds_full_theory_sota_protocol_reaudit_2026-07-31.md)
    - adversarial theory, state-of-the-art, long-run, and GO/NO-GO synthesis.
 16c12. [`docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md`](docs/research/ijds_dual_coefficient_binary_set_native_v1_protocol_2026-08-01.md)
-   - active conditional dual-coefficient set-native theorem and complete
-     208-menu logical-certificate census without new optimization.
+   - active conditional dual-coefficient set-native theorem and complete census
+     of 208 window-by-role-month logical certificates over 26 candidate menus,
+     without new optimization.
 16c13. [`docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md`](docs/research/ijds_binary_phase_census_v1_protocol_2026-08-01.md)
    - active clean calibration-only 200-cell exact phase census.
 16c14. [`docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md`](docs/research/ijds_equal_notional_jomi_synthetic_feasibility_v1_protocol_2026-08-08.md)

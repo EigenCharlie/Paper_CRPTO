@@ -1,4 +1,4 @@
-# IJDS literature corpus ledger (through 2026-08-08)
+# IJDS literature corpus ledger (through 2026-08-09)
 
 Status: documentary literature-provenance record; not an empirical evidence
 source and not an entry in the active-evidence registry.
@@ -10,7 +10,8 @@ materialized on 2026-07-30, two distinct intakes audited on 2026-07-31, the
 four-object theory-neighbor intake audited on 2026-08-01, the exact-version
 and nearest-neighbor refresh audited on 2026-08-06, and the decision-feedback
 and exact-version refresh audited on 2026-08-07, plus the risk-controlled
-policy-post-processing intake audited on 2026-08-08. The 2026-07-31
+policy-post-processing intake audited on 2026-08-08 and the selection/action-
+conditional exact-object refresh audited on 2026-08-09. The 2026-07-31
 frontier intake consists of five newly materialized PDFs plus the already-local
 non-monotonic conformal-risk-control preprint. The active-citation gap intake
 materialized 19 PDFs from primary or official open-access surfaces and left
@@ -76,13 +77,21 @@ new decision-feedback objects added 147 pages and 10,655,236 bytes. Renaming
 the already-local CREDO, Chen--Zhou--Zhu, Wang--Dobriban, and Utility-Directed
 CP objects to expose their exact version or venue changed no bytes or counts.
 
-**Current snapshot, 2026-08-08.** `Papers_tesis` contains **165 PDF objects,
-5,900 pages, and 340,545,318 bytes**. All 165 objects have distinct SHA-256
-values, pass strict PyPDF page-tree traversal, and are unencrypted. The Joshi
-et al. v1 object adds 38 pages and 1,057,028 bytes.
+**Historical snapshot, 2026-08-08.** `Papers_tesis` contained 165 PDF objects,
+5,900 pages, and 340,545,318 bytes. All 165 objects had distinct SHA-256
+values, passed strict PyPDF page-tree traversal, and were unencrypted. The
+Joshi et al. v1 object added 38 pages and 1,057,028 bytes.
 
-The 196-entry master bibliography currently partitions into **103 active**
-body-or-supplement citations and **93 reserve** entries. Of the 196 keys, 144
+**Current snapshot, 2026-08-09.** `Papers_tesis` contains **168 PDF objects,
+6,053 pages, and 343,885,895 bytes**. All 168 objects have distinct SHA-256
+values, pass strict PyPDF page-tree traversal, and are unencrypted. The Liang
+v4, Yang--Kuchibhotla v3, and official Hegazy NeurIPS objects add 153 pages and
+3,340,577 bytes. Bao v2, Yeh v2/TMLR, and Zhu v2 were already present with the
+exact downloaded hashes and were renamed without changing bytes; the Hegazy
+arXiv v1 is retained as a superseded object rather than overwritten.
+
+The 199-entry master bibliography currently partitions into **106 active**
+body-or-supplement citations and **93 reserve** entries. Of the 199 keys, 147
 have one current local PDF and 52 are metadata-only. The only four active
 metadata-only exceptions remain `holm1979`, `manski2003partial`, `platt2000`,
 and `vovk2005`; the other 48 metadata-only entries are reserve records whose
@@ -94,7 +103,7 @@ The generated authority for this complete projection is
 `tests/test_ijds_literature_corpus_manifest.py`. It records, for every local
 object, its BibTeX key or explicit unkeyed disposition, path, version, status,
 bytes, pages, SHA-256, strict-parser result, and source URL. Its object statuses
-are 144 `current`, four `superseded`, one `companion`, six `watchlist`, four
+are 147 `current`, five `superseded`, one `companion`, six `watchlist`, three
 `quarantined`, and six `legacy`; bibliography entries without a current PDF
 are separately marked `metadata-only`. Generation fails on an unrecognized
 status, stale explicit mapping, missing cited key, duplicate hash, encrypted or
@@ -111,6 +120,51 @@ dispositions in that manifest:
 | Izbicki--Shimizu--Stern, *CD-split and HPD-split* | `legacy`; local conformal reference not used by the manuscript. |
 | Lei et al., *Distribution-Free Predictive Inference for Regression* | `legacy`; local conformal reference not used by the manuscript. |
 | Shafer--Vovk, *A Tutorial on Conformal Prediction* | `legacy`; local tutorial not used by the manuscript. |
+
+## Selection and action-conditional exact-object refresh -- 2026-08-09
+
+The refresh separates discovery, exact-byte intake, and citation. Liang--Zhu--
+Barber and Yang--Kuchibhotla are newly materialized exact preprint objects with
+their JASA records; the Hegazy preprint is retained beside the official NeurIPS
+proceedings object. Downloaded Bao v2 and Yeh v2 hashes matched their existing
+local bytes exactly, so only their filenames and metadata were canonicalized.
+The Zhu--Kiyani--Pappas--Hassani v2 bytes were likewise already present under a
+generic quarantined filename; the object is now keyed and version-pinned rather
+than duplicated. The manuscript independently cites all three newly keyed
+works with explicit non-transfer boundaries, so the deterministic bibliography
+projection classifies them as active rather than reserve.
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Primary/official record and disposition |
+|---|---|---:|---:|---|---|---|
+| Liang, Zhu, and Barber, *Conformal Prediction after Data-Dependent Model Selection*, arXiv:2408.07066v4 / JASA 2026 online first | `Papers_tesis/supplement/Liang Zhu Barber 2026 - Conformal Prediction after Data-Dependent Model Selection - arXiv 2408.07066v4 JASA.pdf` | 1,224,059 | 47 | `7e707e0afd0a680076d468717c1e7ae4032ce17160115265c93634c26bc4f071` | `liang2026model_selection_conformal` | [arXiv v4](https://arxiv.org/abs/2408.07066v4) and [JASA DOI](https://doi.org/10.1080/01621459.2026.2663588). Current exact author object; its exchangeable full-conformal model-selection construction does not select a CRPTO calibrator or repair chronological transport. |
+| Yang and Kuchibhotla, *Selection and Aggregation of Conformal Prediction Sets*, arXiv:2104.13871v3 / JASA 120(549), 435--447 | `Papers_tesis/supplement/Yang Kuchibhotla 2025 - Selection and Aggregation of Conformal Prediction Sets - arXiv 2104.13871v3 JASA.pdf` | 824,133 | 74 | `e0f7c8246de481ba35e46b13f06ba175ae22c2737404b53f00824d1bd7acca6d` | `yang2025selection_aggregation_conformal` | [arXiv v3](https://arxiv.org/abs/2104.13871v3) and [JASA DOI](https://doi.org/10.1080/01621459.2024.2344700). Current exact author object; its approximate-coverage and split finite-sample routes require their own sampling/splitting contracts. |
+| Hegazy et al., *Valid Selection among Conformal Sets*, NeurIPS 2025 proceedings | `Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - NeurIPS 2025.pdf` | 1,292,385 | 32 | `e4c1d3841477d5bdb9c2b01fb396c582dde8a024bb8d07eab857229ae5acc6f6` | `hegazy2025valid_selection_conformal_sets` | [NeurIPS 2025 proceedings](https://proceedings.neurips.cc/paper_files/paper/2025/hash/ff9386992bb2b9cee1dddf0bd5f328de-Abstract-Conference.html), DOI `10.52202/085713-5812`. Current official object; selection validity depends on the paper's individual-validity and stability contracts. |
+| Hegazy et al., same title, arXiv:2506.20173v1 | `Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - arXiv 2506.20173v1.pdf` | 1,430,612 | 31 | `f77dc2b614ee8fbfd6f4c9f886645294b781f9a5771f39ae0065ab66a788a605` | `hegazy2025valid_selection_conformal_sets` | [arXiv v1](https://arxiv.org/abs/2506.20173v1). Retained as `superseded`; the official proceedings object is one page longer and fixes venue/DOI identity. |
+| Bao et al., *Optimal Model Selection for Conformalized Robust Optimization*, arXiv:2507.04716v2 | `Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization - arXiv 2507.04716v2.pdf` | 1,995,992 | 104 | `7692f5ade58b6ec5926f6e18fb4a3fb3e8efe419e3edd7878a794dd1842317ea` | `bao2025croms` | [arXiv v2](https://arxiv.org/abs/2507.04716v2). Downloaded exact-object hash equals the pre-existing local hash; no identity was inferred from Content-Length. |
+| Yeh et al., *End-to-End Conformal Calibration for Optimization Under Uncertainty*, TMLR December 2025 / arXiv:2409.20534v2 | `Papers_tesis/supplement/Yeh et al 2025 - End-to-End Conformal Calibration for Optimization Under Uncertainty - arXiv 2409.20534v2 TMLR.pdf` | 1,398,534 | 29 | `4c71398a763e94b75f39d1f99665e57b5a48711b90f3524c20df3735df20a736` | `yeh2026` | [TMLR record](https://openreview.net/forum?id=yM8qkT0f9H) and [arXiv v2](https://arxiv.org/abs/2409.20534v2). The local PDF carries the TMLR publication banner and exactly matches downloaded v2 by SHA-256. |
+| Zhu, Kiyani, Pappas, and Hassani, *Conformal Risk-Averse Decision Making with Action Conditional Guarantee*, arXiv:2606.05551v2 | `Papers_tesis/supplement/Zhu Kiyani Pappas Hassani 2026 - Conformal Risk-Averse Decision Making with Action Conditional Guarantee - arXiv 2606.05551v2.pdf` | 875,669 | 38 | `9b72a0361912b770223980d21390712e8c016272e53b983cf8adbf8cea8a519e` | `zhu2026action_conditional_risk_averse` | [arXiv v2](https://arxiv.org/abs/2606.05551v2), CC BY 4.0. This is the byte-identical previously local object under its exact title/version; its finite discrete-action and exchangeable labeled-sample contract does not instantiate CRPTO's fractional portfolio decision. |
+
+Strict PyPDF parsed all 355 pages across the seven downloaded comparison
+objects (including Hegazy v1 and the proceedings version), traversed every page
+tree, and found no encryption or empty text page. The per-object extracted-text
+medians were 2,303 characters (Liang), 1,972 (Yang), 1,648 (Bao), 3,340 (Yeh),
+2,743 (Zhu), 2,449 (Hegazy v1), and 3,354 (Hegazy proceedings). A bounded
+Docling structural parse was attempted sequentially with one thread, one-page
+batches, OCR and enrichment disabled. Native `std::bad_alloc` failures recurred
+under the machine's constrained pagefile; the pypdfium2 replay was stopped
+rather than continuing a resource-expensive parser run. This operational
+failure is not evidence of malformed source PDFs and no partial parser output
+is canonical.
+
+Poppler renders of pages 1, 7, and 15 (Liang); 1, 5, and 10 (Yang); 1, 8, and
+15 (Bao); 1, 8, and 21 (Yeh); 1, 6, and 11 (Zhu); and 1, 3, and 32 (Hegazy
+proceedings) were compared with strict text extraction. Titles, version/venue
+banners, theorem and algorithm formulas, tables, captions, and page geometry
+were legible. The first page of Hegazy v1 was also compared directly with the
+proceedings page. Poppler reported missing display-font fallbacks for `Symbol`
+and `ArialUnicode` on some pages, but the inspected glyphs and formulas showed
+no visible corruption. Scratch downloads and renders were noncanonical and
+were removed after the hash, parse, and visual-QA receipts were recorded.
 
 ## Risk-controlled policy-post-processing intake -- 2026-08-08
 
@@ -437,6 +491,16 @@ v2, `wang2026optimal_decision_prediction_sets` to arXiv v3, and
 master/view counts at that snapshot were 196 total, 102 active, and 94 reserve. The
 separate corpus manifest is regenerated after citation changes so its
 active/reserve projection remains aligned with those deterministic views.
+
+The 2026-08-09 refresh adds the exact keys
+`liang2026model_selection_conformal`,
+`yang2025selection_aggregation_conformal`, and
+`zhu2026action_conditional_risk_averse`; pins `bao2025croms` to arXiv v2 and
+`yeh2026` to its TMLR/arXiv-v2 identity; and replaces the Hegazy citation
+metadata with the official NeurIPS 2025 proceedings record while retaining
+arXiv v1 as superseded provenance. The three new keys are active only because
+the current body or supplement cites them with explicit assumption and
+non-transfer boundaries; corpus intake alone would not have promoted them.
 
 The same metadata pass corrected three older records: Johnstone--Cox now names
 the Tenth Symposium on Conformal and Probabilistic Prediction and Applications

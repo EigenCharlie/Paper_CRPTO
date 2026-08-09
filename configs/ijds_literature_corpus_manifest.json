@@ -80,10 +80,10 @@
       "bibtex_key": "bao2025croms",
       "citation_state": "active",
       "corpus_status": "current",
-      "current_pdf": "Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization.pdf",
+      "current_pdf": "Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization - arXiv 2507.04716v2.pdf",
       "metadata_only_reason": null,
       "object_paths": [
-        "Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization.pdf"
+        "Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization - arXiv 2507.04716v2.pdf"
       ],
       "title": "Optimal Model Selection for Conformalized Robust Optimization ({CROMS})",
       "year": "2025"
@@ -967,10 +967,10 @@
       "bibtex_key": "yeh2026",
       "citation_state": "active",
       "corpus_status": "current",
-      "current_pdf": "Papers_tesis/supplement/Yeh et al 2026 - End-to-End Conformal Calibration for Optimization Under Uncertainty.pdf",
+      "current_pdf": "Papers_tesis/supplement/Yeh et al 2025 - End-to-End Conformal Calibration for Optimization Under Uncertainty - arXiv 2409.20534v2 TMLR.pdf",
       "metadata_only_reason": null,
       "object_paths": [
-        "Papers_tesis/supplement/Yeh et al 2026 - End-to-End Conformal Calibration for Optimization Under Uncertainty.pdf"
+        "Papers_tesis/supplement/Yeh et al 2025 - End-to-End Conformal Calibration for Optimization Under Uncertainty - arXiv 2409.20534v2 TMLR.pdf"
       ],
       "title": "End-to-End Conformal Calibration for Optimization Under Uncertainty",
       "year": "2025"
@@ -1602,12 +1602,13 @@
       "bibtex_key": "hegazy2025valid_selection_conformal_sets",
       "citation_state": "active",
       "corpus_status": "current",
-      "current_pdf": "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets.pdf",
+      "current_pdf": "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - NeurIPS 2025.pdf",
       "metadata_only_reason": null,
       "object_paths": [
-        "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets.pdf"
+        "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - NeurIPS 2025.pdf",
+        "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - arXiv 2506.20173v1.pdf"
       ],
-      "title": "Valid Selection Among Conformal Sets",
+      "title": "Valid Selection among Conformal Sets",
       "year": "2025"
     },
     {
@@ -2252,6 +2253,42 @@
       ],
       "title": "Online Selective Conformal Prediction with Asymmetric Rules: A Permutation Test Approach",
       "year": "2026"
+    },
+    {
+      "bibtex_key": "liang2026model_selection_conformal",
+      "citation_state": "active",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Liang Zhu Barber 2026 - Conformal Prediction after Data-Dependent Model Selection - arXiv 2408.07066v4 JASA.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Liang Zhu Barber 2026 - Conformal Prediction after Data-Dependent Model Selection - arXiv 2408.07066v4 JASA.pdf"
+      ],
+      "title": "Conformal Prediction after Data-Dependent Model Selection",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "yang2025selection_aggregation_conformal",
+      "citation_state": "active",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Yang Kuchibhotla 2025 - Selection and Aggregation of Conformal Prediction Sets - arXiv 2104.13871v3 JASA.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Yang Kuchibhotla 2025 - Selection and Aggregation of Conformal Prediction Sets - arXiv 2104.13871v3 JASA.pdf"
+      ],
+      "title": "Selection and Aggregation of Conformal Prediction Sets",
+      "year": "2025"
+    },
+    {
+      "bibtex_key": "zhu2026action_conditional_risk_averse",
+      "citation_state": "active",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Zhu Kiyani Pappas Hassani 2026 - Conformal Risk-Averse Decision Making with Action Conditional Guarantee - arXiv 2606.05551v2.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Zhu Kiyani Pappas Hassani 2026 - Conformal Risk-Averse Decision Making with Action Conditional Guarantee - arXiv 2606.05551v2.pdf"
+      ],
+      "title": "Conformal Risk-Averse Decision Making with Action Conditional Guarantee",
+      "year": "2026"
     }
   ],
   "generated_by": "scripts/build_ijds_literature_corpus_manifest.py",
@@ -2855,14 +2892,14 @@
       "match_margin": null,
       "match_method": "explicit",
       "match_score": null,
-      "note": "Human-adjudicated title/author identity; the automatic candidate was below the declared score or runner-up-margin gate.",
+      "note": "Downloaded exact v2 SHA-256 matched the pre-existing local bytes.",
       "pages": 104,
-      "path": "Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization.pdf",
+      "path": "Papers_tesis/supplement/Bao et al 2025 - CROMS Optimal Model Selection for Conformalized Robust Optimization - arXiv 2507.04716v2.pdf",
       "sha256": "7692f5ade58b6ec5926f6e18fb4a3fb3e8efe419e3edd7878a794dd1842317ea",
-      "source_url": "https://arxiv.org/abs/2507.04716",
+      "source_url": "https://arxiv.org/abs/2507.04716v2",
       "status": "current",
       "strict_pypdf": "pass",
-      "version": "unversioned local copy"
+      "version": "arXiv:2507.04716v2"
     },
     {
       "bibtex_key": "barber2023beyond",
@@ -3524,17 +3561,33 @@
       "bibtex_key": "hegazy2025valid_selection_conformal_sets",
       "bytes": 1430612,
       "encrypted": false,
-      "match_margin": 0.430357,
-      "match_method": "title-author",
-      "match_score": 0.783929,
-      "note": "Deterministic title-and-author match; unique current object enforced below.",
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Superseded by the co-located NeurIPS 2025 proceedings object.",
       "pages": 31,
-      "path": "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets.pdf",
+      "path": "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - arXiv 2506.20173v1.pdf",
       "sha256": "f77dc2b614ee8fbfd6f4c9f886645294b781f9a5771f39ae0065ab66a788a605",
-      "source_url": "https://arxiv.org/abs/2506.20173",
+      "source_url": "https://arxiv.org/abs/2506.20173v1",
+      "status": "superseded",
+      "strict_pypdf": "pass",
+      "version": "arXiv:2506.20173v1"
+    },
+    {
+      "bibtex_key": "hegazy2025valid_selection_conformal_sets",
+      "bytes": 1292385,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Human-adjudicated filename-to-work identity.",
+      "pages": 32,
+      "path": "Papers_tesis/supplement/Hegazy et al 2025 - Valid Selection among Conformal Sets - NeurIPS 2025.pdf",
+      "sha256": "e4c1d3841477d5bdb9c2b01fb396c582dde8a024bb8d07eab857229ae5acc6f6",
+      "source_url": "https://proceedings.neurips.cc/paper_files/paper/2025/hash/ff9386992bb2b9cee1dddf0bd5f328de-Abstract-Conference.html",
       "status": "current",
       "strict_pypdf": "pass",
-      "version": "unversioned local copy"
+      "version": "NeurIPS 2025 proceedings / DOI 10.52202/085713-5812"
     },
     {
       "bibtex_key": "hoeffding1963",
@@ -3823,6 +3876,22 @@
       "status": "current",
       "strict_pypdf": "pass",
       "version": "published version"
+    },
+    {
+      "bibtex_key": "liang2026model_selection_conformal",
+      "bytes": 1224059,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Human-adjudicated filename-to-work identity.",
+      "pages": 47,
+      "path": "Papers_tesis/supplement/Liang Zhu Barber 2026 - Conformal Prediction after Data-Dependent Model Selection - arXiv 2408.07066v4 JASA.pdf",
+      "sha256": "7e707e0afd0a680076d468717c1e7ae4032ce17160115265c93634c26bc4f071",
+      "source_url": "https://arxiv.org/abs/2408.07066v4",
+      "status": "current",
+      "strict_pypdf": "pass",
+      "version": "arXiv:2408.07066v4 / JASA 2026 online first"
     },
     {
       "bibtex_key": "chan2024inverse",
@@ -4481,6 +4550,22 @@
       "version": "arXiv:2601.02998v2"
     },
     {
+      "bibtex_key": "yang2025selection_aggregation_conformal",
+      "bytes": 824133,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Human-adjudicated filename-to-work identity.",
+      "pages": 74,
+      "path": "Papers_tesis/supplement/Yang Kuchibhotla 2025 - Selection and Aggregation of Conformal Prediction Sets - arXiv 2104.13871v3 JASA.pdf",
+      "sha256": "e0f7c8246de481ba35e46b13f06ba175ae22c2737404b53f00824d1bd7acca6d",
+      "source_url": "https://arxiv.org/abs/2104.13871v3",
+      "status": "current",
+      "strict_pypdf": "pass",
+      "version": "arXiv:2104.13871v3 / JASA 2025"
+    },
+    {
       "bibtex_key": "yeh2025training",
       "bytes": 2214151,
       "encrypted": false,
@@ -4500,17 +4585,17 @@
       "bibtex_key": "yeh2026",
       "bytes": 1398534,
       "encrypted": false,
-      "match_margin": 0.309524,
-      "match_method": "title-author",
-      "match_score": 0.771429,
-      "note": "Deterministic title-and-author match; unique current object enforced below.",
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Downloaded exact v2 SHA-256 matched the pre-existing TMLR-banner local bytes.",
       "pages": 29,
-      "path": "Papers_tesis/supplement/Yeh et al 2026 - End-to-End Conformal Calibration for Optimization Under Uncertainty.pdf",
+      "path": "Papers_tesis/supplement/Yeh et al 2025 - End-to-End Conformal Calibration for Optimization Under Uncertainty - arXiv 2409.20534v2 TMLR.pdf",
       "sha256": "4c71398a763e94b75f39d1f99665e57b5a48711b90f3524c20df3735df20a736",
-      "source_url": "https://arxiv.org/abs/2409.20534",
+      "source_url": "https://arxiv.org/abs/2409.20534v2",
       "status": "current",
       "strict_pypdf": "pass",
-      "version": "unversioned local copy"
+      "version": "arXiv:2409.20534v2 / TMLR December 2025"
     },
     {
       "bibtex_key": "zadrozny2002",
@@ -4689,20 +4774,20 @@
       "version": "arXiv:2510.07750v2"
     },
     {
-      "bibtex_key": null,
+      "bibtex_key": "zhu2026action_conditional_risk_averse",
       "bytes": 875669,
       "encrypted": false,
       "match_margin": null,
       "match_method": "explicit",
       "match_score": null,
-      "note": "Adversarial audit failed; supports no active claim.",
+      "note": "Human-adjudicated filename-to-work identity.",
       "pages": 38,
-      "path": "Papers_tesis/supplement/Zhu Kiyani Pappas Hassani 2026 - Action-Conditional Conformal Decision Making.pdf",
+      "path": "Papers_tesis/supplement/Zhu Kiyani Pappas Hassani 2026 - Conformal Risk-Averse Decision Making with Action Conditional Guarantee - arXiv 2606.05551v2.pdf",
       "sha256": "9b72a0361912b770223980d21390712e8c016272e53b983cf8adbf8cea8a519e",
-      "source_url": null,
-      "status": "quarantined",
+      "source_url": "https://arxiv.org/abs/2606.05551v2",
+      "status": "current",
       "strict_pypdf": "pass",
-      "version": "unkeyed local PDF"
+      "version": "arXiv:2606.05551v2"
     },
     {
       "bibtex_key": "ziliaskopoulos2026dva",
@@ -4907,7 +4992,7 @@
     "master_bibliography": "paper/references.bib",
     "protected_extraction_manifest_modified": false
   },
-  "snapshot_date": "2026-08-08",
+  "snapshot_date": "2026-08-09",
   "summary": {
     "active_metadata_only_keys": [
       "holm1979",
@@ -4916,26 +5001,26 @@
       "vovk2005"
     ],
     "bibliography_corpus_status_counts": {
-      "current": 144,
+      "current": 147,
       "metadata-only": 52
     },
-    "bibliography_entries": 196,
+    "bibliography_entries": 199,
     "citation_state_counts": {
-      "active": 103,
+      "active": 106,
       "reserve": 93
     },
     "object_status_counts": {
       "companion": 1,
-      "current": 144,
+      "current": 147,
       "legacy": 6,
-      "quarantined": 4,
-      "superseded": 4,
+      "quarantined": 3,
+      "superseded": 5,
       "watchlist": 6
     },
-    "pdf_bytes": 340545318,
-    "pdf_objects": 165,
-    "pdf_pages": 5900,
-    "unique_sha256": 165
+    "pdf_bytes": 343885895,
+    "pdf_objects": 168,
+    "pdf_pages": 6053,
+    "unique_sha256": 168
   },
   "validation": {
     "all_active_keys_current_or_explicit_metadata_only": true,

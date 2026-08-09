@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-08-01
+# CRPTO Active IJDS Claim Registry - 2026-08-09
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -60,7 +60,8 @@ pre-evaluation-outcome-correction evaluations are provenance only.
   feasible full-budget singleton-zero allocation, substitution proves that
   every maximin optimum is singleton-zero and that the complete optimal face
   and value are constant for every constructed set-risk cap in `[0,1]`. All
-  208 primary CatBoost--Platt menu certificates pass without a new optimization. This is a conditional
+  208 window-by-role-month certificates over 26 primary CatBoost--Platt
+  candidate menus pass without a new optimization. This is a conditional
   structural result, not joint coverage, probabilistic robustness, true zero
   risk, optimizer uniqueness, or policy validation.
 - The clean calibration-only binary-phase census reconciles all 200
@@ -447,10 +448,15 @@ pre-evaluation-outcome-correction evaluations are provenance only.
   Git-tracked outputs.
 - The runner reads the 1,248 hash-pinned primary CatBoost--Platt GO2 solve rows
   and 208 taxonomy rows,
-  reconciles their six repeated ruler--coordinate witnesses into 208 monthly
-  menu certificates (88 development and 120 primary OOT), and executes zero new
+  reconciles their six repeated ruler--coordinate witnesses into 208
+  window-by-role-month certificates over 26 candidate menus (88 development and
+  120 primary OOT certificates), and executes zero new
   optimizations. Every menu has a full-budget zero-set-score witness under the
   same exact-budget, no-cash polytope.
+- The sealed protocol's historical 208-menu shorthand denotes these
+  208 window-by-role-month certificate rows; it does not denote 208 distinct
+  physical candidate menus. The protocol record remains immutable, while this
+  registry supplies the current denominator.
 - Complete each empty binary set to `{0,1}` by the declared fail-closed decision
   convention. The set-internal minimum standardized payoff is the nonnegative
   contractual rate for `{0}` and `-LGD` for empty, `{1}`, or `{0,1}`. With
@@ -782,8 +788,9 @@ than presented as additional numbered propositions in the body.
    label-free fixed-top-K selector. Combining the universal reference-set
    identity in Proposition 6 of Jin and Ren with the analogous shared-threshold
    beta--binomial mechanism highlighted by Marques gives, for the
-   `(m-K)`-th ascending test order statistic `T`,
-   `R=#{i:S_i>T} ~ BetaBinomial(n,K+1,m-K)`. For `0 < alpha < 1`, the
+   `(m-K)`-th ascending test order statistic `T`, and writing `Z_i` for the
+   selection scores, `R=#{i:Z_i>T} ~ BetaBinomial(n,K+1,m-K)`. For
+   `0 < alpha < 1`, the
    deterministic conformal cutoff is finite exactly when
    `R >= r_alpha = ceil(1/alpha-1)`. This complements,
    and is not derived from, the asymptotic reference-size analysis in
@@ -796,6 +803,9 @@ than presented as additional numbered propositions in the body.
    cutoff need not yield a nonempty or otherwise informative set, and the
    beta--binomial law does not automatically extend to ties or sampling without
    replacement.
+- The sealed synthetic protocol used `S` for this selection score. Current
+  paper surfaces rename only that local symbol to `Z` to avoid collision with
+  the prediction-set notation; the construction and formulas are unchanged.
 - **Count--exposure covariance identity.** On one fixed nonempty panel with
    nonnegative exposures and positive total exposure, dollar-minus-unweighted
    panel FCP---equivalently unweighted-minus-dollar coverage---equals empirical
