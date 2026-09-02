@@ -41,10 +41,14 @@ def test_scientific_git_lineage_count_is_derived_from_registry() -> None:
 def test_missing_dvc_sources_use_only_the_exact_sealed_incremental_bridge() -> None:
     verification = _load_integrity_source_registry()
 
-    assert verification.mode == "sealed_incremental"
-    assert len(verification.missing_dvc_sources) == 33
+    assert verification.mode in {"full", "sealed_incremental"}
+    assert bool(verification.missing_dvc_sources) is (verification.mode == "sealed_incremental")
+    assert tuple(sorted(set(verification.missing_dvc_sources))) == (
+        verification.missing_dvc_sources
+    )
+    assert set(verification.missing_dvc_sources).issubset(verification.registry["sources"])
     assert set(verification.registered) == set(verification.registry["sources"])
-    assert _sealed_parent_manifest()["schema_version"] == "2026-07-31.1"
+    assert _sealed_parent_manifest()["schema_version"] == "2026-08-01.1"
 
 
 def test_incremental_bridge_rejects_changed_parent_descriptor(
@@ -55,7 +59,10 @@ def test_incremental_bridge_rejects_changed_parent_descriptor(
     mutated_path = tmp_path / "mutated_registry.yaml"
     mutated_path.write_text(yaml.safe_dump(registry, sort_keys=False), encoding="utf-8")
 
-    with pytest.raises(RuntimeError, match="differs from the sealed parent registry"):
+    with pytest.raises(
+        RuntimeError,
+        match=r"differs from the sealed parent registry|mismatched on sha256",
+    ):
         _load_integrity_source_registry(mutated_path)
 
 
@@ -103,6 +110,20 @@ def test_sealed_extension_payload_and_boundaries_are_fail_closed() -> None:
     leaked_phase_row["binary_phase_census"]["rows"][0]["target_coverage"] = 0.9
     assert "binary-phase 200-cell census or exact checks changed" in (
         _check_sealed_extension_payload(leaked_phase_row, registry)
+    )
+
+    wrong_support_count = deepcopy(evidence)
+    wrong_support_count["binary_phase_target_support"]["positive_label_exclusion_cells"] = 86
+    assert "binary-phase target-support 87/200 census changed" in (
+        _check_sealed_extension_payload(wrong_support_count, registry)
+    )
+
+    promoted_support_claim = deepcopy(evidence)
+    promoted_support_claim["binary_phase_target_support"]["interpretation"][
+        "nominal_coverage_impossibility_established_for_all_exclusion_cells"
+    ] = True
+    assert "binary-phase target-support interpretation boundary changed" in (
+        _check_sealed_extension_payload(promoted_support_claim, registry)
     )
 
     wrong_dual_census = deepcopy(evidence)

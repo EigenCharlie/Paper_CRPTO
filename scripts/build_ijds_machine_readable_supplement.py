@@ -56,6 +56,9 @@ SOURCE_FILENAMES = {
     "Table_S6P_calibrator_pairwise_shared_completion.csv": (
         "crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv"
     ),
+    "Table_S6Q_binary_phase_target_support.csv": (
+        "crpto_ijds_v4_tableS6Q_binary_phase_target_support.csv"
+    ),
     "Table_S9G_decision_catalog_metric_separation.csv": (
         "crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv"
     ),
@@ -246,6 +249,17 @@ S6P_COLUMNS: Final = _columns(
     "method_a,method_b,window_id,taxonomy_groups,role,conformal_group,candidate_rows,",
     "resolved_rows,unresolved_rows,coverage_difference_resolved,",
     "coverage_difference_lower,coverage_difference_upper,shared_loanwise_completion",
+)
+S6Q_COLUMNS: Final = _columns(
+    "learner,learner_label,window,window_id,taxonomy_groups,score_stratum,",
+    "conformal_group,alpha,fit_rows,fit_defaults,fit_default_prevalence,",
+    "finite_sample_rank,boundary_count,phase_boundary_rate,phase_margin,",
+    "phase_prevalence_at_or_below_boundary,frozen_threshold,threshold_below_half,",
+    "max_score_below_half_condition,target_candidate_rows,target_score_max,",
+    "positive_label_boundary,target_max_below_positive_label_boundary,",
+    "positive_label_excluded_from_every_target_set,target_resolved_rows,",
+    "target_resolved_misses,resolved_misses_in_exclusion_strata,",
+    "resolved_misses_all_strata,exclusion_strata_resolved_miss_fraction",
 )
 S9G_COLUMNS: Final = _columns(
     "metric,target_blocks,minimum_target_lower,development_maximum_upper,",
@@ -590,6 +604,23 @@ TABLE_CONTRACTS: Final = {
             "shared_loanwise_completion": frozenset({"True"}),
         },
     ),
+    "Table_S6Q_binary_phase_target_support.csv": CsvContract(
+        columns=S6Q_COLUMNS,
+        rows=200,
+        key_columns=("learner", "window_id", "conformal_group"),
+        expected_keys=_grid(LEARNERS, WINDOWS, GROUPS_ZERO_BASED),
+        exact_domains={
+            "taxonomy_groups": frozenset({"5"}),
+            "score_stratum": frozenset(STRATA_ONE_BASED),
+            "conformal_group": frozenset(GROUPS_ZERO_BASED),
+            "alpha": frozenset({"0.1"}),
+            "phase_prevalence_at_or_below_boundary": BOOLEAN_DOMAIN,
+            "threshold_below_half": BOOLEAN_DOMAIN,
+            "max_score_below_half_condition": BOOLEAN_DOMAIN,
+            "target_max_below_positive_label_boundary": BOOLEAN_DOMAIN,
+            "positive_label_excluded_from_every_target_set": BOOLEAN_DOMAIN,
+        },
+    ),
     "Table_S9G_decision_catalog_metric_separation.csv": CsvContract(
         columns=S9G_COLUMNS,
         rows=3,
@@ -728,6 +759,12 @@ multiprobability guarantee to the scalar score, and perform no portfolio
 optimization. The separate primary portfolio analysis already uses the
 pre-existing Platt score; none of the three alternative maps is propagated.
 
+The binary phase target-support table reports all 200 learner--window--stratum
+joins. Its 87 label-one exclusions are exact set-membership statements for the
+frozen archive scores. The resolved-miss fractions only localize observed
+misses by stratum; they are not class-conditional validity, a complete causal
+decomposition, or evidence that target prevalence is constant within strata.
+
 The set-preserving embedding tables report the full allocation-change and
 descriptive direction censuses from a retrospective post-inspection
 sensitivity. Identical binary prediction sets do not select an embedding,
@@ -829,6 +866,11 @@ BOOLEAN_COLUMNS: Final = frozenset(
         "same_sample_descriptive_only",
         "selection_metric",
         "shared_loanwise_completion",
+        "phase_prevalence_at_or_below_boundary",
+        "threshold_below_half",
+        "max_score_below_half_condition",
+        "target_max_below_positive_label_boundary",
+        "positive_label_excluded_from_every_target_set",
     }
 )
 OPTIONAL_NUMERIC_COLUMNS: Final = frozenset(
@@ -891,6 +933,11 @@ EXPLICIT_INTEGER_COLUMNS: Final = frozenset(
         "positive",
         "not_directionally_separated_at_tolerance",
         "within_tolerance",
+        "fit_defaults",
+        "phase_margin",
+        "target_resolved_misses",
+        "resolved_misses_in_exclusion_strata",
+        "resolved_misses_all_strata",
     }
 )
 
@@ -1231,6 +1278,57 @@ def _validate_row_identities(
         if not lower <= resolved <= upper:
             _fail(name, path, f"row {row_number} reverses the shared-completion bounds.")
 
+    if name == "Table_S6Q_binary_phase_target_support.csv":
+        fit_rows = int(row["fit_rows"])
+        fit_defaults = int(row["fit_defaults"])
+        boundary_count = int(row["boundary_count"])
+        threshold = float(row["frozen_threshold"])
+        target_score_max = float(row["target_score_max"])
+        positive_boundary = float(row["positive_label_boundary"])
+        support = target_score_max < positive_boundary
+        low = threshold < 0.5
+        _require_close(
+            name,
+            path,
+            row_number,
+            "fit default prevalence",
+            float(row["fit_default_prevalence"]),
+            fit_defaults / fit_rows,
+        )
+        _require_close(
+            name,
+            path,
+            row_number,
+            "finite phase boundary rate",
+            float(row["phase_boundary_rate"]),
+            boundary_count / fit_rows,
+        )
+        _require_close(
+            name,
+            path,
+            row_number,
+            "positive-label score boundary",
+            positive_boundary,
+            1.0 - threshold,
+        )
+        expected_flags = {
+            "phase_prevalence_at_or_below_boundary": fit_defaults <= boundary_count,
+            "threshold_below_half": low,
+            "target_max_below_positive_label_boundary": support,
+            "positive_label_excluded_from_every_target_set": low and support,
+        }
+        if int(row["phase_margin"]) != fit_defaults - boundary_count:
+            _fail(name, path, f"row {row_number} has an inconsistent integer phase margin.")
+        if any(row[column] != str(value) for column, value in expected_flags.items()):
+            _fail(name, path, f"row {row_number} has an inconsistent support flag.")
+        if not (
+            0
+            <= int(row["target_resolved_misses"])
+            <= int(row["target_resolved_rows"])
+            <= int(row["target_candidate_rows"])
+        ):
+            _fail(name, path, f"row {row_number} has invalid target row counts.")
+
     if name == "Table_S6D_label_mondrian_cells.csv":
         if (
             int(row["candidate_rows"]),
@@ -1439,7 +1537,7 @@ def _read_validated_reviewer_csv(
             if _is_integer_column(column):
                 integer = _as_int(name, path, row_number, column, raw)
                 if integer < 0 and not (
-                    column in {"threshold_sign", "conformal_group"}
+                    column in {"threshold_sign", "conformal_group", "phase_margin"}
                     or ("delta" in column and column.endswith("_numerator"))
                 ):
                     _fail(name, path, f"row {row_number} column {column!r} is negative.")
@@ -1507,6 +1605,7 @@ def _validate_cross_table_contract(
     s6k_name = "Table_S6K_common_panel_threshold_response_learners.csv"
     s6o_name = "Table_S6O_calibrator_sensitivity_cells.csv"
     s6p_name = "Table_S6P_calibrator_pairwise_shared_completion.csv"
+    s6q_name = "Table_S6Q_binary_phase_target_support.csv"
     _validate_partitioned_primary_census(s6c_name, paths[s6c_name], rows_by_name[s6c_name])
     _validate_partitioned_primary_census(
         s6e_name,
@@ -1650,6 +1749,88 @@ def _validate_cross_table_contract(
                 s6b_name,
                 paths[s6b_name],
                 f"S6B-to-S6C all-singleton flag fails at {cell_key!r}.",
+            )
+
+    s6c_by_key = {
+        (row["learner"], row["window_id"], row["conformal_group"]): row
+        for row in rows_by_name[s6c_name]
+    }
+    support_by_learner_window: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
+    support_counts = Counter()
+    for row_number, support_row in enumerate(rows_by_name[s6q_name], start=2):
+        key = (
+            support_row["learner"],
+            support_row["window_id"],
+            support_row["conformal_group"],
+        )
+        stratum = s6c_by_key[key]
+        for support_column, stratum_column in (
+            ("learner_label", "learner_label"),
+            ("window", "window"),
+            ("taxonomy_groups", "taxonomy_groups"),
+            ("score_stratum", "score_stratum"),
+        ):
+            if support_row[support_column] != stratum[stratum_column]:
+                _fail(
+                    s6q_name,
+                    paths[s6q_name],
+                    f"S6C-to-S6Q field {support_column!r} disagrees at row {row_number}.",
+                )
+        for support_column, stratum_column in (
+            ("fit_rows", "fit_rows"),
+            ("finite_sample_rank", "finite_sample_rank"),
+            ("frozen_threshold", "fit_residual_quantile"),
+            ("target_candidate_rows", "candidate_rows"),
+            ("target_score_max", "score_max"),
+            ("target_resolved_rows", "resolved_rows"),
+            ("target_resolved_misses", "resolved_misses"),
+        ):
+            _require_close(
+                s6q_name,
+                paths[s6q_name],
+                row_number,
+                f"S6C-to-S6Q field {support_column}",
+                float(support_row[support_column]),
+                float(stratum[stratum_column]),
+            )
+        if support_row["max_score_below_half_condition"] != str(
+            float(stratum["fit_score_max"]) < 0.5
+        ):
+            _fail(
+                s6q_name,
+                paths[s6q_name],
+                f"S6C-to-S6Q calibration support disagrees at row {row_number}.",
+            )
+        learner_window = (support_row["learner"], support_row["window_id"])
+        support_by_learner_window[learner_window].append(support_row)
+        if support_row["positive_label_excluded_from_every_target_set"] == "True":
+            support_counts[int(support_row["conformal_group"])] += 1
+    if support_counts != Counter({0: 40, 1: 40, 2: 7}):
+        _fail(s6q_name, paths[s6q_name], "the complete 40/40/7/0/0 support census changed.")
+    for learner_window, support_rows in support_by_learner_window.items():
+        misses_all = sum(int(row["target_resolved_misses"]) for row in support_rows)
+        misses_excluded = sum(
+            int(row["target_resolved_misses"])
+            for row in support_rows
+            if row["positive_label_excluded_from_every_target_set"] == "True"
+        )
+        for row_number, row in enumerate(support_rows, start=2):
+            if (
+                int(row["resolved_misses_all_strata"]) != misses_all
+                or int(row["resolved_misses_in_exclusion_strata"]) != misses_excluded
+            ):
+                _fail(
+                    s6q_name,
+                    paths[s6q_name],
+                    f"resolved-miss localization fails at {learner_window!r}.",
+                )
+            _require_close(
+                s6q_name,
+                paths[s6q_name],
+                row_number,
+                "resolved-miss localization fraction",
+                float(row["exclusion_strata_resolved_miss_fraction"]),
+                misses_excluded / misses_all,
             )
 
     s6e = {

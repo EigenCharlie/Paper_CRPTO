@@ -10,7 +10,7 @@ paper and reproducibility bundle, not a production service.
 
 ## Authority Snapshot
 
-Research authority is current through the active 2026-08-09 claim registry
+Research authority is current through the active 2026-09-01 claim registry
 and claim ledger. The active claim registry remains the sole paper-facing
 claim authority; exact theory overrides a
 conflicting summary. The complete-hull score-equivalence and set-native binary
@@ -449,13 +449,15 @@ joint-block rank reference, common-panel V8, individual-age follow-up,
 label-Mondrian, fit-label completion, and allocation-granularity
 manifests/freezes, the set-preserving-embedding two-stage Git lineage, the
 calibrator-sensitivity four-commit Git lineage, and every artifact descriptor.
-It also verifies the clean phase census and dual-coefficient direct-child
-lineages. During scientific editing, the sealed-parent extension builder may
+It also verifies the clean phase census, the complete sealed-table
+phase-to-target-support join, and the dual-coefficient direct-child lineage.
+During scientific editing, the sealed-parent extension builder may
 accept an unavailable historical DVC source only when its descriptor is
-identical to commit `6e9086e` and it remains under an active DVC pointer;
+identical to the hash-pinned parent commit `01b1b08` and it remains under an
+active DVC pointer;
 submission-freeze rebuilds still require every DVC byte.
 The active capsule contains 53 DVC pointers and 11 scientific Git artifact
-lineages. It emits 45
+lineages. It emits 46
 paper-facing CSV tables and five figure families
 in PNG and PDF under the `crpto_ijds_v4_*` naming family, and
 `ijds_binary_geometry_frontier_v4_evidence.json`. Consecutive builds must be

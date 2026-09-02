@@ -101,6 +101,26 @@ def test_v4_wording_keeps_theory_and_empirical_scope_separate() -> None:
         assert "no portfolio claim uses this simulation" not in surface
 
 
+def test_jomi_reference_size_assumptions_are_aligned_across_authoritative_surfaces() -> None:
+    body = re.sub(r"\s+", " ", BODY.read_text(encoding="utf-8").lower())
+    supplement = re.sub(r"\s+", " ", SUPPLEMENT.read_text(encoding="utf-8").lower())
+    registry = re.sub(r"\s+", " ", REGISTRY.read_text(encoding="utf-8").lower())
+    matrix = re.sub(r"\s+", " ", CLAIM_MATRIX.read_text(encoding="utf-8").lower())
+    ledger = (REPO / "configs/ijds_claim_ledger.yaml").read_text(encoding="utf-8")
+
+    for surface in (body, supplement, registry, matrix):
+        assert "jointly exchangeable" in surface
+        assert "almost surely tie-free" in surface
+    assert "i.i.d. continuous scores are a sufficient special case" in body
+    assert "iid continuous construction is a sufficient special case" in supplement
+    assert "i.i.d. continuous scores are a sufficient special case" in registry
+    assert "i.i.d. continuous scores are a sufficient special case" in matrix
+    assert (
+        "jointly_exchangeable_almost_surely_tie_free_calibration_and_test_selection_scores"
+        in ledger
+    )
+
+
 def test_related_work_is_ordered_by_calibrated_object() -> None:
     body = BODY.read_text(encoding="utf-8")
     related = _section(body, "# Related Work", "# Data and Locked Evaluation Design")

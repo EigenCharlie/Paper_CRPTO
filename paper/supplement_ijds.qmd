@@ -1003,6 +1003,35 @@ administrative outcome, target coverage, allocation,
 optimization, or policy. It establishes neither a universal low-bin phase,
 continuity, temporal transport, validity, mechanism, nor confirmation.
 
+<!-- claim:coverage.low_regime_target_support_census -->
+
+The sealed publication builder then joins every calibration-side phase row to
+the corresponding registered target score support. This second table reads
+target scores and resolved-miss totals, but it does not use a target label to
+decide which cell to report.
+
+| Ordered score stratum | Complete cells | $c<1/2$ | $\max p_t<1-c$ | Label 1 excluded from every target set |
+|---:|---:|---:|---:|---:|
+| 1 | 40 | 40 | 40 | 40 |
+| 2 | 40 | 40 | 40 | 40 |
+| 3 | 40 | 7 | 7 | 7 |
+| 4 | 40 | 0 | 0 | 0 |
+| 5 | 40 | 0 | 0 | 0 |
+| **All** | **200** | **87** | **87** | **87** |
+
+**Table S6Q.** Complete phase-to-target-support census. In each of the 87
+below-half-threshold cells the target maximum is strictly below $1-c$; hence
+no target prediction set contains label one and every positive label would be
+missed. The machine-readable table reports all 200 identifiers, integer phase
+coordinates, target maxima and boundaries, resolved-miss counts, and the
+within-learner--window miss-localization fraction. The finite boundary
+$(n-k)/n$ ranges from 0.099016 to 0.099905. Across the 40 learner--window
+aggregates, 23.98%--58.46% of resolved misses lie in the exclusion strata.
+This is a stratum localization, not a class decomposition or a causal
+explanation. It does not replace stratum prevalence with the global target
+prevalence, establish that nominal coverage is impossible in every exclusion
+cell, or promote an unconditional prevalence-only phase theorem.
+
 CatBoost S3 (the third score stratum; internal zero-based group 2) displays the
 corresponding diagnostic pattern:
 
@@ -3055,7 +3084,7 @@ coverage rows, 5,112 monthly evaluations, 360 aggregates, 221,040 paired sharp
 contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, outcome-availability lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
-cardinalities before producing 45 tables, five figure families in PNG and PDF,
+cardinalities before producing 46 tables, five figure families in PNG and PDF,
 and one paper-facing manifest. Additional retrospective families cover joint
 fit-label completion, deterministic allocation granularity, marginal score and
 residual-distribution diagnostics, complete-catalog transport, and funded

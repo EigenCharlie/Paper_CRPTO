@@ -72,7 +72,7 @@ the display label, not the numeral embedded in a filename, as authoritative:
 | S10 | `crpto_ijds_v4_tableS1_named_comparators.csv` |
 | S11 | `crpto_ijds_v4_table4_direction_summary.csv` |
 
-Suffix-matched files such as S2C, S6A--S6P, S7D, and S9G--S9O retain their
+Suffix-matched files such as S2C, S6A--S6Q, S7D, and S9G--S9O retain their
 display labels. Renaming historical CSVs is deferred to an explicit submission
 freeze because the current names are bound by the active manifest.
 
@@ -82,7 +82,7 @@ freeze because the current names are bound by the active manifest.
 - at most 25 pages excluding references and appendices;
 - separate online supplement;
 - separate anonymous machine-readable supplement for full stratum tables,
-  including calibrator Tables S2C, S6O, and S6P;
+  including calibrator Tables S2C, S6O, and S6P and the complete phase-to-target-support Table S6Q;
 - double-anonymous review;
 - abstract no longer than 300 words;
 - 1--10 keywords; and
@@ -198,7 +198,7 @@ every regenerated reviewer page again.
 - the abstract stays below 300 words;
 - no retired endpoint or favorable `.25` claim returns; and
 - the package contains exactly 53 registered DVC pointers, 11 scientific Git
-  artifact lineages, and 45 paper-facing CSV tables, with unequal-follow-up roots labeled
+  artifact lineages, and 46 paper-facing CSV tables, with unequal-follow-up roots labeled
   only as replay provenance;
 - scientific, drift, publication, compilation, and visual gates pass.
 

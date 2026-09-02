@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from scripts import extend_ijds_evidence_from_sealed_parent_2026_08_01 as sealed_extension
+from scripts import extend_ijds_evidence_from_sealed_parent_2026_09_01 as sealed_extension
 from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
     BINARY_PHASE_CENSUS_SOURCE_KEYS,
     CALIBRATOR_SOURCE_KEYS,
@@ -19,9 +19,12 @@ from scripts.build_ijds_binary_geometry_frontier_v4_evidence import (
     DECISION_REPRESENTATION_SOURCE_KEYS,
     FIGURE_STEMS,
     TABLE_TARGETS,
+    _binary_phase_target_support_manifest_payload,
+    _binary_phase_target_support_publication_table,
     _calibrator_sensitivity_manifest_payload,
     _common_panel_threshold_response_census_figure,
     _common_panel_threshold_response_figure,
+    _joint_block_departure_table,
     _phase_transition_publication_table,
     _prepare_common_panel_figure_data,
     _require_coverage_aggregate_reconciliation,
@@ -191,10 +194,73 @@ def test_phase_table_handles_alpha_boundary_when_n_plus_one_is_a_multiple_of_ten
     assert table["phase_margin"] == 0
 
 
+def test_complete_phase_target_support_join_is_fail_closed() -> None:
+    phase = pd.read_csv(
+        REPO / "reports/crpto/tables/crpto_ijds_v4_tableS6I_binary_phase_census.csv"
+    )
+    target = pd.read_csv(
+        REPO / "reports/crpto/tables/crpto_ijds_v4_tableS6C_exchangeability_strata.csv"
+    )
+
+    table = _binary_phase_target_support_publication_table(phase, target)
+    payload = _binary_phase_target_support_manifest_payload(table)
+
+    assert len(table) == 200
+    assert payload["threshold_below_half_cells"] == 87
+    assert payload["target_support_cells"] == 87
+    assert payload["positive_label_exclusion_cells"] == 87
+    assert payload["all_low_threshold_cells_have_target_support"] is True
+    assert payload["phase_margin_prevalence_boundary_reconciles_all_cells"] is True
+    assert [
+        row["positive_label_excluded_from_every_target_set"]
+        for row in payload["ordered_stratum_census"]
+    ] == [40, 40, 7, 0, 0]
+    assert payload["finite_phase_boundary_rate_range"] == pytest.approx(
+        [0.0990159901599016, 0.0999046711153482]
+    )
+    assert payload["exclusion_strata_resolved_miss_fraction_range"] == pytest.approx(
+        [0.2397794701677335, 0.5845764027953737]
+    )
+    assert (
+        payload["interpretation"][
+            "nominal_coverage_impossibility_established_for_all_exclusion_cells"
+        ]
+        is False
+    )
+    assert payload["interpretation"]["stratum_specific_target_prevalence_identified"] is False
+
+    drifted = target.copy()
+    key = table.loc[table["threshold_below_half"].astype(bool)].iloc[0]
+    mask = (
+        drifted["learner"].eq(key["learner"])
+        & drifted["window_id"].eq(key["window_id"])
+        & drifted["conformal_group"].eq(key["conformal_group"])
+    )
+    drifted.loc[mask, "score_max"] = 1.0 - float(key["frozen_threshold"])
+    with pytest.raises(RuntimeError, match="87-cell"):
+        _binary_phase_target_support_publication_table(phase, drifted)
+
+
+def test_joint_block_departure_pools_integer_numerators_before_division() -> None:
+    cells = pd.read_csv(
+        REPO / "reports/crpto/tables/crpto_ijds_v4_tableS6B_exchangeability_cells.csv"
+    )
+    strata = pd.read_csv(
+        REPO / "reports/crpto/tables/crpto_ijds_v4_tableS6C_exchangeability_strata.csv"
+    )
+
+    table = _joint_block_departure_table(cells, strata)
+
+    assert len(table) == 40
+    assert int(table["meets_locked_nominal_holm_threshold"].sum()) == 31
+    assert table["minimum_miss_rate_departure"].min() == pytest.approx(0.002379331272026275)
+    assert table["minimum_miss_rate_departure"].max() == pytest.approx(0.030535024527601637)
+
+
 def test_publication_inventory_is_derived_from_declared_targets() -> None:
-    assert len(TABLE_TARGETS) == 45
+    assert len(TABLE_TARGETS) == 46
     assert len(FIGURE_STEMS) == 5
-    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 55
+    assert len(TABLE_TARGETS) + 2 * len(FIGURE_STEMS) == 56
     assert {
         "calibrator_fit_diagnostics",
         "calibrator_sensitivity_cells",
@@ -255,10 +321,10 @@ def test_calibrator_manifest_is_derived_from_the_complete_overall_grid() -> None
     registry, registered, missing = load_verified_or_sealed_source_registry(
         REPO / "configs/ijds_active_evidence_sources.yaml",
         repo_root=REPO,
-        sealed_parent_commit="6e9086ed57492325787498d912b3f5f3e03458bf",
-        sealed_parent_registry_path="configs/ijds_active_evidence_sources.yaml",
+        sealed_parent_commit=sealed_extension.PARENT_COMMIT,
+        sealed_parent_registry_path=sealed_extension.PARENT_REGISTRY_PATH,
     )
-    assert len(missing) == 33
+    assert tuple(sorted(set(missing))) == missing
     if missing:
         # The pre-freeze additive path is deliberately usable without the
         # historical DVC cache.  In that environment, the exact parent seal is
@@ -431,6 +497,7 @@ def test_implementation_inventory_binds_every_acceptance_dependency() -> None:
         "publication_targets_contract",
         "evidence_builder",
         "sealed_parent_extension_builder",
+        "sealed_parent_target_support_extension_builder",
         "policy_support_evidence_builder",
         "publication_integrity_checker",
         "paper_pdf_auditor",

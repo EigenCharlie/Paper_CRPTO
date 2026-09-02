@@ -1,4 +1,4 @@
-version: "2026-08-01"
+version: "2026-09-01"
 project: paper-crpto
 decision_status: prefreeze_active
 
@@ -215,6 +215,7 @@ active_scientific_contract:
     - reports/crpto/tables/crpto_ijds_v4_tableS6N_marginal_score_outcome_gap.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv
+    - reports/crpto/tables/crpto_ijds_v4_tableS6Q_binary_phase_target_support.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9H_decision_catalog_target_blocks.csv
     - reports/crpto/tables/crpto_ijds_v4_tableS9I_funded_selection_track_estimands.csv

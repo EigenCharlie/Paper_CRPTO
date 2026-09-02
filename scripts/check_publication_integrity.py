@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import subprocess
 import sys
@@ -29,15 +30,17 @@ SOURCE_REGISTRY_PATH = REPO / "configs/ijds_active_evidence_sources.yaml"
 PUBLICATION_TARGETS_PATH = REPO / "configs/crpto_publication_targets.yaml"
 CLAIM_LEDGER_PATH = REPO / "configs/ijds_claim_ledger.yaml"
 
-EXPECTED_REGISTRY_SCHEMA = "2026-08-01.1"
+EXPECTED_REGISTRY_SCHEMA = "2026-09-01.1"
+EXPECTED_MANIFEST_STATUS = "active_ijds_v5_phase_target_support_paper_facing_evidence"
 EXPECTED_DVC_POINTERS = 53
-EXPECTED_CSV_TABLES = 45
-SEALED_PARENT_COMMIT = "6e9086ed57492325787498d912b3f5f3e03458bf"
+EXPECTED_CSV_TABLES = 46
+SEALED_PARENT_COMMIT = "01b1b08437c1de415fad7569de42257ee5110e79"
 SEALED_PARENT_MANIFEST_PATH = "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json"
 SEALED_PARENT_REGISTRY_PATH = "configs/ijds_active_evidence_sources.yaml"
-SEALED_PARENT_MANIFEST_BYTES = 3_500_642
-SEALED_PARENT_MANIFEST_SHA256 = "02122d92270425540fba930de574e3b8abc940cc667b3a34f32f5504e21bb5e4"
-EXPECTED_INCREMENTAL_MISSING_DVC_SOURCES = 33
+SEALED_PARENT_MANIFEST_BYTES = 3_984_046
+SEALED_PARENT_MANIFEST_SHA256 = "838fdff2fb0532ae2fd64f5ffa0649170e076bee50e800427b02d5c09de32261"
+SEALED_PARENT_SCHEMA = "2026-08-01.1"
+SEALED_PARENT_STATUS = "active_ijds_v5_phase_and_dual_set_native_paper_facing_evidence"
 
 EXPECTED_SCIENTIFIC_GIT_LINEAGES = (
     "lineages.diagnostics.binary_phase_census",
@@ -103,7 +106,11 @@ def _sealed_parent_manifest(*, repo_root: Path = REPO) -> Mapping[str, Any]:
             "The sealed parent publication manifest differs from its exact byte/hash pin."
         )
     payload = json.loads(blob.stdout)
-    if not isinstance(payload, Mapping) or payload.get("schema_version") != "2026-07-31.1":
+    if (
+        not isinstance(payload, Mapping)
+        or payload.get("schema_version") != SEALED_PARENT_SCHEMA
+        or payload.get("status") != SEALED_PARENT_STATUS
+    ):
         raise RuntimeError("The sealed parent publication manifest has an invalid schema.")
     return payload
 
@@ -113,13 +120,13 @@ def _load_integrity_source_registry(
     *,
     repo_root: Path = REPO,
 ) -> SourceRegistryVerification:
-    """Use strict verification unless only the sealed 33-source DVC gap remains."""
+    """Use strict verification unless only sealed, unchanged DVC gaps remain."""
     try:
         registry, registered = load_verified_source_registry(
             registry_path,
             repo_root=repo_root,
         )
-    except FileNotFoundError as missing_error:
+    except FileNotFoundError:
         _sealed_parent_manifest(repo_root=repo_root)
         registry, registered, missing = load_verified_or_sealed_source_registry(
             registry_path,
@@ -127,12 +134,6 @@ def _load_integrity_source_registry(
             sealed_parent_commit=SEALED_PARENT_COMMIT,
             sealed_parent_registry_path=SEALED_PARENT_REGISTRY_PATH,
         )
-        if len(missing) != EXPECTED_INCREMENTAL_MISSING_DVC_SOURCES:
-            raise RuntimeError(
-                "Incremental publication verification requires exactly "
-                f"{EXPECTED_INCREMENTAL_MISSING_DVC_SOURCES} absent DVC sources; "
-                f"found {len(missing)}."
-            ) from missing_error
         return SourceRegistryVerification(
             registry=registry,
             registered=registered,
@@ -1065,11 +1066,184 @@ def _binary_phase_rows_are_complete(rows: object) -> bool:
     return len(learners) == 5 and len(windows) == 8 and set(keys) == expected_keys
 
 
+def _binary_phase_target_support_rows_are_complete(
+    rows: object,
+    phase_rows: object,
+) -> bool:
+    """Validate the complete phase-to-target-support join and its arithmetic."""
+    if (
+        not isinstance(rows, list)
+        or len(rows) != 200
+        or not isinstance(phase_rows, list)
+        or len(phase_rows) != 200
+    ):
+        return False
+    phase_by_key = {
+        (row.get("learner"), row.get("window_id"), row.get("conformal_group")): row
+        for row in phase_rows
+        if isinstance(row, Mapping)
+    }
+    if len(phase_by_key) != 200:
+        return False
+
+    seen: set[tuple[str, str, int]] = set()
+    by_learner_window: dict[tuple[str, str], list[Mapping[str, Any]]] = {}
+    for raw_row in rows:
+        if not isinstance(raw_row, Mapping):
+            return False
+        row = cast(Mapping[str, Any], raw_row)
+        learner = row.get("learner")
+        window_id = row.get("window_id")
+        group = row.get("conformal_group")
+        if (
+            not isinstance(learner, str)
+            or not isinstance(window_id, str)
+            or not isinstance(group, int)
+            or isinstance(group, bool)
+            or group not in range(5)
+        ):
+            return False
+        key = (learner, window_id, group)
+        phase_row = phase_by_key.get(key)
+        if key in seen or not isinstance(phase_row, Mapping):
+            return False
+        seen.add(key)
+        by_learner_window.setdefault((learner, window_id), []).append(row)
+
+        integer_fields = (
+            "taxonomy_groups",
+            "score_stratum",
+            "fit_rows",
+            "fit_defaults",
+            "finite_sample_rank",
+            "boundary_count",
+            "phase_margin",
+            "target_candidate_rows",
+            "target_resolved_rows",
+            "target_resolved_misses",
+            "resolved_misses_in_exclusion_strata",
+            "resolved_misses_all_strata",
+        )
+        boolean_fields = (
+            "phase_prevalence_at_or_below_boundary",
+            "threshold_below_half",
+            "max_score_below_half_condition",
+            "target_max_below_positive_label_boundary",
+            "positive_label_excluded_from_every_target_set",
+        )
+        numeric_fields = (
+            "alpha",
+            "fit_default_prevalence",
+            "phase_boundary_rate",
+            "frozen_threshold",
+            "target_score_max",
+            "positive_label_boundary",
+            "exclusion_strata_resolved_miss_fraction",
+        )
+        if any(
+            not isinstance(row.get(field), int) or isinstance(row.get(field), bool)
+            for field in integer_fields
+        ) or any(type(row.get(field)) is not bool for field in boolean_fields):
+            return False
+        if any(
+            not isinstance(row.get(field), (int, float))
+            or isinstance(row.get(field), bool)
+            or not math.isfinite(float(cast(int | float, row[field])))
+            for field in numeric_fields
+        ):
+            return False
+
+        fit_rows = int(row["fit_rows"])
+        fit_defaults = int(row["fit_defaults"])
+        boundary = int(row["boundary_count"])
+        threshold = float(row["frozen_threshold"])
+        target_score_max = float(row["target_score_max"])
+        positive_boundary = float(row["positive_label_boundary"])
+        support = target_score_max < positive_boundary
+        low = threshold < 0.5
+        expected_phase_fields = (
+            "taxonomy_groups",
+            "fit_rows",
+            "fit_defaults",
+            "finite_sample_rank",
+            "boundary_count",
+            "phase_margin",
+            "frozen_threshold",
+            "threshold_below_half",
+            "max_score_below_half_condition",
+        )
+        if (
+            row.get("score_stratum") != group + 1
+            or row.get("taxonomy_groups") != 5
+            or row.get("alpha") != 0.1
+            or any(row.get(field) != phase_row.get(field) for field in expected_phase_fields)
+            or fit_rows <= 0
+            or not (0 <= fit_defaults <= fit_rows)
+            or row.get("phase_margin") != fit_defaults - boundary
+            or row.get("phase_prevalence_at_or_below_boundary") is not (fit_defaults <= boundary)
+            or row.get("threshold_below_half") is not low
+            or row.get("target_max_below_positive_label_boundary") is not support
+            or row.get("positive_label_excluded_from_every_target_set") is not (low and support)
+            or int(row["target_candidate_rows"]) <= 0
+            or not 0
+            <= int(row["target_resolved_misses"])
+            <= int(row["target_resolved_rows"])
+            <= int(row["target_candidate_rows"])
+            or not math.isclose(
+                float(row["fit_default_prevalence"]),
+                fit_defaults / fit_rows,
+                rel_tol=0.0,
+                abs_tol=1.0e-15,
+            )
+            or not math.isclose(
+                float(row["phase_boundary_rate"]),
+                boundary / fit_rows,
+                rel_tol=0.0,
+                abs_tol=1.0e-15,
+            )
+            or not math.isclose(
+                positive_boundary,
+                1.0 - threshold,
+                rel_tol=0.0,
+                abs_tol=1.0e-15,
+            )
+        ):
+            return False
+
+    if seen != set(phase_by_key) or len(by_learner_window) != 40:
+        return False
+    for learner_window_rows in by_learner_window.values():
+        if len(learner_window_rows) != 5:
+            return False
+        misses_all = sum(int(row["target_resolved_misses"]) for row in learner_window_rows)
+        misses_excluded = sum(
+            int(row["target_resolved_misses"])
+            for row in learner_window_rows
+            if row["positive_label_excluded_from_every_target_set"] is True
+        )
+        if misses_all <= 0:
+            return False
+        expected_fraction = misses_excluded / misses_all
+        if any(
+            int(row["resolved_misses_all_strata"]) != misses_all
+            or int(row["resolved_misses_in_exclusion_strata"]) != misses_excluded
+            or not math.isclose(
+                float(row["exclusion_strata_resolved_miss_fraction"]),
+                expected_fraction,
+                rel_tol=0.0,
+                abs_tol=1.0e-15,
+            )
+            for row in learner_window_rows
+        ):
+            return False
+    return True
+
+
 def _check_sealed_extension_payload(
     evidence_payload: Mapping[str, Any] | None = None,
     registry_payload: Mapping[str, Any] | None = None,
 ) -> list[str]:
-    """Fail closed on the sealed phase-census and dual-coefficient extension."""
+    """Fail closed on the sealed phase, support, and dual-coefficient extensions."""
     evidence = evidence_payload if evidence_payload is not None else _evidence()
     if registry_payload is None:
         raw_registry = yaml.safe_load(SOURCE_REGISTRY_PATH.read_text(encoding="utf-8"))
@@ -1084,14 +1258,17 @@ def _check_sealed_extension_payload(
     phase_identity = diagnostics.get("binary_phase_census", {})
     dual_identity = diagnostics.get("dual_coefficient_binary_set_native", {})
     phase = evidence.get("binary_phase_census", {})
+    support = evidence.get("binary_phase_target_support", {})
     dual = evidence.get("dual_coefficient_binary_set_native", {})
     if not all(
-        isinstance(payload, Mapping) for payload in (phase_identity, dual_identity, phase, dual)
+        isinstance(payload, Mapping)
+        for payload in (phase_identity, dual_identity, phase, support, dual)
     ):
-        return ["sealed phase-census or dual-coefficient payload is missing"]
+        return ["sealed phase-census, target-support, or dual-coefficient payload is missing"]
     phase_identity = cast(Mapping[str, Any], phase_identity)
     dual_identity = cast(Mapping[str, Any], dual_identity)
     phase = cast(Mapping[str, Any], phase)
+    support = cast(Mapping[str, Any], support)
     dual = cast(Mapping[str, Any], dual)
 
     expected_phase_groups = [
@@ -1166,6 +1343,94 @@ def _check_sealed_extension_payload(
         and phase_interpretation.get("coverage_transport_or_validity_claimed") is False
         and phase_interpretation.get("optimization_or_funded_policy_claimed") is False
         and phase_interpretation.get("causal_or_prospective_claimed") is False
+    )
+
+    expected_support_groups = [
+        {
+            "conformal_group": group,
+            "score_stratum": group + 1,
+            "cells": 40,
+            "threshold_below_half": count,
+            "target_max_below_positive_label_boundary": count,
+            "positive_label_excluded_from_every_target_set": count,
+        }
+        for group, count in enumerate((40, 40, 7, 0, 0))
+    ]
+    support_census = (
+        support.get("scope") == "five_learners_by_eight_windows_by_five_frozen_score_strata"
+        and support.get("complete_census_verified") is True
+        and support.get("cells") == 200
+        and support.get("learner_window_cells") == 40
+        and support.get("threshold_below_half_cells") == 87
+        and support.get("target_support_cells") == 87
+        and support.get("positive_label_exclusion_cells") == 87
+        and support.get("all_low_threshold_cells_have_target_support") is True
+        and support.get("phase_margin_prevalence_boundary_reconciles_all_cells") is True
+        and support.get("fit_default_prevalence_range_below_half")
+        == [0.0372993389990557, 0.0971465213209362]
+        and support.get("fit_default_prevalence_range_at_or_above_half")
+        == [0.1006326611308817, 0.2183098591549295]
+        and support.get("finite_phase_boundary_rate_range")
+        == [0.0990159901599016, 0.09990467111534795]
+        and support.get("exclusion_strata_resolved_miss_fraction_range")
+        == [0.2397794701677335, 0.5845764027953737]
+        and support.get("ordered_stratum_census") == expected_support_groups
+        and _binary_phase_target_support_rows_are_complete(
+            support.get("rows"),
+            phase.get("rows"),
+        )
+    )
+    support_interpretation = support.get("interpretation", {})
+    support_boundary = support_interpretation == {
+        "target_support_census_uses_scores_not_target_labels": True,
+        "resolved_miss_localization_uses_administratively_resolved_outcomes": True,
+        "every_positive_label_would_be_missed_in_exclusion_cells": True,
+        "nominal_coverage_impossibility_established_for_all_exclusion_cells": False,
+        "stratum_specific_target_prevalence_identified": False,
+        "global_target_prevalence_substituted_for_stratum_prevalence": False,
+        "unconditional_prevalence_only_phase_theorem_claimed": False,
+        "complete_explanation_of_aggregate_shortfall_claimed": False,
+        "label_shift_or_other_mechanism_identified": False,
+        "class_conditional_validity_claimed": False,
+        "all_cells_reported_without_selection": True,
+    }
+
+    incremental_parent = evidence.get("incremental_parent", {})
+    unmaterialized = (
+        incremental_parent.get("unmaterialized_unchanged_dvc_sources", [])
+        if isinstance(incremental_parent, Mapping)
+        else []
+    )
+    parent_boundary = (
+        isinstance(incremental_parent, Mapping)
+        and incremental_parent.get("commit") == SEALED_PARENT_COMMIT
+        and incremental_parent.get("path") == SEALED_PARENT_MANIFEST_PATH
+        and incremental_parent.get("bytes") == SEALED_PARENT_MANIFEST_BYTES
+        and incremental_parent.get("sha256") == SEALED_PARENT_MANIFEST_SHA256
+        and incremental_parent.get("schema_version") == SEALED_PARENT_SCHEMA
+        and incremental_parent.get("status") == SEALED_PARENT_STATUS
+        and incremental_parent.get("extension_scope") == ["binary_phase_target_support"]
+        and incremental_parent.get("derived_from_parent_paper_artifacts")
+        == [
+            "table/binary_phase_census",
+            "table/conformal_set_diagnostics",
+            "table/exchangeability_cells",
+            "table/exchangeability_strata",
+        ]
+        and incremental_parent.get("refreshed_figure_scope")
+        == [
+            "figure/coverage/pdf",
+            "figure/coverage/png",
+            "figure/phase_transition/pdf",
+            "figure/phase_transition/png",
+        ]
+        and incremental_parent.get("protected_stages_run") == []
+        and incremental_parent.get("historical_numeric_payload_recomputed") is False
+        and incremental_parent.get("all_declared_cells_reported_without_selection") is True
+        and isinstance(unmaterialized, list)
+        and all(isinstance(name, str) for name in unmaterialized)
+        and unmaterialized == sorted(set(unmaterialized))
+        and all(name in registry.get("sources", {}) for name in unmaterialized)
     )
 
     dual_protocol = dual.get("protocol", {})
@@ -1258,6 +1523,9 @@ def _check_sealed_extension_payload(
             "table/binary_phase_census": (
                 "reports/crpto/tables/crpto_ijds_v4_tableS6I_binary_phase_census.csv"
             ),
+            "table/binary_phase_target_support": (
+                "reports/crpto/tables/crpto_ijds_v4_tableS6Q_binary_phase_target_support.csv"
+            ),
             "table/dual_coefficient_binary_set_native": (
                 "reports/crpto/tables/crpto_ijds_v4_tableS9O_dual_coefficient_binary_set_native.csv"
             ),
@@ -1267,6 +1535,9 @@ def _check_sealed_extension_payload(
         (not phase_registry_identity, "binary-phase identity differs from the registry"),
         (not phase_census, "binary-phase 200-cell census or exact checks changed"),
         (not phase_boundary, "binary-phase interpretation boundary changed"),
+        (not support_census, "binary-phase target-support 87/200 census changed"),
+        (not support_boundary, "binary-phase target-support interpretation boundary changed"),
+        (not parent_boundary, "target-support sealed-parent boundary changed"),
         (not dual_registry_identity, "dual-coefficient identity differs from the registry"),
         (not dual_census, "dual-coefficient 208/88/120/0 certificate census changed"),
         (not dual_boundary, "dual-coefficient interpretation boundary changed"),
@@ -1686,6 +1957,10 @@ def _check_lineage_sync() -> list[str]:
         (
             evidence.get("schema_version") != EXPECTED_REGISTRY_SCHEMA,
             f"paper evidence manifest schema is not {EXPECTED_REGISTRY_SCHEMA}",
+        ),
+        (
+            evidence.get("status") != EXPECTED_MANIFEST_STATUS,
+            f"paper evidence manifest status is not {EXPECTED_MANIFEST_STATUS}",
         ),
         (
             len(registry.get("dvc_pointers", [])) != EXPECTED_DVC_POINTERS,

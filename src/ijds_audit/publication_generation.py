@@ -23,6 +23,9 @@ PUBLICATION_IMPLEMENTATION_PATHS: dict[str, str] = {
     "sealed_parent_extension_builder": (
         "scripts/extend_ijds_evidence_from_sealed_parent_2026_08_01.py"
     ),
+    "sealed_parent_target_support_extension_builder": (
+        "scripts/extend_ijds_evidence_from_sealed_parent_2026_09_01.py"
+    ),
     "policy_support_evidence_builder": (
         "scripts/build_ijds_policy_support_optimal_face_evidence.py"
     ),

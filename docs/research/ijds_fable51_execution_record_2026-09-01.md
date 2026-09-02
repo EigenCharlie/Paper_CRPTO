@@ -231,3 +231,51 @@ reconstructed or copied to replace either missing artifact.
   marginal prevalence/label-shift boundary, the JOMI statement and proof, the
   supplemental set-native Remark, and Table S10A; no clipping, overflow,
   broken formula, or malformed table was found.
+
+## Follow-up remediation — 2026-09-02
+
+### Phase 8 — sealed target-support census and figure repair
+
+- A machine-local legacy DVC cache was added only in `.dvc/config.local` and
+  was not committed. DVC verified the registered V5 binary-geometry directory
+  object `3e4af46a58d37e9687bee904b4f4ead7.dir`, including its three child
+  objects and 82,440-byte census, before materialization. The available V5 and
+  credit-control parents now match the active source registry by SHA-256.
+- The legacy mirror is incomplete rather than a one-object repair: after the
+  verified pulls, 29 of 170 registered source artifacts remain unavailable.
+  A full evidence replay stops at the next absent registered parent, and the
+  tie-audit prerequisite for `submission-build` is also absent. No missing
+  object was fabricated and no protected scientific stage was run.
+- A new additive builder pins the complete prior paper manifest at commit
+  `01b1b08437c1de415fad7569de42257ee5110e79` by byte count and SHA-256. It
+  joins only the parent's descriptor-verified Tables S6I and S6C for the new
+  result, reports all 200 learner--window--stratum cells, and refreshes the two
+  affected figures from four named parent tables. Two independent staging
+  generations were byte-identical before transactional promotion.
+- The resulting Table S6Q verifies that all 87 below-half-threshold cells have
+  target score maxima below `1-c`, distributed `40/40/7/0/0`; hence no target
+  prediction set in those cells contains label one. The phase margin equals
+  the finite prevalence-boundary comparison in all 200 cells. The resolved
+  misses located in those strata comprise 0.239779--0.584576 of misses across
+  the 40 learner--window aggregates.
+- The stronger interpretation proposed in the follow-up was rejected. The
+  global target prevalence interval is not a stratum prevalence, so nominal
+  0.90 coverage impossibility is not established in every exclusion cell.
+  The localization is not a class decomposition or cause, and the observed
+  agreement outside the stated calibration-support hypothesis is not an
+  unconditional prevalence-only phase theorem.
+- The JOMI statement is now aligned across body, supplement, active registry,
+  ledger, and claim matrix: joint exchangeability plus almost-sure absence of
+  ties is the theorem premise, with iid continuous scores a sufficient special
+  case. This editorial correction does not broaden the narrower iid design of
+  the sealed synthetic implementation run.
+- Figure 1 now encodes the pooled minimum miss-rate departure from the finite
+  joint-block reference and retains the 31/40 threshold flags as annotations.
+  Figure 2 now shows the full 200-cell phase census, with all 87 label-one
+  exclusion cells outlined and the former CatBoost S3 W8 illustration retained
+  only as a gold annotation. Both PNG and PDF outputs passed visual inspection.
+- The active registry, executable ledger, manifest, publication targets,
+  machine-readable supplement, reviewer crosswalk, QMD sources, generated TeX,
+  and tests now bind 46 CSV tables and five figure families. Publication
+  integrity, claim synchronization, sealed-parent, table, archive-anonymity,
+  target-support, JOMI, and deterministic-TeX gates pass.

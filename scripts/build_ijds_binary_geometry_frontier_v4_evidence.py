@@ -154,6 +154,9 @@ TABLE_TARGETS = {
     "calibrator_pairwise_shared_completion": (
         TABLE_DIR / "crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv"
     ),
+    "binary_phase_target_support": (
+        TABLE_DIR / "crpto_ijds_v4_tableS6Q_binary_phase_target_support.csv"
+    ),
     "decision_catalog_metric_separation": (
         TABLE_DIR / "crpto_ijds_v4_tableS9G_decision_catalog_metric_separation.csv"
     ),
@@ -1310,6 +1313,7 @@ def _save_figure(figure: plt.Figure, stem: str, *, output_dir: Path) -> dict[str
 def _coverage_figure(
     coverage: pd.DataFrame,
     exchangeability_cells: pd.DataFrame,
+    exchangeability_strata: pd.DataFrame,
     *,
     output_dir: Path,
 ) -> dict[str, Path]:
@@ -1328,6 +1332,10 @@ def _coverage_figure(
         exchangeability_cells,
         domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
         label="joint-block rank-reference threshold heatmap",
+    )
+    departures = _joint_block_departure_table(
+        exchangeability_cells,
+        exchangeability_strata,
     )
     window_labels = [f"W{index}" for index in range(1, 9)]
     x = np.arange(8, dtype=float)
@@ -1367,35 +1375,58 @@ def _coverage_figure(
             axis.set_xticks(x, [])
 
     heat_axis = figure.add_subplot(grid[:, 1])
-    decisions = np.zeros((5, 8), dtype=float)
+    departure_matrix = np.zeros((5, 8), dtype=float)
+    flags = np.zeros((5, 8), dtype=bool)
     for row_index, learner in enumerate(CREDIT_LEARNER_ORDER):
-        frame = exchangeability_cells.loc[exchangeability_cells["learner"].eq(learner)].sort_values(
-            "window_id"
+        frame = departures.loc[departures["learner"].eq(learner)].sort_values("window_id")
+        departure_matrix[row_index, :] = 100.0 * frame["minimum_miss_rate_departure"].to_numpy(
+            dtype=float
         )
-        decisions[row_index, :] = frame["holm_reject_exchangeability_null"].astype(int)
-    flag_cmap = ListedColormap(("#E5E7EB", "#8B1E3F"))
-    heat_axis.imshow(decisions, cmap=flag_cmap, vmin=0, vmax=1, aspect="auto")
+        flags[row_index, :] = frame["meets_locked_nominal_holm_threshold"].to_numpy(dtype=bool)
+    departure_cmap = LinearSegmentedColormap.from_list(
+        "joint_block_departure",
+        ("#F8FAFC", "#D8A0AE", "#8B1E3F"),
+    )
+    image = heat_axis.imshow(
+        departure_matrix,
+        cmap=departure_cmap,
+        vmin=0.0,
+        vmax=float(departure_matrix.max()),
+        aspect="auto",
+    )
     for row_index in range(5):
         for column_index in range(8):
-            flagged = bool(decisions[row_index, column_index])
+            value = float(departure_matrix[row_index, column_index])
             heat_axis.text(
                 column_index,
                 row_index,
-                "F" if flagged else "NF",
+                f"{value:.1f}",
                 ha="center",
                 va="center",
-                color="white" if flagged else INK,
-                fontsize=8.5,
+                color="white" if value >= 0.55 * departure_matrix.max() else INK,
+                fontsize=8.0,
                 fontweight="bold",
             )
+            if flags[row_index, column_index]:
+                heat_axis.text(
+                    column_index + 0.37,
+                    row_index - 0.34,
+                    "F",
+                    ha="right",
+                    va="top",
+                    color="white" if value >= 0.55 * departure_matrix.max() else INK,
+                    fontsize=6.0,
+                )
     heat_axis.set_xticks(x, window_labels)
     heat_axis.set_yticks(
         np.arange(5),
         [CREDIT_LEARNER_SHORT_LABELS[learner] for learner in CREDIT_LEARNER_ORDER],
     )
     heat_axis.set_xlabel("Six-month residual window")
-    heat_axis.set_title("B. Cells meeting locked nominal reporting thresholds", loc="left")
+    heat_axis.set_title("B. Minimum miss-rate departure (percentage points)", loc="left")
     heat_axis.tick_params(length=0)
+    colorbar = figure.colorbar(image, ax=heat_axis, fraction=0.046, pad=0.04)
+    colorbar.set_label("Percentage points above finite-sample reference")
     figure.suptitle(
         "Finite-archive coverage and joint-block rank-reference flags",
         y=0.995,
@@ -1405,14 +1436,99 @@ def _coverage_figure(
     figure.text(
         0.01,
         0.006,
-        "Focused coverage scale. Bounds are sharp completion intervals, not sampling intervals; "
-        "F/NF denotes meets/does not meet the locked nominal Bonferroni--Holm thresholds. "
-        "The post-inspection family has no selective-FWER claim.",
+        "Focused coverage scale. Bounds are sharp completion intervals, not sampling intervals.\n"
+        "Panel B pools integer strict-miss lower bounds before subtracting the weighted "
+        "finite-sample reference rate.\n"
+        "Small F marks the 31/40 cells meeting the locked nominal Bonferroni--Holm thresholds; "
+        "the post-inspection family has no selective-FWER claim.",
         fontsize=7.8,
         color=MID,
     )
-    figure.subplots_adjust(left=0.13, right=0.98, top=0.93, bottom=0.09)
+    figure.subplots_adjust(left=0.13, right=0.98, top=0.93, bottom=0.13)
     return _save_figure(figure, FIGURE_STEMS["coverage"], output_dir=output_dir)
+
+
+def _joint_block_departure_table(
+    cells: pd.DataFrame,
+    strata: pd.DataFrame,
+) -> pd.DataFrame:
+    """Pool exact stratum numerators before forming the 40-cell departure."""
+    cell_columns = (
+        "learner",
+        "window_id",
+        "meets_locked_nominal_holm_threshold",
+    )
+    stratum_columns = (
+        "learner",
+        "window_id",
+        "conformal_group",
+        "candidate_rows",
+        "misses_min",
+        "null_expected_misses",
+    )
+    missing_cells = sorted(set(cell_columns).difference(cells.columns))
+    missing_strata = sorted(set(stratum_columns).difference(strata.columns))
+    if missing_cells or missing_strata:
+        raise KeyError(
+            "Joint-block departure inputs omit columns: "
+            f"cells={missing_cells}, strata={missing_strata}."
+        )
+    cell_frame = cells.loc[:, cell_columns].copy()
+    stratum_frame = strata.loc[:, stratum_columns].copy()
+    require_exact_grid(
+        cell_frame,
+        domains={"learner": CREDIT_LEARNER_ORDER, "window_id": WINDOW_IDS},
+        label="joint-block departure cell flags",
+    )
+    require_exact_grid(
+        stratum_frame,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "window_id": WINDOW_IDS,
+            "conformal_group": range(5),
+        },
+        label="joint-block departure strata",
+    )
+    require_finite(
+        stratum_frame,
+        ("candidate_rows", "misses_min", "null_expected_misses"),
+        label="joint-block departure strata",
+    )
+    if (
+        (stratum_frame["candidate_rows"] <= 0).any()
+        or (stratum_frame["misses_min"] < 0).any()
+        or (stratum_frame["misses_min"] > stratum_frame["candidate_rows"]).any()
+        or (stratum_frame["null_expected_misses"] < 0.0).any()
+        or (stratum_frame["null_expected_misses"] > stratum_frame["candidate_rows"]).any()
+    ):
+        raise RuntimeError("Joint-block departure counts leave their admissible ranges.")
+    pooled = (
+        stratum_frame.groupby(["learner", "window_id"], observed=True, sort=False)
+        .agg(
+            candidate_rows=("candidate_rows", "sum"),
+            misses_min=("misses_min", "sum"),
+            null_expected_misses=("null_expected_misses", "sum"),
+        )
+        .reset_index()
+    )
+    pooled["minimum_miss_rate"] = pooled["misses_min"] / pooled["candidate_rows"]
+    pooled["finite_sample_reference_rate"] = (
+        pooled["null_expected_misses"] / pooled["candidate_rows"]
+    )
+    pooled["minimum_miss_rate_departure"] = (
+        pooled["minimum_miss_rate"] - pooled["finite_sample_reference_rate"]
+    )
+    if (pooled["minimum_miss_rate_departure"] < 0.0).any():
+        raise RuntimeError("A joint-block minimum miss-rate departure became negative.")
+    result = pooled.merge(
+        cell_frame,
+        on=["learner", "window_id"],
+        how="left",
+        validate="one_to_one",
+    )
+    if int(result["meets_locked_nominal_holm_threshold"].astype(bool).sum()) != 31:
+        raise RuntimeError("The locked 31/40 joint-block reporting census changed.")
+    return result.sort_values(["learner", "window_id"]).reset_index(drop=True)
 
 
 def _phase_transition_publication_table(
@@ -1509,90 +1625,464 @@ def _phase_transition_publication_table(
     return table
 
 
-def _phase_figure(phase: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
-    _style()
-    frame = phase.sort_values("window_id")
+def _binary_phase_target_support_publication_table(
+    phase_census: pd.DataFrame,
+    target_strata: pd.DataFrame,
+) -> pd.DataFrame:
+    """Join the complete phase census to target support without selecting cells."""
+    keys = ["learner", "window_id", "taxonomy_groups", "conformal_group"]
+    phase_columns = [
+        *keys,
+        "alpha",
+        "fit_rows",
+        "fit_defaults",
+        "fit_default_prevalence",
+        "finite_sample_rank",
+        "boundary_count",
+        "phase_margin",
+        "frozen_threshold",
+        "threshold_below_half",
+        "max_score_below_half_condition",
+    ]
+    target_columns = [
+        *keys,
+        "score_stratum",
+        "fit_rows",
+        "finite_sample_rank",
+        "fit_residual_quantile",
+        "fit_score_max",
+        "candidate_rows",
+        "score_max",
+        "resolved_rows",
+        "resolved_misses",
+    ]
+    missing_phase = sorted(set(phase_columns).difference(phase_census.columns))
+    missing_target = sorted(set(target_columns).difference(target_strata.columns))
+    if missing_phase or missing_target:
+        raise KeyError(
+            "Binary phase target-support inputs omit columns: "
+            f"phase={missing_phase}, target={missing_target}."
+        )
+    phase = phase_census.loc[:, phase_columns].copy()
+    target = (
+        target_strata.loc[:, target_columns]
+        .copy()
+        .rename(
+            columns={
+                "fit_rows": "target_reference_fit_rows",
+                "finite_sample_rank": "target_reference_finite_sample_rank",
+                "fit_residual_quantile": "target_reference_threshold",
+                "fit_score_max": "target_reference_fit_score_max",
+                "candidate_rows": "target_candidate_rows",
+                "score_max": "target_score_max",
+                "resolved_rows": "target_resolved_rows",
+                "resolved_misses": "target_resolved_misses",
+            }
+        )
+    )
+    domains = {
+        "learner": CREDIT_LEARNER_ORDER,
+        "window_id": WINDOW_IDS,
+        "taxonomy_groups": (5,),
+        "conformal_group": range(5),
+    }
+    require_exact_grid(phase, domains=domains, label="binary phase target-support phase grid")
+    require_exact_grid(target, domains=domains, label="binary phase target-support target grid")
+    table = phase.merge(target, on=keys, how="inner", validate="one_to_one")
+    require_finite(
+        table,
+        (
+            "alpha",
+            "fit_rows",
+            "fit_defaults",
+            "fit_default_prevalence",
+            "finite_sample_rank",
+            "boundary_count",
+            "phase_margin",
+            "frozen_threshold",
+            "target_reference_fit_rows",
+            "target_reference_finite_sample_rank",
+            "target_reference_threshold",
+            "target_reference_fit_score_max",
+            "target_candidate_rows",
+            "target_score_max",
+            "target_resolved_rows",
+            "target_resolved_misses",
+        ),
+        label="binary phase target-support table",
+    )
+    integer_columns = (
+        "fit_rows",
+        "fit_defaults",
+        "finite_sample_rank",
+        "boundary_count",
+        "phase_margin",
+        "target_reference_fit_rows",
+        "target_reference_finite_sample_rank",
+        "target_candidate_rows",
+        "target_resolved_rows",
+        "target_resolved_misses",
+    )
+    for column in integer_columns:
+        values = table[column].to_numpy(dtype=float)
+        rounded = np.rint(values)
+        if not np.array_equal(values, rounded):
+            raise RuntimeError(f"Binary phase target-support column {column} is not integral.")
+        table[column] = rounded.astype(np.int64)
+    if (
+        (table["fit_rows"] <= 0).any()
+        or (table["fit_defaults"] < 0).any()
+        or (table["fit_defaults"] > table["fit_rows"]).any()
+        or (table["target_candidate_rows"] <= 0).any()
+        or (table["target_resolved_rows"] <= 0).any()
+        or (table["target_resolved_rows"] > table["target_candidate_rows"]).any()
+        or (table["target_resolved_misses"] < 0).any()
+        or (table["target_resolved_misses"] > table["target_resolved_rows"]).any()
+    ):
+        raise RuntimeError("Binary phase target-support counts leave their admissible ranges.")
+    exact_equalities = (
+        np.array_equal(table["fit_rows"], table["target_reference_fit_rows"])
+        and np.array_equal(
+            table["finite_sample_rank"], table["target_reference_finite_sample_rank"]
+        )
+        and np.allclose(
+            table["frozen_threshold"],
+            table["target_reference_threshold"],
+            rtol=0.0,
+            atol=1.0e-15,
+        )
+    )
+    if not exact_equalities:
+        raise RuntimeError("Phase and target-support source identities no longer reconcile.")
+    reconstructed_prevalence = table["fit_defaults"] / table["fit_rows"]
+    if not np.allclose(
+        reconstructed_prevalence,
+        table["fit_default_prevalence"],
+        rtol=0.0,
+        atol=1.0e-15,
+    ):
+        raise RuntimeError("Fit default prevalence no longer reconstructs from integer counts.")
+    if not np.allclose(
+        table["target_reference_fit_score_max"],
+        phase_census.set_index(keys)
+        .loc[pd.MultiIndex.from_frame(table[keys]), "recomputed_score_max"]
+        .to_numpy(dtype=float),
+        rtol=0.0,
+        atol=1.0e-15,
+    ):
+        raise RuntimeError("The target-support calibration score maximum no longer reconciles.")
+
+    table["phase_boundary_rate"] = table["boundary_count"] / table["fit_rows"]
+    table["phase_prevalence_at_or_below_boundary"] = (
+        table["fit_defaults"] <= table["boundary_count"]
+    )
+    if not np.array_equal(
+        table["phase_prevalence_at_or_below_boundary"].to_numpy(dtype=bool),
+        table["phase_margin"].le(0).to_numpy(dtype=bool),
+    ):
+        raise RuntimeError("The integer phase margin no longer equals its prevalence boundary.")
+    table["positive_label_boundary"] = 1.0 - table["frozen_threshold"]
+    table["target_max_below_positive_label_boundary"] = (
+        table["target_score_max"] < table["positive_label_boundary"]
+    )
+    table["positive_label_excluded_from_every_target_set"] = table["threshold_below_half"].astype(
+        bool
+    ) & table["target_max_below_positive_label_boundary"].astype(bool)
+    low = table["threshold_below_half"].astype(bool)
+    support = table["target_max_below_positive_label_boundary"].astype(bool)
+    excluded = table["positive_label_excluded_from_every_target_set"].astype(bool)
+    if (
+        int(low.sum()) != 87
+        or not np.array_equal(low, support)
+        or not np.array_equal(low, excluded)
+    ):
+        raise RuntimeError("The frozen 87-cell low-regime target-support census changed.")
+    expected_by_group = {0: 40, 1: 40, 2: 7, 3: 0, 4: 0}
+    observed_by_group = {
+        int(group): int(frame["positive_label_excluded_from_every_target_set"].sum())
+        for group, frame in table.groupby("conformal_group", observed=True, sort=True)
+    }
+    if observed_by_group != expected_by_group:
+        raise RuntimeError("The low-regime target-support stratum census changed.")
+
+    group_keys = ["learner", "window_id"]
+    table["resolved_misses_in_exclusion_strata"] = (
+        table["target_resolved_misses"]
+        .where(excluded, 0)
+        .groupby([table[column] for column in group_keys], observed=True)
+        .transform("sum")
+    )
+    table["resolved_misses_all_strata"] = table.groupby(group_keys, observed=True)[
+        "target_resolved_misses"
+    ].transform("sum")
+    if (table["resolved_misses_all_strata"] <= 0).any():
+        raise RuntimeError("A learner-window cell has no resolved miss denominator.")
+    table["exclusion_strata_resolved_miss_fraction"] = (
+        table["resolved_misses_in_exclusion_strata"] / table["resolved_misses_all_strata"]
+    )
+    if not table["exclusion_strata_resolved_miss_fraction"].between(0.0, 1.0).all():
+        raise RuntimeError("A resolved-miss localization fraction leaves [0, 1].")
+    table.insert(1, "learner_label", table["learner"].map(CREDIT_LEARNER_LABELS))
+    table.insert(
+        3,
+        "window",
+        table["window_id"].map(
+            {window_id: f"W{index}" for index, window_id in enumerate(WINDOW_IDS, 1)}
+        ),
+    )
+    table["score_stratum"] = table["score_stratum"].astype(np.int64)
+    if not np.array_equal(
+        table["score_stratum"].to_numpy(dtype=np.int64),
+        table["conformal_group"].to_numpy(dtype=np.int64) + 1,
+    ):
+        raise RuntimeError("Reader-facing score strata no longer equal internal groups plus one.")
+    ordered_columns = [
+        "learner",
+        "learner_label",
+        "window",
+        "window_id",
+        "taxonomy_groups",
+        "score_stratum",
+        "conformal_group",
+        "alpha",
+        "fit_rows",
+        "fit_defaults",
+        "fit_default_prevalence",
+        "finite_sample_rank",
+        "boundary_count",
+        "phase_boundary_rate",
+        "phase_margin",
+        "phase_prevalence_at_or_below_boundary",
+        "frozen_threshold",
+        "threshold_below_half",
+        "max_score_below_half_condition",
+        "target_candidate_rows",
+        "target_score_max",
+        "positive_label_boundary",
+        "target_max_below_positive_label_boundary",
+        "positive_label_excluded_from_every_target_set",
+        "target_resolved_rows",
+        "target_resolved_misses",
+        "resolved_misses_in_exclusion_strata",
+        "resolved_misses_all_strata",
+        "exclusion_strata_resolved_miss_fraction",
+    ]
+    return (
+        table.loc[:, ordered_columns]
+        .sort_values(["learner", "window_id", "conformal_group"])
+        .reset_index(drop=True)
+    )
+
+
+def _binary_phase_target_support_manifest_payload(table: pd.DataFrame) -> dict[str, Any]:
+    """Summarize the complete support census while retaining its boundaries."""
     require_exact_grid(
-        frame,
-        domains={"window_id": WINDOW_IDS},
-        label="phase-transition figure",
+        table,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "window_id": WINDOW_IDS,
+            "taxonomy_groups": (5,),
+            "conformal_group": range(5),
+        },
+        label="binary phase target-support manifest",
     )
-    w7 = require_unique_row(
-        frame,
-        key={"window_id": "w07_2012m07_m12"},
-        label="phase-transition W7",
+    low = table["threshold_below_half"].astype(bool)
+    high = ~low
+    learner_windows = table.drop_duplicates(["learner", "window_id"])
+    group_rows = []
+    for group, frame in table.groupby("conformal_group", observed=True, sort=True):
+        group_rows.append(
+            {
+                "conformal_group": int(group),
+                "score_stratum": int(group) + 1,
+                "cells": int(len(frame)),
+                "threshold_below_half": int(frame["threshold_below_half"].sum()),
+                "target_max_below_positive_label_boundary": int(
+                    frame["target_max_below_positive_label_boundary"].sum()
+                ),
+                "positive_label_excluded_from_every_target_set": int(
+                    frame["positive_label_excluded_from_every_target_set"].sum()
+                ),
+            }
+        )
+    return {
+        "scope": "five_learners_by_eight_windows_by_five_frozen_score_strata",
+        "complete_census_verified": True,
+        "cells": int(len(table)),
+        "learner_window_cells": int(len(learner_windows)),
+        "threshold_below_half_cells": int(low.sum()),
+        "target_support_cells": int(table["target_max_below_positive_label_boundary"].sum()),
+        "positive_label_exclusion_cells": int(
+            table["positive_label_excluded_from_every_target_set"].sum()
+        ),
+        "all_low_threshold_cells_have_target_support": bool(
+            table.loc[low, "target_max_below_positive_label_boundary"].all()
+        ),
+        "phase_margin_prevalence_boundary_reconciles_all_cells": bool(
+            np.array_equal(
+                table["phase_margin"].le(0).to_numpy(dtype=bool),
+                table["phase_prevalence_at_or_below_boundary"].to_numpy(dtype=bool),
+            )
+        ),
+        "fit_default_prevalence_range_below_half": [
+            float(table.loc[low, "fit_default_prevalence"].min()),
+            float(table.loc[low, "fit_default_prevalence"].max()),
+        ],
+        "fit_default_prevalence_range_at_or_above_half": [
+            float(table.loc[high, "fit_default_prevalence"].min()),
+            float(table.loc[high, "fit_default_prevalence"].max()),
+        ],
+        "finite_phase_boundary_rate_range": [
+            float(table["phase_boundary_rate"].min()),
+            float(table["phase_boundary_rate"].max()),
+        ],
+        "exclusion_strata_resolved_miss_fraction_range": [
+            float(learner_windows["exclusion_strata_resolved_miss_fraction"].min()),
+            float(learner_windows["exclusion_strata_resolved_miss_fraction"].max()),
+        ],
+        "ordered_stratum_census": group_rows,
+        "rows": table.to_dict(orient="records"),
+        "interpretation": {
+            "target_support_census_uses_scores_not_target_labels": True,
+            "resolved_miss_localization_uses_administratively_resolved_outcomes": True,
+            "every_positive_label_would_be_missed_in_exclusion_cells": True,
+            "nominal_coverage_impossibility_established_for_all_exclusion_cells": False,
+            "stratum_specific_target_prevalence_identified": False,
+            "global_target_prevalence_substituted_for_stratum_prevalence": False,
+            "unconditional_prevalence_only_phase_theorem_claimed": False,
+            "complete_explanation_of_aggregate_shortfall_claimed": False,
+            "label_shift_or_other_mechanism_identified": False,
+            "class_conditional_validity_claimed": False,
+            "all_cells_reported_without_selection": True,
+        },
+    }
+
+
+def _phase_census_figure(census: pd.DataFrame, *, output_dir: Path) -> dict[str, Path]:
+    """Show all 200 phase margins and mark the target label-one exclusions."""
+    _style()
+    require_exact_grid(
+        census,
+        domains={
+            "learner": CREDIT_LEARNER_ORDER,
+            "window_id": WINDOW_IDS,
+            "taxonomy_groups": (5,),
+            "conformal_group": range(5),
+        },
+        label="phase target-support census figure",
     )
-    w8 = require_unique_row(
-        frame,
-        key={"window_id": "w08_2012m08_2013m01"},
-        label="phase-transition W8",
+    require_finite(census, ("phase_margin",), label="phase target-support census figure")
+    figure, axes = plt.subplots(2, 3, figsize=(11.2, 6.6), constrained_layout=True)
+    axes_flat = axes.ravel()
+    norm = TwoSlopeNorm(
+        vmin=float(census["phase_margin"].min()),
+        vcenter=0.0,
+        vmax=float(census["phase_margin"].max()),
     )
-    x = np.arange(1, len(frame) + 1, dtype=float)
-    # Keep the two x axes independent.  With a shared Matplotlib axis, assigning
-    # the same formatted labels to both panels can overprint one raster label
-    # (observed as W3 rendered on top of W5 in the left-hand PNG).
-    figure, axes = plt.subplots(1, 2, figsize=(7.2, 3.35), sharex=False)
-    axes[0].plot(x, frame["fit_prevalence"], color=BLUE, marker="o", linewidth=1.5)
-    axes[0].plot(
-        x,
-        frame["phase_boundary_rate"],
-        color=ORANGE,
-        linestyle="--",
-        linewidth=1.3,
-        label=r"finite boundary $(n-k)/n$",
+    cmap = LinearSegmentedColormap.from_list(
+        "phase_margin",
+        ("#2166AC", "#F7F7F7", "#B2182B"),
     )
-    axes[0].axhline(
-        0.10,
-        color=MID,
-        linestyle=":",
-        linewidth=1.0,
-        label=r"nominal $\alpha=0.10$",
+    image = None
+    for group in range(5):
+        axis = axes_flat[group]
+        frame = census.loc[census["conformal_group"].eq(group)].copy()
+        matrix = (
+            frame.pivot(index="learner", columns="window_id", values="phase_margin")
+            .reindex(index=CREDIT_LEARNER_ORDER, columns=WINDOW_IDS)
+            .to_numpy(dtype=float)
+        )
+        support = (
+            frame.pivot(
+                index="learner",
+                columns="window_id",
+                values="positive_label_excluded_from_every_target_set",
+            )
+            .reindex(index=CREDIT_LEARNER_ORDER, columns=WINDOW_IDS)
+            .to_numpy(dtype=bool)
+        )
+        image = axis.imshow(matrix, cmap=cmap, norm=norm, aspect="auto")
+        for row_index in range(len(CREDIT_LEARNER_ORDER)):
+            for column_index in range(len(WINDOW_IDS)):
+                if support[row_index, column_index]:
+                    axis.add_patch(
+                        plt.Rectangle(
+                            (column_index - 0.45, row_index - 0.45),
+                            0.9,
+                            0.9,
+                            fill=False,
+                            edgecolor="white",
+                            linewidth=1.25,
+                        )
+                    )
+        if group == 2:
+            axis.add_patch(
+                plt.Rectangle(
+                    (7 - 0.49, 0 - 0.49),
+                    0.98,
+                    0.98,
+                    fill=False,
+                    edgecolor=GOLD,
+                    linewidth=2.4,
+                )
+            )
+        axis.set_xticks(np.arange(8), [f"W{index}" for index in range(1, 9)])
+        axis.set_yticks(
+            np.arange(5),
+            [CREDIT_LEARNER_SHORT_LABELS[learner] for learner in CREDIT_LEARNER_ORDER],
+        )
+        axis.set_title(f"Ordered score stratum {group + 1}", loc="left")
+        axis.tick_params(length=0, labelsize=7.5)
+        axis.grid(False)
+    explanation = axes_flat[5]
+    explanation.axis("off")
+    counts = (
+        census.groupby("conformal_group", observed=True)[
+            "positive_label_excluded_from_every_target_set"
+        ]
+        .sum()
+        .astype(int)
+        .tolist()
     )
-    axes[0].set_ylabel("Fit default prevalence")
-    axes[0].set_title("CatBoost S3 prevalence and phase boundary")
-    axes[0].legend(
-        loc="lower left",
-        frameon=True,
-        facecolor="white",
-        edgecolor="none",
-        framealpha=0.92,
+    explanation.text(
+        0.02,
+        0.90,
+        "White outline:\nno target prediction set\ncontains label 1",
+        fontsize=9,
+        fontweight="bold",
+        va="top",
     )
-    axes[1].plot(
-        x,
-        frame["fit_residual_quantile"],
-        color=GOLD,
-        marker="s",
-        linewidth=1.5,
+    explanation.text(
+        0.02,
+        0.69,
+        f"Complete count: {sum(counts)}/200\nBy stratum: "
+        + "/".join(str(value) for value in counts),
+        fontsize=10,
+        va="top",
     )
-    axes[1].set_ylabel("Residual quantile")
-    axes[1].set_title("Applied conformal quantile")
-    for axis in axes:
-        axis.set_xticks(x)
-        axis.set_xlabel("Window index (W)")
-        axis.spines[["top", "right"]].set_visible(False)
-    axes[0].annotate(
-        f"W7: 0.1017; m={int(w7['phase_margin']):+d}",
-        xy=(7, float(w7["fit_prevalence"])),
-        xytext=(5.6, 0.111),
-        arrowprops={"arrowstyle": "-", "color": MID},
-        fontsize=8,
+    explanation.text(
+        0.02,
+        0.42,
+        "Gold outline: post-inspection\nCatBoost S3 W8 illustration",
+        fontsize=9,
+        va="top",
     )
-    axes[0].annotate(
-        f"W8: 0.0971; m={int(w8['phase_margin']):+d}",
-        xy=(8, float(w8["fit_prevalence"])),
-        xytext=(6.5, 0.0975),
-        arrowprops={"arrowstyle": "-", "color": MID},
-        fontsize=8,
+    explanation.text(
+        0.02,
+        0.19,
+        "Color: integer phase margin\n$m=D-(n-k)$",
+        fontsize=9,
+        va="top",
     )
-    axes[1].annotate(
-        "0.8884 to 0.1118",
-        xy=(8, float(w8["fit_residual_quantile"])),
-        xytext=(4.8, 0.35),
-        arrowprops={"arrowstyle": "->", "color": MID},
-        fontsize=8,
+    if image is None:
+        raise RuntimeError("The phase census figure did not render a panel.")
+    colorbar = figure.colorbar(image, ax=axes_flat[:5], shrink=0.82, pad=0.02)
+    colorbar.set_label("Integer phase margin m")
+    figure.suptitle(
+        "Complete binary phase and target-support census",
+        fontsize=12,
+        fontweight="bold",
     )
-    figure.suptitle("Post-inspection CatBoost S3 finite-sample illustration")
-    figure.tight_layout()
     return _save_figure(figure, FIGURE_STEMS["phase_transition"], output_dir=output_dir)
 
 
@@ -3783,7 +4273,8 @@ def _stage_publication_generation(
     tables: Mapping[str, pd.DataFrame],
     coverage: pd.DataFrame,
     exchangeability_cells: pd.DataFrame,
-    phase: pd.DataFrame,
+    exchangeability_strata: pd.DataFrame,
+    phase_target_support: pd.DataFrame,
     development_envelopes: pd.DataFrame,
     common_panel_threshold_response: pd.DataFrame,
 ) -> StagedPublicationGeneration:
@@ -3806,9 +4297,13 @@ def _stage_publication_generation(
         "coverage": _coverage_figure(
             coverage,
             exchangeability_cells,
+            exchangeability_strata,
             output_dir=staged_figure_dir,
         ),
-        "phase_transition": _phase_figure(phase, output_dir=staged_figure_dir),
+        "phase_transition": _phase_census_figure(
+            phase_target_support,
+            output_dir=staged_figure_dir,
+        ),
         "development_envelopes": _envelope_figure(
             development_envelopes,
             output_dir=staged_figure_dir,
@@ -4099,6 +4594,13 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     exchangeability_summary = exchangeability.summary
     exchangeability_artifacts = exchangeability.artifacts
     exchangeability_cells = exchangeability.cells
+    binary_phase_target_support_table = _binary_phase_target_support_publication_table(
+        binary_phase_census_table,
+        exchangeability.publication_strata,
+    )
+    binary_phase_target_support_payload = _binary_phase_target_support_manifest_payload(
+        binary_phase_target_support_table
+    )
     common_panel = _load_common_panel_threshold_response_inputs(
         registered,
         cast(dict[str, Any], diagnostic_lineage["common_panel_threshold_response"]),
@@ -4464,6 +4966,7 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
             ),
             "calibrator_sensitivity_cells": calibrator_cell_table,
             "calibrator_pairwise_shared_completion": calibrator_pairwise_table,
+            "binary_phase_target_support": binary_phase_target_support_table,
             "decision_catalog_metric_separation": (
                 frontiers.decision_catalog_transport.publication_tables["metric_separation"]
             ),
@@ -4489,7 +4992,8 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
         },
         coverage=credit_temporal_coverage,
         exchangeability_cells=exchangeability_cells,
-        phase=phase_table,
+        exchangeability_strata=exchangeability.publication_strata,
+        phase_target_support=binary_phase_target_support_table,
         development_envelopes=development_envelopes,
         common_panel_threshold_response=common_panel_strata,
     )
@@ -4749,8 +5253,8 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
     )
     paper_artifact_descriptors = _paper_artifact_descriptors(publication_generation)
     evidence = {
-        "schema_version": "2026-08-01.1",
-        "status": "active_ijds_v5_phase_and_dual_set_native_paper_facing_evidence",
+        "schema_version": "2026-09-01.1",
+        "status": "active_ijds_v5_phase_target_support_paper_facing_evidence",
         "source_registry": {
             "schema_version": str(registry["schema_version"]),
             "status": str(registry["status"]),
@@ -5034,6 +5538,7 @@ def _build_evidence(staging_root: Path, *, promote: bool = True) -> Path:
                 "causal_or_prospective_claimed": False,
             },
         },
+        "binary_phase_target_support": binary_phase_target_support_payload,
         "residual_transport_frontier": {
             "scope": "five_learners_by_eight_windows_by_five_strata_primary_oot",
             "run_tag": frontiers.residual_transport.summary["run_tag"],

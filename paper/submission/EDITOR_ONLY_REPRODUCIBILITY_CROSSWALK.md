@@ -173,13 +173,14 @@ structural V5 shard root and the unequal-follow-up origin roots. Pull with:
 uv run --locked python scripts/manage_ijds_dvc_capsule.py pull
 ```
 
-The registered evidence builder emits one paper-facing manifest, 45 CSV
+The registered evidence builder emits one paper-facing manifest, 46 CSV
 tables, and five figure families in both PDF and PNG. Calibrator Table S2C
 contains the four same-sample fit rows, S6O contains all 192
 method--window--scope rows, and S6P contains all 288 unordered-pair
 shared-completion rows. Table S9M contains the five complete-hull certificate
 partitions, S9N contains all 75 set-native theta--gamma--metric partitions,
-S6I contains the complete 200-cell phase census, and S9O contains the two
+S6I contains the complete 200-cell calibration phase census, S6Q contains the
+complete 200-cell phase-to-target-support join, and S9O contains the two
 disjoint 88/120-role rows covering all 208 dual-coefficient certificates.
 
 Machine-local DVC credentials belong in `.dvc/config.local` and are never

@@ -1,4 +1,4 @@
-# CRPTO Active IJDS Claim Registry - 2026-08-09
+# CRPTO Active IJDS Claim Registry - 2026-09-01
 
 This is the sole claim registry for the active IJDS manuscript. Numerical
 statements must be traceable to
@@ -479,6 +479,7 @@ pre-evaluation-outcome-correction evaluations are provenance only.
 ### Complete binary-phase calibration census
 
 <!-- claim:geometry.binary_phase_census_complete -->
+<!-- claim:coverage.low_regime_target_support_census -->
 
 - Protocol tag `protocol/ijds-binary-phase-census-2026-08-01-v1` resolves to
   `8f3219ee2591f63a0bbf17af49b004e4cec7351f`; its exact direct-child artifact
@@ -499,6 +500,23 @@ pre-evaluation-outcome-correction evaluations are provenance only.
   path. It does not establish continuity, a common-maxima crossing, a universal
   phase, target-mass behavior, temporal transport, validity, mechanism, winner,
   causal effect, preregistration, or confirmation.
+- A deterministic sealed-table join reports target support for all 200 cells.
+  In every one of the 87 below-half-threshold cells, `max p_target < 1-c`;
+  these cells are distributed `40/40/7/0/0` across ordered strata. Therefore
+  no target prediction set in those cells contains label one, and any positive
+  label would be missed. The target-support part reads scores, not target
+  labels, and selects no cell.
+- The phase margin always gives the exact arithmetic comparison
+  `D/n <= (n-k)/n`, whose finite-grid boundary ranges from 0.099016 to
+  0.099905. Using its sign as a below-half threshold criterion still requires
+  the calibration-support hypothesis; the census verifies that hypothesis in
+  184/200 cells and does not generalize the remaining empirical agreement.
+- Across all 40 learner--window aggregates, the share of resolved misses
+  located in the label-one-exclusion strata ranges from 0.239779 to 0.584576.
+  This does not identify the missed labels, explain the remainder, substitute
+  global target prevalence for stratum prevalence, establish nominal
+  impossibility in every exclusion cell, identify a shift mechanism, or supply
+  class-conditional validity.
 
 ### Closed CatBoost calibrator-family sensitivity
 

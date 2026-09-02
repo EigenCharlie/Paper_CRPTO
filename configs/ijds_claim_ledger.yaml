@@ -1,4 +1,4 @@
-schema_version: "2026-08-09.1"
+schema_version: "2026-09-01.1"
 status: active_ijds_claim_contract
 
 surfaces:
@@ -193,7 +193,7 @@ claims:
     kind: theorem
     rule: documented
     lineages: []
-    scope: iid_continuous_calibration_and_test_selection_scores_under_label_free_fixed_top_k_selection_with_one_le_k_lt_m_and_zero_lt_alpha_lt_one_with_the_universal_jomi_reference_set_beta_binomial_reference_size_law_and_exact_finite_cutoff_gate
+    scope: jointly_exchangeable_almost_surely_tie_free_calibration_and_test_selection_scores_under_label_free_fixed_top_k_selection_with_iid_continuous_as_a_sufficient_special_case_one_le_k_lt_m_and_zero_lt_alpha_lt_one_with_the_universal_jomi_reference_set_beta_binomial_reference_size_law_and_exact_finite_cutoff_gate
     forbidden_inference:
       [novelty_priority, lendingclub_or_real_data_selected_set_validity,
        temporal_transport, finite_cutoff_implies_informative_or_nonempty_set,
@@ -409,6 +409,30 @@ claims:
        target_coverage, temporal_transport, mechanism, learner_winner,
        selected_stratum, funded_set_validity, optimizer_or_policy_claim,
        causal_effect, prospective_validation]
+    surfaces:
+      required: [body, supplement, registry, claim_matrix]
+      allowed: [body, supplement, registry, claim_matrix]
+
+  - id: coverage.low_regime_target_support_census
+    status: active
+    kind: empirical
+    rule: equals
+    result_pointer: /binary_phase_target_support/complete_census_verified
+    expected: true
+    lineages:
+      [binary_phase_census, credit_controls.evaluation,
+       exchangeability_transport_test]
+    scope: complete_retrospective_five_learner_by_eight_window_by_five_ordered_score_stratum_join_of_exact_calibration_phase_coordinates_to_target_score_support_with_resolved_miss_localization_reported_for_all_forty_learner_window_cells
+    forbidden_inference:
+      [universal_lac_low_prevalence_law,
+       threshold_regime_from_prevalence_without_calibration_support,
+       nominal_coverage_impossibility_in_every_exclusion_cell,
+       global_target_prevalence_as_stratum_prevalence,
+       all_candidate_label_conditional_validity,
+       complete_explanation_of_aggregate_shortfall,
+       temporal_transport, identified_shift_mechanism, causal_effect,
+       learner_winner, selected_stratum, funded_set_validity,
+       optimizer_or_policy_claim, prospective_validation]
     surfaces:
       required: [body, supplement, registry, claim_matrix]
       allowed: [body, supplement, registry, claim_matrix]

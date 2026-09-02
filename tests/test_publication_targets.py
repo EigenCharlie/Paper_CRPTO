@@ -178,6 +178,7 @@ def test_active_capsule_paths_exist() -> None:
         "reports/crpto/tables/crpto_ijds_v4_tableS2C_calibrator_fit_diagnostics.csv",
         "reports/crpto/tables/crpto_ijds_v4_tableS6O_calibrator_sensitivity_cells.csv",
         "reports/crpto/tables/crpto_ijds_v4_tableS6P_calibrator_pairwise_shared_completion.csv",
+        "reports/crpto/tables/crpto_ijds_v4_tableS6Q_binary_phase_target_support.csv",
         "reports/crpto/tables/crpto_ijds_v4_tableS9K_set_preserving_embedding_allocation_summary.csv",
         "reports/crpto/tables/crpto_ijds_v4_tableS9L_set_preserving_embedding_direction_census.csv",
     }.issubset(active["required_artifacts"])

@@ -11,6 +11,7 @@ from typing import Any
 
 import pytest
 
+from scripts import extend_ijds_evidence_from_sealed_parent_2026_09_01 as support_extension
 from scripts.build_ijds_submission_tex import render_submission_tex
 from src.ijds_audit.publication_sources import load_source_registry
 
@@ -78,8 +79,8 @@ def _normalize(text: str) -> str:
 def test_active_evidence_locks_v4_lineage_and_claim_boundary() -> None:
     evidence = _json(EVIDENCE)
 
-    assert evidence["schema_version"] == "2026-08-01.1"
-    assert evidence["status"] == "active_ijds_v5_phase_and_dual_set_native_paper_facing_evidence"
+    assert evidence["schema_version"] == support_extension.EXTENSION_SCHEMA
+    assert evidence["status"] == support_extension.EXTENSION_STATUS
     assert evidence["run_tag"] == RUN
     assert evidence["protocol_commit"] == COMMIT
     assert evidence["claim_boundary"] == {
@@ -364,6 +365,35 @@ def test_complete_binary_phase_census_is_calibration_only_and_nonselective() -> 
     assert len(phase["rows"]) == 200
     assert phase["interpretation"]["target_or_evaluation_endpoint_read"] is False
     assert phase["interpretation"]["universal_phase_law_claimed"] is False
+
+
+def test_complete_binary_phase_target_support_census_is_bounded() -> None:
+    support = _json(EVIDENCE)["binary_phase_target_support"]
+
+    assert support["complete_census_verified"] is True
+    assert support["cells"] == 200
+    assert support["learner_window_cells"] == 40
+    assert support["threshold_below_half_cells"] == 87
+    assert support["target_support_cells"] == 87
+    assert support["positive_label_exclusion_cells"] == 87
+    assert support["phase_margin_prevalence_boundary_reconciles_all_cells"] is True
+    assert [
+        row["positive_label_excluded_from_every_target_set"]
+        for row in support["ordered_stratum_census"]
+    ] == [40, 40, 7, 0, 0]
+    assert support["exclusion_strata_resolved_miss_fraction_range"] == pytest.approx(
+        [0.2397794701677335, 0.5845764027953737]
+    )
+    interpretation = support["interpretation"]
+    assert interpretation["every_positive_label_would_be_missed_in_exclusion_cells"] is True
+    assert (
+        interpretation["nominal_coverage_impossibility_established_for_all_exclusion_cells"]
+        is False
+    )
+    assert interpretation["stratum_specific_target_prevalence_identified"] is False
+    assert interpretation["global_target_prevalence_substituted_for_stratum_prevalence"] is False
+    assert interpretation["unconditional_prevalence_only_phase_theorem_claimed"] is False
+    assert interpretation["complete_explanation_of_aggregate_shortfall_claimed"] is False
 
 
 def test_dual_coefficient_frontier_certificate_is_complete_and_bounded() -> None:
@@ -890,8 +920,7 @@ def test_evidence_manifest_hashes_every_active_output() -> None:
         [
             "git",
             "show",
-            "6e9086ed57492325787498d912b3f5f3e03458bf:"
-            "reports/crpto/ijds_binary_geometry_frontier_v4_evidence.json",
+            f"{support_extension.PARENT_COMMIT}:{support_extension.PARENT_MANIFEST_PATH}",
         ],
         cwd=REPO,
     )

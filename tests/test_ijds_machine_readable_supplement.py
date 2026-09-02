@@ -73,6 +73,7 @@ def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
         "Table_S6N_marginal_score_outcome_gap.csv": 5,
         "Table_S6O_calibrator_sensitivity_cells.csv": 192,
         "Table_S6P_calibrator_pairwise_shared_completion.csv": 288,
+        "Table_S6Q_binary_phase_target_support.csv": 200,
         "Table_S9G_decision_catalog_metric_separation.csv": 3,
         "Table_S9H_decision_catalog_target_blocks.csv": 45,
         "Table_S9I_funded_selection_track_estimands.csv": 96,
@@ -82,7 +83,7 @@ def test_current_zip_has_fixed_metadata_and_complete_table_censuses() -> None:
     }
     with zipfile.ZipFile(OUTPUT) as archive:
         assert archive.namelist() == sorted(archive.namelist())
-        assert len(archive.namelist()) == 20
+        assert len(archive.namelist()) == 21
         for info in archive.infolist():
             assert info.date_time == (1980, 1, 1, 0, 0, 0)
             assert info.compress_type == zipfile.ZIP_STORED
@@ -104,6 +105,7 @@ def test_current_zip_has_complete_five_learner_eight_window_cell_structure() -> 
         "Table_S6D_label_mondrian_cells.csv": 1,
         "Table_S6E_label_mondrian_strata.csv": 5,
         "Table_S6F_label_mondrian_categories.csv": 10,
+        "Table_S6Q_binary_phase_target_support.csv": 5,
     }
     with zipfile.ZipFile(OUTPUT) as archive:
         for name, multiplicity in expected_multiplicity.items():
@@ -123,6 +125,27 @@ def test_current_zip_has_complete_five_learner_eight_window_cell_structure() -> 
             )
         )
         assert {row["label"] for row in categories} == {"0", "1"}
+
+
+def test_current_zip_has_complete_binary_phase_target_support_census() -> None:
+    with zipfile.ZipFile(OUTPUT) as archive:
+        rows = list(
+            csv.DictReader(
+                io.StringIO(
+                    archive.read("Table_S6Q_binary_phase_target_support.csv").decode("utf-8")
+                )
+            )
+        )
+
+    assert len(rows) == 200
+    excluded = [
+        row for row in rows if row["positive_label_excluded_from_every_target_set"] == "True"
+    ]
+    assert len(excluded) == 87
+    assert Counter(int(row["conformal_group"]) for row in excluded) == Counter({0: 40, 1: 40, 2: 7})
+    assert all(
+        float(row["target_score_max"]) < float(row["positive_label_boundary"]) for row in excluded
+    )
 
 
 def test_current_zip_has_complete_closed_calibrator_family() -> None:
@@ -359,6 +382,11 @@ def test_every_source_rejects_duplicate_composite_keys(
             "False",
         ),
         (
+            "Table_S6Q_binary_phase_target_support.csv",
+            "taxonomy_groups",
+            "4",
+        ),
+        (
             "Table_S9G_decision_catalog_metric_separation.csv",
             "all_target_blocks_exceed_development",
             "False",
@@ -449,6 +477,20 @@ def test_calibrator_pairwise_resolved_difference_drift_is_rejected(
     _write_csv_matrix(path, matrix)
 
     with pytest.raises(RuntimeError, match="S6O-to-S6P resolved coverage difference"):
+        _zip_payload(valid_sources)
+
+
+def test_cross_table_s6c_to_s6q_target_support_drift_is_rejected(
+    valid_sources: dict[str, Path],
+) -> None:
+    name = "Table_S6Q_binary_phase_target_support.csv"
+    path = valid_sources[name]
+    matrix = _csv_matrix(path)
+    column = matrix[0].index("target_score_max")
+    matrix[1][column] = str(float(matrix[1][column]) + 0.0001)
+    _write_csv_matrix(path, matrix)
+
+    with pytest.raises(RuntimeError, match="S6C-to-S6Q field target_score_max"):
         _zip_payload(valid_sources)
 
 

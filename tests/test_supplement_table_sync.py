@@ -6,6 +6,8 @@ import csv
 import re
 from pathlib import Path
 
+import pytest
+
 from src.ijds_audit.publication_schemas import S6B_PUBLICATION_COLUMNS
 
 REPO = Path(__file__).resolve().parents[1]
@@ -193,6 +195,41 @@ def test_calibrator_tables_are_complete_and_pooled_rows_match_the_supplement() -
         for column in rows[0]
         for token in forbidden
     )
+
+
+def test_binary_phase_target_support_table_is_complete_and_matches_the_supplement() -> None:
+    rows = _rows("crpto_ijds_v4_tableS6Q_binary_phase_target_support.csv")
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+
+    assert len(rows) == 200
+    assert len({(row["learner"], row["window_id"], row["conformal_group"]) for row in rows}) == 200
+    excluded = [
+        row for row in rows if row["positive_label_excluded_from_every_target_set"] == "True"
+    ]
+    assert len(excluded) == 87
+    assert [
+        sum(
+            row["positive_label_excluded_from_every_target_set"] == "True"
+            for row in rows
+            if row["conformal_group"] == str(group)
+        )
+        for group in range(5)
+    ] == [40, 40, 7, 0, 0]
+    assert all(
+        float(row["target_score_max"]) < float(row["positive_label_boundary"])
+        and row["threshold_below_half"] == "True"
+        for row in excluded
+    )
+    learner_window_rows = {(row["learner"], row["window_id"]): row for row in rows}
+    fractions = [
+        float(row["exclusion_strata_resolved_miss_fraction"])
+        for row in learner_window_rows.values()
+    ]
+    assert min(fractions) == pytest.approx(0.2397794701677335)
+    assert max(fractions) == pytest.approx(0.5845764027953737)
+    assert "**Table S6Q.**" in supplement
+    assert "**87** | **87** | **87**" in supplement
+    assert "23.98%--58.46%" in supplement
 
 
 def test_calibrator_body_summary_and_named_pairwise_ranges_are_derived() -> None:

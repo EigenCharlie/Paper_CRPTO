@@ -86,22 +86,23 @@ calibrators is therefore not established, and both retrospective
 censuses leave the split-conformal theorem unrefuted. For binary
 absolute residuals, the threshold is a mirror-sample order statistic; a
 threshold change moves coverage by mass in crossed score bands, and a
-low-regime ceiling follows under its support condition. The observed
-prevalence contrast is consistent with an increase in class prevalence,
-the marginal signature associated with label shift, but identifies no
-label shift, class-conditional feature-law invariance, or cause. The
-binary set identifies boundary contact, not the subunit coefficient
-passed to the optimizer. Across the set-preserving grid, 9,659/11,520
-embedding comparisons change allocation. Two scores preserve every
-feasible allocation ordering exactly when they are positive-affine
-modulo the orthogonal complement of feasible allocation differences.
-Outcome-blind rulers and three funded-weighting estimands expose
-comparator dependence. A set-native challenger removes the continuous
-risk embedding without supplying joint-set validity; its fully
-set-native version is retained only as a structural boundary. No
-learner, calibrator, embedding, coordinate, ruler, or policy is
-selected. CRPTO is an executable identification audit, not a deployment
-certificate.%
+low-regime ceiling follows under its support condition. In all 87
+below-half-threshold cells, target score support excludes label one from
+every prediction set. The observed prevalence contrast is consistent
+with an increase in class prevalence, the marginal signature associated
+with label shift, but identifies no label shift, class-conditional
+feature-law invariance, or cause. The binary set identifies boundary
+contact, not the subunit coefficient passed to the optimizer. Across the
+set-preserving grid, 9,659/11,520 embedding comparisons change
+allocation. Two scores preserve every feasible allocation ordering
+exactly when they are positive-affine modulo the orthogonal complement
+of feasible allocation differences. Outcome-blind rulers and three
+funded-weighting estimands expose comparator dependence. A set-native
+challenger removes the continuous risk embedding without supplying
+joint-set validity; its fully set-native version is retained only as a
+structural boundary. No learner, calibrator, embedding, coordinate,
+ruler, or policy is selected. CRPTO is an executable identification
+audit, not a deployment certificate.%
 }
 
 \KEYWORDS{conformal prediction; predict-then-optimize; comparator
@@ -1961,8 +1962,9 @@ maximum 0.900411, and the margin at six months is 23 basis points.
 This finite-archive shortfall comprises 40 deterministic identification
 results; they are not sampling confidence intervals and do not, by
 themselves, reject conformal validity. Figure~\ref{fig-coverage}
-therefore displays the 40 bounds separately from the joint-block
-rank-reference flags.
+therefore displays the 40 bounds alongside the pooled minimum miss-rate
+departure from the finite-sample joint-block reference; the 31 locked
+flags remain small annotations rather than the panel's visual encoding.
 
 \begin{figure}
 
@@ -1973,10 +1975,12 @@ rank-reference flags.
 }
 
 \caption{\label{fig-coverage}Resolved coverage and sharp completion
-bounds appear in Panel A. Panel B marks cells meeting the locked nominal
-reporting thresholds for the stronger joint-block reference. Segments
-are identification bounds, not error bars; flags have no post-selection
-FWER interpretation.}
+bounds appear in Panel A. Panel B reports, in percentage points, the
+pooled minimum strict-miss rate minus the candidate-count-weighted
+finite-sample reference rate; small F annotations identify the 31/40
+cells meeting the locked nominal Bonferroni--Holm reporting thresholds.
+Segments are identification bounds, not error bars, and the
+post-inspection flags have no selective-FWER interpretation.}
 
 \end{figure}%
 
@@ -2271,6 +2275,55 @@ retrospective and calibration-side. The census supports no universal
 phase law, target-side inference, or decision guarantee. Online
 Supplement Table S6I reports all 200 cells.
 
+\subsubsection{Complete target-support
+consequence}\label{complete-target-support-consequence}
+
+Joining the complete phase census to the registered target score ranges
+gives an exact set-membership result without selecting a learner,
+window, or stratum. In all 87 cells with \(c<1/2\), the target maximum
+is strictly below \(1-c\); these are exactly the 87 cells in which the
+sufficient support condition holds. Consequently, no target prediction
+set in those cells contains label one, so every positive label would be
+missed. The count is 40/40/7/0/0 across the five ordered score strata.
+This extends the previously illustrated W8 S3 fact to the full declared
+grid.
+
+The phase margin is exactly the integer comparison \(D\le n-k\),
+equivalently \(D/n\le(n-k)/n\), and the 200 finite boundary rates range
+from 0.099016 to 0.099905. That arithmetic identity holds in every cell;
+interpreting its sign as the below-half threshold branch still requires
+the calibration support condition in Proposition 1, which is verified in
+184/200 cells. The observed sign agreement in the remaining cells is not
+promoted to an unconditional prevalence-only theorem.
+
+For each of the 40 learner--window aggregates, the resolved misses
+located in the label-one-exclusion strata account for 23.98\%--58.46\%
+of all resolved misses across the five strata. This is a complete
+descriptive localization, not a class decomposition or a cause: the
+remainder lies outside these strata, and unresolved labels remain
+unresolved. Nor does the global target-prevalence interval substitute
+for a stratum-specific prevalence. Therefore the stronger claim that
+nominal 0.90 coverage is arithmetically impossible in every one of the
+87 cells is not established.
+
+\begin{figure}
+
+\centering{
+
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio]{../../reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png}
+
+}
+
+\caption{\label{fig-phase}Complete 200-cell phase and target-support
+census. Color encodes the integer phase margin \(m=D-(n-k)\). White
+outlines mark the 87 cells whose below-half threshold and target support
+imply that no prediction set contains label one; the gold outline
+retains the post-inspection CatBoost S3 W8 illustration. All cells are
+reported without selection. The support statement is not a transport
+guarantee, class-conditional validity claim, or mechanism.}
+
+\end{figure}%
+
 \subsection{Fixed-panel response and an illustrative phase-margin
 crossing}\label{fixed-panel-response-and-an-illustrative-phase-margin-crossing}
 
@@ -2303,24 +2356,6 @@ in W8. This stratum and transition were selected after inspection solely
 as a descriptive geometric illustration; they are not confirmatory and
 select no learner, stratum, or window. All 175 adjacent contrasts remain
 reported.
-
-\begin{figure}
-
-\centering{
-
-\includegraphics[width=0.82\linewidth,height=\textheight,keepaspectratio]{../../reports/crpto/figures/crpto_ijds_v4_fig2_phase_transition.png}
-
-}
-
-\caption{\label{fig-phase}Post-inspection illustration: CatBoost S3 fit
-prevalence, finite-sample boundary, and fitted residual threshold across
-eight overlapping windows, shown on focused scales. The illustrated pair
-changes from phase margin +11 in W7 to -16 in W8 and coincides with the
-large threshold step described by Proposition 1's conditional
-order-statistic characterization; it is not confirmatory or a winner,
-and all 175 contrasts remain reported.}
-
-\end{figure}%
 
 The common-panel replay evaluates the target response directly. In the
 highlighted S3, the same 79,047 loans appear under both thresholds.
@@ -2973,7 +3008,13 @@ block; a zero-positive-coverage conclusion also needs the target-support
 condition. The exact two-threshold identity then accounts for coverage
 changes through crossed target mass. Neither statement proves that score
 binning must create a low regime, identifies a transport mechanism, or
-turns candidate coverage into funded-set coverage. For a fixed
+turns candidate coverage into funded-set coverage. For a fixed target
+panel, the complete join verifies that support condition in all 87
+below-half-threshold cells: label one is absent from every prediction
+set in those cells. Their 23.98\%--58.46\% share of resolved misses
+across the 40 learner--window aggregates is descriptive localization,
+not a classwise or causal decomposition, and does not establish nominal
+impossibility without stratum-specific target prevalence. For a fixed
 allocation, the only outcome-free miscoverage lower bound supplied by
 the binary set itself is exposure in empty sets; a positive lower bound
 endpoint alone is insufficient.
@@ -3026,9 +3067,10 @@ repairs or evidence that label shift generated the observed pattern.
 As a prospective feasibility calculation rather than an empirical result
 from this archive, consider \(1\le K<m\) and a top-\(K\) selector with a
 score map frozen without calibration or test labels. Suppose the \(n\)
-calibration selection scores and \(m\) test selection scores are i.i.d.
-and continuous. Write \(Z_i\) for selection score \(i\). Proposition 6
-of Jin and Ren then gives the universal reference count
+calibration selection scores and \(m\) test selection scores are jointly
+exchangeable and almost surely tie-free; i.i.d. continuous scores are a
+sufficient special case. Write \(Z_i\) for selection score \(i\).
+Proposition 6 of Jin and Ren then gives the universal reference count
 \(R=\sum_{i=1}^{n}\mathbf 1\{Z_i>T_{\mathrm{topK}}\}\), and the shared
 random threshold calculation yields
 
@@ -3204,7 +3246,7 @@ chain, the four-commit calibrator-sensitivity chain, the complete-hull
 score-equivalence audit, the two-phase set-native worst-label
 counterpart, the binary-phase direct-child census, and the
 dual-coefficient direct-child certificate. Publication replay
-regenerates 45 tables and five figure families in both PNG and PDF;
+regenerates 46 tables and five figure families in both PNG and PDF;
 Online Supplement Appendix F specifies both replay modes.
 
 \section{Conclusion}\label{sec-conclusion}
@@ -3217,13 +3259,15 @@ below nominal; this deterministic archive fact is not by itself a
 rejection of split-conformal validity. Exact binary geometry identifies
 the calibration threshold, the crossed target mass, and a low-regime
 coverage ceiling under its support condition; it supplies no transport
-theorem. The clean 200-cell census remains calibration-side,
-Label-Mondrian fails to uniformly restore nominal coverage, and the
-closed CatBoost family has only 18/32 upper bounds below nominal. The
-prevalence contrast is consistent with an increase in class
-prevalence---the marginal signature associated with label shift---but
-the audit neither identifies label shift nor separates it from covariate
-shift.
+theorem. The clean 200-cell census remains calibration-side, while its
+complete target-support join shows label-one exclusion in all 87
+below-half-threshold cells without converting that fact into
+class-conditional validity or a causal explanation. Label-Mondrian fails
+to uniformly restore nominal coverage, and the closed CatBoost family
+has only 18/32 upper bounds below nominal. The prevalence contrast is
+consistent with an increase in class prevalence---the marginal signature
+associated with label shift---but the audit neither identifies label
+shift nor separates it from covariate shift.
 
 At the decision interface, equal binary sets do not identify the
 continuous coefficient or a feasible allocation ordering. In the

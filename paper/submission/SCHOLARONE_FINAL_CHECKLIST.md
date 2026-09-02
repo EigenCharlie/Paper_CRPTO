@@ -66,14 +66,15 @@ living closeout checklist, not evidence that the package is final.
 - [ ] Separate title-page metadata form.
 - [ ] Optional cover letter and generative-AI disclosure, if uploaded.
 - [ ] Anonymous machine-readable supplement containing full S6C and S6E
-      strata plus S2C, S6O, and S6P calibrator tables.
+      strata, S2C/S6O/S6P calibrator tables, and the complete S6Q
+      phase-to-target-support census.
 - [ ] Data and code disclosure form.
 - [ ] Editor-only reproducibility crosswalk, if requested.
 - [ ] Sanitized reproducibility capsule, if requested.
 - [ ] LaTeX `.fls`, `.aux`, `.log`, `.blg`, and `.bbl` files are excluded from
       every reviewer upload; the editor-only crosswalk is not reviewer-facing.
 - [ ] Capsule inventory reconciles to exactly 53 DVC pointers, 11 scientific
-      Git artifact lineages, and 45 paper-facing CSV tables; unequal-follow-up roots appear
+      Git artifact lineages, and 46 paper-facing CSV tables; unequal-follow-up roots appear
       only as replay provenance.
 
 ## Build and Numerical QA
