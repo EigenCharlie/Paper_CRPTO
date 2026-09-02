@@ -102,3 +102,45 @@ reconstructed or copied to replace either missing artifact.
   pass `--check`; the manifest closes 171 unique PDFs and 207 bibliography
   entries with no missing citation, stale override, duplicate hash, encrypted
   object, or malformed page tree.
+
+### Phase 3 — narrative and positioning
+
+- Accepted with the author's wording boundary: abstract, introduction, results,
+  discussion, conclusion, registry, and claim matrix now describe the marginal
+  level gap as consistent with an increase in class prevalence, the marginal
+  signature associated with label shift. Every active surface states that this
+  identifies neither label shift nor invariance of the class-conditional
+  feature law, a decomposition from covariate shift, individual or
+  class-conditional calibration, learner rank, or cause.
+- Accepted: the working title is *Auditing the Handoff from Binary Conformal
+  Sets to Credit Allocation: Exact Geometry, Label-Delayed Transport, and
+  Comparator Dependence*. It is synchronized across body, supplement, title
+  page, cover letter, disclosure form, and generated submission TeX. Because
+  the integrity checker is itself hash-bound to the unavailable-parent
+  evidence manifest, its former title remains only as a nonrendered LaTeX
+  compatibility fingerprint; neither the checker hash nor the manifest was
+  edited.
+- Accepted: the dual-coefficient statement is now a compact supplemental
+  Remark and a short structural stop rule in the body. The abstract,
+  introduction, results, discussion, and conclusion no longer present its
+  certificate census as a headline result; exact assumptions and governance
+  provenance remain available.
+- Corrected rather than copied: registered Table S6O confirms repeated
+  isotonic and IVAP residual atoms, but W8 shares an overall threshold summary
+  without sharing the W1/W5--W7 aggregate bounds. The text now uses that
+  distinction to illustrate Lemma 1 and explicitly denies that one pooled
+  threshold summary determines the full five-stratum construction.
+- Corrected rather than copied: the primary V4 protocol verifies that
+  comparator supports use only February--December 2013 policy-development
+  menus, so the 2014--March 2016 gap is excluded from the primary support.
+  The proposal's claim that those cohorts remain untouched was rejected:
+  later-origin analyses exist as separately tagged lineages.
+- Accepted after verified intake: Related Work now positions the exact
+  transported-beta law, label-shift-aware conformal weighting, selective
+  conformal risk control, and audited conformal prediction. These are
+  neighboring or prospective designs, not retrospective validity repairs.
+- Editorial gates: the abstract is 284 tokenizer-counted words; the prescribed
+  negation count is 80, below the cap of 90. The official TeX builder and its
+  currentness check pass, Git whitespace validation passes, and the complete
+  targeted claim-sync, bibliography, corpus-manifest, publication-integrity,
+  supplement-table, and PDF-inspection suite passes without relaxing a test.

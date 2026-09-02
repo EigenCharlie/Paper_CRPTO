@@ -121,6 +121,10 @@ def test_related_work_is_ordered_by_calibrated_object() -> None:
     assert "@zhu2026action_conditional_risk_averse" in related
     assert "@lakkaraju2017selective" in related
     assert "@kleinberg2018human" in related
+    assert "@podkopaev2021labelshift" in related
+    assert "@ramos2026transported_beta" in related
+    assert "@xu2026selective_crc" in related
+    assert "@zhou2026audited_cp" in body
     assert "Selecting a predictor or conformal set is a different object" in related
     assert "finite discrete action space" in related
 
@@ -145,6 +149,12 @@ def test_body_wording_preserves_information_and_identification_boundaries() -> N
     assert "Online Supplement Appendix E.6" in normalized
     assert "208 window-by-role-month certificates over 26 candidate menus" in normalized
     assert "208 monthly menus" not in normalized
+    assert (
+        "consistent with an increase in class prevalence, which is the marginal "
+        "signature associated with label shift"
+    ) in normalized
+    assert "cannot identify label shift" in normalized
+    assert r"establish invariance of $P(X\mid Y)$" in normalized
 
 
 def test_fixed_top_k_jomi_corollary_keeps_its_exact_boundary() -> None:

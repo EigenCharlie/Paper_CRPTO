@@ -6,8 +6,9 @@ is a field map, not a substitute for the signed official form.
 
 ## Page 1
 
-**Title of manuscript:** Auditing Binary Conformal Prediction in Credit
-Allocation: Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence
+**Title of manuscript:** Auditing the Handoff from Binary Conformal Sets to
+Credit Allocation: Exact Geometry, Label-Delayed Transport, and Comparator
+Dependence
 
 **Policy confirmation:** Check the box confirming familiarity with and
 agreement to comply with the IJDS Data and Code Disclosure Policy.

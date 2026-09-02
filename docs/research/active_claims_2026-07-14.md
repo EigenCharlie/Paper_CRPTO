@@ -310,6 +310,11 @@ pre-evaluation-outcome-correction evaluations are provenance only.
   [0.151163, 0.183205]. All five frozen mean-score-minus-prevalence intervals
   lie below zero; the least-negative upper endpoint is -0.023934 and their
   common width is 0.032041.
+- Read together with the separately registered calibration and target
+  prevalence summaries, this is consistent with an increase in class
+  prevalence, which is the marginal signature associated with label shift. It
+  does not identify label shift, establish invariance of the class-conditional
+  feature law, separate label from covariate shift, or infer a cause.
 - This is marginal finite-panel level partial identification, not individual or
   conditional calibration, a sampling interval, a model ranking, a conformal
   mechanism, or a prospective guarantee.
@@ -1154,8 +1159,11 @@ The complete evaluation-outcome-availability sensitivity is:
   substantially increases two-label sets.
 - All five sharp marginal mean-score-minus-prevalence intervals are negative,
   and the complete residual-distribution frontier reports all 200 pooled cells;
-  these are separate level and distribution diagnostics, not causes of the
-  conformal-coverage pattern.
+  these are separate level and distribution diagnostics. The prevalence
+  contrast is consistent with an increase in class prevalence, the marginal
+  signature associated with label shift, but it neither identifies label shift
+  nor decomposes it from covariate shift or supplies a cause of the conformal-
+  coverage pattern.
 - The coverage finding also survives all four declared fit-label scenarios;
   the W7--W8 geometric crossing survives only three of them.
 - Binary absolute-residual geometry can be prevalence-sensitive under the

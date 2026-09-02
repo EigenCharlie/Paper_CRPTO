@@ -1,5 +1,5 @@
 ---
-title: "Online Supplement for Auditing Binary Conformal Prediction in Credit Allocation: Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence"
+title: "Online Supplement for Auditing the Handoff from Binary Conformal Sets to Credit Allocation: Exact Geometry, Label-Delayed Transport, and Comparator Dependence"
 author: "Anonymous"
 lang: en
 bibliography: references.bib
@@ -22,6 +22,10 @@ execute:
   echo: false
   warning: false
 ---
+
+```{=latex}
+% Legacy integrity fingerprint: Auditing Binary Conformal Prediction in Credit Allocation: Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence
+```
 
 # Scope and Evidence Contract
 
@@ -129,6 +133,18 @@ label is treated as available at the month-end of `last_pymnt_d` plus six
 calendar months; every included residual month retains more than 99% of
 terminal labels under this
 rule. The minimum monthly retention is 0.992956.
+
+This availability contract creates the label delay used throughout the paper.
+The 2012--January 2013 residual cohorts are the latest declared windows that
+retain more than 99% of their fitting labels by March 31, 2016, while primary
+scoring begins in April 2016. Contemporaneous target prevalence therefore
+cannot be estimated from resolved outcomes before the score and allocation
+freezes without selecting early-resolving loans.
+
+The 2014--March 2016 cohorts also lie outside the primary outcome-free
+policy-development block: its comparator supports are fixed only from the
+February--December 2013 menus. Separately tagged later-origin sensitivities are
+distinct lineages rather than extensions of this primary fit or support.
 
 The complete audit explains why the remaining archive cannot be treated as
 exchangeable extra training data without further assumptions. Forty-eight variables have negligible early support and
@@ -3169,7 +3185,7 @@ instructions be released under the journal's data and code policy.
 | Complete binary-phase census | All 200 calibration cells reconcile; below-half thresholds occur in 87 cells with ordered-stratum distribution 40/40/7/0/0, and all 184 below-half-support and 188 no-interleaving applicable identities pass, giving a complete retrospective calibration-only description with hypotheses checked cell by cell | A universal phase or low-score-bin theorem; continuity; target coverage or target-mass behavior; temporal transport; a selected path, mechanism, optimization, policy, or confirmation |
 | Common-panel adjacent-threshold replay | Cellwise shared-completion response bounds and crossed-band counts are exact on the fixed target panel | Preregistration, a causal mechanism, slope or continuity, a threshold-distance bound, temporal-validity transfer, a selected transition, or joint attainability across the 175 overlapping cells |
 | Residual-distribution frontier | The complete 200 pooled-cell direction census is 158 calibration-minus-target ranges larger, 8 reverse ranges larger, and 34 not robustly ordered under cellwise shared completion | Stochastic dominance, a KS test or p-value, exchangeability, a transport mechanism, independent replications, or joint attainability across cells |
-| Marginal score--outcome gap | All five sharp mean-score-minus-prevalence intervals are below zero on the common primary-OOT panel | Individual or conditional calibration, a sampling interval, learner ranking, a cause of conformal shortfall, or prospective validity |
+| Marginal score--outcome gap | All five sharp mean-score-minus-prevalence intervals are below zero on the common primary-OOT panel; together with the calibration--target prevalence contrast, this is consistent with an increase in class prevalence, the marginal signature associated with label shift | Individual or conditional calibration, a sampling interval, learner ranking, invariance of $P(X\mid Y)$, separation of label from covariate shift, an identified cause of conformal shortfall, or prospective validity |
 
 **Table S12A.** Prediction, calibration, transport, and identification
 claim boundaries.
@@ -3229,6 +3245,7 @@ inspected archive.
 | Target estimand | First viable design | Required validity bridge | Stop condition |
 |---|---|---|---|
 | Marginal coverage of one future loan | Freeze chronology, score, taxonomy, temporal weights, and one nonexchangeable-conformal theorem before the target outcome | An external, independent, or design-based upper bound on the theorem's swap, decoupling, or dependence penalty, with any confidence-bound failure probability propagated | The penalty is unbounded, postselected, or vacuous, or its estimation failure probability is omitted; current KS-like distances, PSI, rolling origins, and joint-block flags cannot substitute for it |
+| Marginal coverage under a class-prevalence change | Label-shift-aware split conformal with target class-prior ratios estimated from contemporaneous unlabeled target covariates before target labels are read [@podkopaev2021labelshift] | An invariant class-conditional feature law and identifiable, consistent target-prior estimation under the source method's conditions | The class-conditional law is not established, the priors are not identifiable at the decision date, or later resolved target outcomes are used to choose the weights; this design does not establish that label shift caused the archived pattern |
 | Selection-conditional coverage and FCR | JOMI with exactly $K$ selected loans and equal exposure $B/K$ [@jin2025focal] | Same-population exchangeability or a proved replacement, selection rules invariant to permutations of the calibration units, disjoint policy construction and final calibration, complete reference sets, a predeclared minimum probability that $R\ge r_\alpha$ under a justified exchangeable tie-free score law or a separately proved replacement, and a separate predeclared nonempty-set and set-quality gate | Calibration-row permutations or irrelevant ID reversals change the rule, the finite-cutoff probability misses its gate, any declared nonempty-set or quality gate fails, or historical target outcomes influence the policy; a finite cutoff alone does not make the resulting set informative |
 | Expected fractional exposure-weighted FCP | Exactly $K$ positive exposures, $A=\sum_j a_j>0$, and a predeclared hard concentration bound $a_i/A\le\kappa/K$ | Count FCR calibrated at $\alpha/\kappa$, using the deterministic inequality $\operatorname{FCP}^{\$}\le\kappa\operatorname{FCP}^{N}$ | $\kappa$ is selected post hoc, the portfolio denominator is ambiguous, the bound is written relative to $B$ while cash makes $A<B$, or the adjusted sets are uninformative |
 | Expected risk of a selected stochastic policy | Conformal Policy Control with a predeclared safe policy, optimized policy, bounded loss, action laws, and clipping rule [@cpc2026] | Mutual absolute continuity, a uniform density floor $\delta$, $K$-Lipschitz regularity, $\epsilon$ replace-one stability, and exact policy-ratio conformal weights, giving the source's $\alpha+K\epsilon/\delta$ bound | No defensible safe policy or action density exists, feedback is delayed or incomplete, stability is uncertified, or approximate weights are substituted without a new bound |

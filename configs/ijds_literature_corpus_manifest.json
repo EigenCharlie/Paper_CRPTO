@@ -1132,7 +1132,7 @@
     },
     {
       "bibtex_key": "podkopaev2021labelshift",
-      "citation_state": "reserve",
+      "citation_state": "active",
       "corpus_status": "current",
       "current_pdf": "Papers_tesis/supplement/Podkopaev Ramdas 2021 - Distribution-Free Uncertainty Quantification for Classification under Label Shift - UAI PMLR 161.pdf",
       "metadata_only_reason": null,
@@ -1144,7 +1144,7 @@
     },
     {
       "bibtex_key": "ramos2026transported_beta",
-      "citation_state": "reserve",
+      "citation_state": "active",
       "corpus_status": "current",
       "current_pdf": "Papers_tesis/supplement/Ramos Graziadei Cabezas 2026 - Conformal Prediction via Transported Beta Laws - arXiv 2605.19024v1.pdf",
       "metadata_only_reason": null,
@@ -1156,7 +1156,7 @@
     },
     {
       "bibtex_key": "xu2026selective_crc",
-      "citation_state": "reserve",
+      "citation_state": "active",
       "corpus_status": "current",
       "current_pdf": "Papers_tesis/supplement/Xu Guo Wei 2026 - Selective Conformal Risk Control - arXiv 2512.12844v2.pdf",
       "metadata_only_reason": null,
@@ -1168,7 +1168,7 @@
     },
     {
       "bibtex_key": "zhou2026audited_cp",
-      "citation_state": "reserve",
+      "citation_state": "active",
       "corpus_status": "current",
       "current_pdf": "Papers_tesis/supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction for Classification under Unknown Distribution Shift - arXiv 2606.14909v1.pdf",
       "metadata_only_reason": null,
@@ -5142,8 +5142,8 @@
     },
     "bibliography_entries": 207,
     "citation_state_counts": {
-      "active": 106,
-      "reserve": 101
+      "active": 110,
+      "reserve": 97
     },
     "object_status_counts": {
       "companion": 1,

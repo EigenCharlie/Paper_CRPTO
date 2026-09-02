@@ -100,8 +100,8 @@ local Zhou--Fathony--Nguyen--Sesia object matched the primary arXiv v1 object
 byte for byte and was renamed to expose that identity without changing corpus
 counts or bytes.
 
-The 207-entry master bibliography currently partitions into **106 active**
-body-or-supplement citations and **101 reserve** entries. Of the 207 keys, 151
+The 207-entry master bibliography currently partitions into **110 active**
+body-or-supplement citations and **97 reserve** entries. Of the 207 keys, 151
 have one current local PDF and 56 are metadata-only. The only four active
 metadata-only exceptions remain `holm1979`, `manski2003partial`, `platt2000`,
 and `vovk2005`; the other 52 metadata-only entries are reserve records whose

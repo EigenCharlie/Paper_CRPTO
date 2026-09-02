@@ -2,8 +2,9 @@
 
 Dear Editor,
 
-Please consider **“Auditing Binary Conformal Prediction in Credit Allocation:
-Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence”** for publication in
+Please consider **“Auditing the Handoff from Binary Conformal Sets to Credit
+Allocation: Exact Geometry, Label-Delayed Transport, and Comparator
+Dependence”** for publication in
 *INFORMS Journal on Data Science*.
 
 The paper studies a predictive-to-prescriptive interface: binary conformal

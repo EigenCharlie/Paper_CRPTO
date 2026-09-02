@@ -185,7 +185,7 @@ def test_repository_literature_manifest_is_current_and_complete() -> None:
         "active_metadata_only_keys": ["holm1979", "manski2003partial", "platt2000", "vovk2005"],
         "bibliography_corpus_status_counts": {"current": 151, "metadata-only": 56},
         "bibliography_entries": 207,
-        "citation_state_counts": {"active": 106, "reserve": 101},
+        "citation_state_counts": {"active": 110, "reserve": 97},
         "object_status_counts": EXPECTED_STATUS_COUNTS,
         "pdf_bytes": 346_669_707,
         "pdf_objects": 171,

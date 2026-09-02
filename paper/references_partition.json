@@ -1,8 +1,8 @@
 {
   "citation_sources": [
     {
-      "citation_key_count": 100,
-      "citation_key_sha256": "8b5e29be8ce6a6aa8c16afe054fa909fd2c826b62e8edfd7c88ea086d8fccca2",
+      "citation_key_count": 104,
+      "citation_key_sha256": "b3e0c04c09b93d6b321f28d26f316fd2e1de9be0ff139fc1c4220207f85955ca",
       "citation_keys": [
         "aior2025lendingclub",
         "aldirawi2026nonmonotone_crc",
@@ -70,8 +70,10 @@
         "patel2024",
         "peng2026drift_survival",
         "platt2000",
+        "podkopaev2021labelshift",
         "prinster2024feedback",
         "prokhorenkova2018catboost",
+        "ramos2026transported_beta",
         "sadinle2019lac",
         "schutte2024robust",
         "serrano2016profitscoring",
@@ -90,6 +92,7 @@
         "wiberg2025ai_or",
         "xu2024profit_risk_credit",
         "xu2025profit_uncertainty_credit",
+        "xu2026selective_crc",
         "yang2025costaware",
         "yang2025selection_aggregation_conformal",
         "yang2026multidistribution",
@@ -101,6 +104,7 @@
         "zheng2026counterfactual_decision_sets",
         "zheng2026online_selective",
         "zhou2025credo",
+        "zhou2026audited_cp",
         "zhou2026creme",
         "zhu2026action_conditional_risk_averse",
         "ziliaskopoulos2026dva"
@@ -108,8 +112,8 @@
       "path": "paper/CRPTO_ijds.qmd"
     },
     {
-      "citation_key_count": 76,
-      "citation_key_sha256": "adbc42b907d15f954870c1d072a2180efa97e2fb8ed72ea5afb41c1a0ed7e240",
+      "citation_key_count": 77,
+      "citation_key_sha256": "d8dfcc864d296406eff8be6472b9c273bbad7cb247e1461fb48d5a625a181acb",
       "citation_keys": [
         "aldirawi2026nonmonotone_crc",
         "angelopoulos2024risk",
@@ -161,6 +165,7 @@
         "patel2024",
         "peng2026drift_survival",
         "platt2000",
+        "podkopaev2021labelshift",
         "prinster2024feedback",
         "prokhorenkova2018catboost",
         "schutte2024robust",
@@ -416,7 +421,7 @@
   },
   "views": {
     "active": {
-      "entry_count": 106,
+      "entry_count": 110,
       "keys": [
         "angelopoulos2023",
         "angelopoulos2024risk",
@@ -462,6 +467,10 @@
         "cpc2026",
         "zhou2026creme",
         "tibshirani2019covshift",
+        "podkopaev2021labelshift",
+        "ramos2026transported_beta",
+        "xu2026selective_crc",
+        "zhou2026audited_cp",
         "schutte2024robust",
         "hu2026crc",
         "angelopoulos2026nonmonotonic",
@@ -526,10 +535,10 @@
         "zhu2026action_conditional_risk_averse"
       ],
       "path": "paper/references_active.bib",
-      "sha256": "fb6af9d5b66bfd94913c1506144792c1f397566d4d7b99d4daeca3339a344363"
+      "sha256": "a6d8f422ce5e5863f1ac09e2b3cb42fec5f72738a9a56140b9b4c71fad8664a4"
     },
     "reserve": {
-      "entry_count": 101,
+      "entry_count": 97,
       "keys": [
         "athey2019",
         "ayari2026",
@@ -588,10 +597,6 @@
         "zhou2024",
         "rockafellar2000cvar",
         "bental2007oce",
-        "podkopaev2021labelshift",
-        "ramos2026transported_beta",
-        "xu2026selective_crc",
-        "zhou2026audited_cp",
         "long2026cp_wdro",
         "farzaneh2026oce_risk_control",
         "braun2026conditional_coverage_diagnostics",
@@ -634,7 +639,7 @@
         "lyocsa2022profit"
       ],
       "path": "paper/references_reserve.bib",
-      "sha256": "3c9fedddc1de5bd0fdd761e4e4989ea9daa74d14743a9229919d3758b5bcc22b"
+      "sha256": "90bde681005d8dc9223c03b4a2631f2e4e585f2a3cb934547a35f98c46b2b48b"
     }
   }
 }

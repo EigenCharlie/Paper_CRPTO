@@ -4,11 +4,12 @@ Upload separately from the double-anonymous manuscript.
 
 ## Title
 
-Auditing Binary Conformal Prediction in Credit Allocation: Exact Geometry, Temporal-Transport Diagnostics, and Comparator Dependence
+Auditing the Handoff from Binary Conformal Sets to Credit Allocation: Exact
+Geometry, Label-Delayed Transport, and Comparator Dependence
 
 ## Running Title
 
-Binary Conformal Portfolio Audit
+Binary Conformal Handoff Audit
 
 ## Keywords
 
