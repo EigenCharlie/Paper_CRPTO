@@ -10,8 +10,9 @@ paper and reproducibility bundle, not a production service.
 
 ## Authority Snapshot
 
-Research authority is current through 2026-08-08. The active claim registry
-remains the sole paper-facing claim authority; exact theory overrides a
+Research authority is current through the active 2026-08-09 claim registry
+and claim ledger. The active claim registry remains the sole paper-facing
+claim authority; exact theory overrides a
 conflicting summary. The complete-hull score-equivalence and set-native binary
 worst-label lineages (whose historical tags retain `robust-counterpart`) are
 sealed Git-native July-31 audits. The clean
@@ -370,8 +371,8 @@ the master `paper/references.bib`, and regenerate deterministic active/reserve
 views. Regenerate `configs/ijds_literature_corpus_manifest.json` with
 `scripts/build_ijds_literature_corpus_manifest.py`; its complete
 key--PDF--version--SHA-256--status crosswalk, not a partial prose table, owns the
-current corpus census. The 2026-08-09 state is 168 unique readable PDFs and 199
-bibliography keys, partitioned into 106 active and 93 reserve keys.
+current corpus census. The 2026-09-01 state is 171 unique readable PDFs and 207
+bibliography keys, partitioned into 110 active and 97 reserve keys.
 
 CREDO is a close expectation-wise *decide-then-assess* neighbor whose source
 uses the stated first-order approximation or additive correction; it supplies

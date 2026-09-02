@@ -273,9 +273,9 @@ def test_master_bibliography_contains_coordinated_keys_and_pinned_urls() -> None
         "https://arxiv.org/abs/2602.00989v3" in entries["wang2026optimal_decision_prediction_sets"]
     )
     assert "https://openreview.net/forum?id=iOMnn1hSBO" in entries["cortesgomez2025utility"]
-    assert "https://proceedings.mlr.press/v161/podkopaev21a.html" in entries[
-        "podkopaev2021labelshift"
-    ]
+    assert (
+        "https://proceedings.mlr.press/v161/podkopaev21a.html" in entries["podkopaev2021labelshift"]
+    )
     assert "https://arxiv.org/abs/2605.19024v1" in entries["ramos2026transported_beta"]
     assert "https://arxiv.org/abs/2512.12844v2" in entries["xu2026selective_crc"]
     assert "https://arxiv.org/abs/2606.14909v1" in entries["zhou2026audited_cp"]

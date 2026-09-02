@@ -1270,3 +1270,8 @@ paper-facing run requires a written protocol and immutable tag before the
 corresponding run, explicit stop rules, complete reporting, and a new versioned
 evidence source. Because the archive has already been inspected, such locking
 is retrospective discipline rather than preregistration.
+
+The sealed synthetic JOMI lineage
+`protocol/ijds-equal-notional-jomi-synthetic-feasibility-2026-08-08-v1` is
+deliberately unregistered as an evidence source. It remains theorem-to-code
+provenance only and supports no empirical archive claim.
