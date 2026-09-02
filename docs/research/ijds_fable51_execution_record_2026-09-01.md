@@ -279,3 +279,28 @@ reconstructed or copied to replace either missing artifact.
   and tests now bind 46 CSV tables and five figure families. Publication
   integrity, claim synchronization, sealed-parent, table, archive-anonymity,
   target-support, JOMI, and deterministic-TeX gates pass.
+
+### Phase 9 — integral validation and publication closeout
+
+- The final serial validation passed `just test`, `just lint`,
+  `just type-check`, `just type-check-fast`, `just ijds-active-check`,
+  `just drift-gate`, `just validate-champion`, `just paper-tex-check`,
+  `just paper-official-scan`, `just paper-pdf-audit`, and
+  `just paper-machine-supplement-check`. The active runner reports 970 passed,
+  three declared skips, and 59 DVC-tier deselections; the machine-readable
+  archive is current with 21 members.
+- The official TeX was regenerated only through its source builder. The body,
+  supplement, and official PDFs were regenerated serially and contain 52, 83,
+  and 78 Letter-sized pages. The structural audit reports no blank pages,
+  stale outputs, identity or fingerprint hits, or citation/reference failures.
+  The one-paragraph abstract matches the official PDF and contains 299 words.
+- Visual inspection covered the official title, both redesigned figures, the
+  complete S6I/S6Q table transition, the JOMI corollary and proof, and their
+  body/supplement renderings. No clipping, overflow, illegible annotation,
+  broken formula, or malformed table was found.
+- `just submission-build` remains correctly fail-closed at the absent sealed
+  tie-audit summary, before any downstream evidence rebuild. Every
+  non-materialization component of `just submission-check` passes; its final
+  strict manifest gate alone reports 20 absent frozen DVC artifacts and zero
+  drifted artifacts. The missing-object condition was preserved rather than
+  bypassed, reconstructed, or hidden by changing a test.

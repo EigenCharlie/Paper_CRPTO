@@ -1891,10 +1891,11 @@ def _binary_phase_target_support_manifest_payload(table: pd.DataFrame) -> dict[s
     learner_windows = table.drop_duplicates(["learner", "window_id"])
     group_rows = []
     for group, frame in table.groupby("conformal_group", observed=True, sort=True):
+        group_value = int(cast(Any, group))
         group_rows.append(
             {
-                "conformal_group": int(group),
-                "score_stratum": int(group) + 1,
+                "conformal_group": group_value,
+                "score_stratum": group_value + 1,
                 "cells": int(len(frame)),
                 "threshold_below_half": int(frame["threshold_below_half"].sum()),
                 "target_max_below_positive_label_boundary": int(

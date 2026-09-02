@@ -13,18 +13,12 @@ def test_publication_figures_pin_headless_backend() -> None:
     assert builder.plt.get_backend().casefold() == "agg"
 
 
-def test_phase_figure_uses_independent_axes_and_exact_window_ordinals(
+def test_phase_census_figure_uses_independent_axes_and_exact_window_ordinals(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    phase = pd.DataFrame(
-        {
-            "window_id": builder.WINDOW_IDS,
-            "fit_prevalence": [0.117, 0.116, 0.114, 0.110, 0.107, 0.105, 0.102, 0.097],
-            "phase_boundary_rate": [0.10] * 8,
-            "fit_residual_quantile": [0.888] * 7 + [0.112],
-            "phase_margin": [20, 18, 16, 14, 13, 12, 11, -16],
-        }
+    census = pd.read_csv(
+        builder.TABLE_TARGETS["binary_phase_target_support"],
     )
     rendered: dict[str, object] = {}
 
@@ -34,29 +28,33 @@ def test_phase_figure_uses_independent_axes_and_exact_window_ordinals(
         *,
         output_dir: Path,
     ) -> dict[str, Path]:
-        left, right = figure.axes
+        panels = figure.axes[:5]
         figure.canvas.draw()
-        rendered["joined"] = left.get_shared_x_axes().joined(left, right)
-        rendered["ticks"] = [axis.get_xticks().tolist() for axis in (left, right)]
-        rendered["labels"] = [
-            [tick.get_text() for tick in axis.get_xticklabels()] for axis in (left, right)
-        ]
-        rendered["formatters_are_distinct"] = (
-            left.xaxis.get_major_formatter() is not right.xaxis.get_major_formatter()
+        rendered["joined"] = any(
+            panels[0].get_shared_x_axes().joined(panels[0], axis) for axis in panels[1:]
         )
+        rendered["ticks"] = [axis.get_xticks().tolist() for axis in panels]
+        rendered["labels"] = [
+            [tick.get_text() for tick in axis.get_xticklabels()] for axis in panels
+        ]
+        rendered["formatters_are_distinct"] = len(
+            {id(axis.xaxis.get_major_formatter()) for axis in panels}
+        ) == len(panels)
+        rendered["outline_counts"] = [len(axis.patches) for axis in panels]
         builder.plt.close(figure)
         return {}
 
     monkeypatch.setattr(builder, "_save_figure", capture_figure)
 
-    builder._phase_figure(phase, output_dir=tmp_path)
+    builder._phase_census_figure(census, output_dir=tmp_path)
 
-    expected = [str(index) for index in range(1, 9)]
+    expected = [f"W{index}" for index in range(1, 9)]
     assert rendered == {
         "joined": False,
-        "ticks": [[float(index) for index in range(1, 9)]] * 2,
-        "labels": [expected, expected],
+        "ticks": [[float(index) for index in range(8)]] * 5,
+        "labels": [expected] * 5,
         "formatters_are_distinct": True,
+        "outline_counts": [40, 40, 8, 0, 0],
     }
 
 

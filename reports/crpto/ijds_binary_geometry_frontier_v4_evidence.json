@@ -76055,13 +76055,13 @@
     },
     "publication_targets_contract": {
       "path": "configs/crpto_publication_targets.yaml",
-      "bytes": 25225,
-      "sha256": "44d5057946ed210a54e06bb020b263a1657daa326aad7a07b05188e38dde56bd"
+      "bytes": 25295,
+      "sha256": "b77414e0668adf42da344ed0f3999adba1a678a5a25e407a30cde269c173367d"
     },
     "evidence_builder": {
       "path": "scripts/build_ijds_binary_geometry_frontier_v4_evidence.py",
-      "bytes": 298383,
-      "sha256": "23fd5333c7f47387a40feaf9fdab5a3f12b795f29cee7da7f42632c815df2069"
+      "bytes": 298429,
+      "sha256": "fdb5d020060c57b261b33afd0fa7db12ce1243c174f1eddf17e1a295a001a755"
     },
     "policy_support_evidence_builder": {
       "path": "scripts/build_ijds_policy_support_optimal_face_evidence.py",

@@ -1756,7 +1756,7 @@ def _validate_cross_table_contract(
         for row in rows_by_name[s6c_name]
     }
     support_by_learner_window: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
-    support_counts = Counter()
+    support_counts: Counter[int] = Counter()
     for row_number, support_row in enumerate(rows_by_name[s6q_name], start=2):
         key = (
             support_row["learner"],
@@ -2438,10 +2438,14 @@ def _validate_cross_table_contract(
         "within_tolerance",
     )
     for row in s9l_rows:
-        key = (row["contrast_family"], row["metric"])
+        s9l_key = (row["contrast_family"], row["metric"])
         observed = tuple(int(row[column]) for column in census_columns)
-        if observed != expected_s9l[key]:
-            _fail(s9l_name, paths[s9l_name], f"the exact direction census changed for {key!r}.")
+        if observed != expected_s9l[s9l_key]:
+            _fail(
+                s9l_name,
+                paths[s9l_name],
+                f"the exact direction census changed for {s9l_key!r}.",
+            )
 
 
 def _zip_payload(sources: dict[str, Path] | None = None) -> bytes:

@@ -38,6 +38,7 @@ active_scientific_contract:
       - src
     paper_pipeline:
       - scripts/build_ijds_binary_geometry_frontier_v4_evidence.py
+      - scripts/extend_ijds_evidence_from_sealed_parent_2026_09_01.py
       - scripts/check_publication_integrity.py
       - scripts/build_ijds_submission_tex.py
       - scripts/build_ijds_machine_readable_supplement.py
