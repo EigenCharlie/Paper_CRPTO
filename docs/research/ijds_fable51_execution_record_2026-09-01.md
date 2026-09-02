@@ -58,3 +58,28 @@ reconstructed or copied to replace either missing artifact.
   therefore governed under the existing active crossed-band claim rather than
   leaving the ledger and manifest inconsistent. No manifest or descriptor was
   edited manually.
+
+### Phase 4 — literature intake
+
+- Accepted after primary-source verification: Podkopaev--Ramdas is UAI 2021,
+  PMLR 161:844--853. The official proceedings PDF and record replace the
+  proposal's tentative venue metadata. Its invariant class-conditional law and
+  target-prior information remain prospective assumptions; the intake does not
+  identify label shift in CRPTO.
+- Accepted with exact-version receipts: Ramos--Graziadei--Cabezas v1,
+  Xu--Guo--Wei v2, and Zhou--Fathony--Nguyen--Sesia v1 now have keyed current
+  corpus objects. The previously local Zhou object matched the downloaded v1
+  SHA-256 exactly and was renamed rather than duplicated or overwritten.
+- Accepted as reserve metadata only: Long et al. v1, Farzaneh--Simeone v1,
+  Braun et al. v2, and the official ICLR 2025 Wasserstein-regularized conformal
+  paper. Corpus intake or reserve bibliography status activates no method or
+  claim.
+- Parser and visual QA passed for the four promoted objects. Docling completed
+  three exact objects; the 59-page Zhou conversion was stopped after one
+  bounded five-minute attempt, while strict PyPDF and targeted Poppler review
+  passed. No partial parser output is canonical and no protected extraction
+  manifest was modified.
+- Gates: all 11 bibliography/manifest tests passed; both deterministic builders
+  pass `--check`; the manifest closes 171 unique PDFs and 207 bibliography
+  entries with no missing citation, stale override, duplicate hash, encrypted
+  object, or malformed page tree.

@@ -16,11 +16,11 @@ MASTER_BIBLIOGRAPHY = Path("paper/references.bib")
 
 EXPECTED_STATUS_COUNTS = {
     "companion": 1,
-    "current": 147,
+    "current": 151,
     "legacy": 6,
     "quarantined": 3,
     "superseded": 5,
-    "watchlist": 6,
+    "watchlist": 5,
 }
 
 EXPECTED_VERSIONED_OBJECTS = {
@@ -77,6 +77,30 @@ EXPECTED_VERSIONED_OBJECTS = {
         "pages": 38,
         "sha256": "1412672dee77ca804e3d9e611ea8af41555fbce1be34657f7d2b707a9bd650b6",
         "source_url": "https://arxiv.org/abs/2605.06479v1",
+    },
+    "podkopaev2021labelshift": {
+        "version": "UAI 2021 / PMLR 161:844--853",
+        "pages": 10,
+        "sha256": "76c4e956fff514c23546d8c5145f7331cdf4caddf458078fa59cefb9f91074ac",
+        "source_url": "https://proceedings.mlr.press/v161/podkopaev21a.html",
+    },
+    "ramos2026transported_beta": {
+        "version": "arXiv:2605.19024v1",
+        "pages": 33,
+        "sha256": "f4563aae0258ed80cf26155cee07f0c8476d2ba9261fc7738847030e20cbe577",
+        "source_url": "https://arxiv.org/abs/2605.19024v1",
+    },
+    "xu2026selective_crc": {
+        "version": "arXiv:2512.12844v2",
+        "pages": 25,
+        "sha256": "e5531ca84122c8fb5e56e9c0a2fe2b98521b69ca092f587eea9825a33e39d1f5",
+        "source_url": "https://arxiv.org/abs/2512.12844v2",
+    },
+    "zhou2026audited_cp": {
+        "version": "arXiv:2606.14909v1",
+        "pages": 59,
+        "sha256": "498e13b5b90e53335f18bc2a5757293d1c316302d7fba841e4808c5c7fdd00ea",
+        "source_url": "https://arxiv.org/abs/2606.14909v1",
     },
     "liang2026model_selection_conformal": {
         "version": "arXiv:2408.07066v4 / JASA 2026 online first",
@@ -139,8 +163,12 @@ EXPECTED_MANUALLY_ADJUDICATED_KEYS = {
     "liu2021riskbounds",
     "ovalle2025cmicl",
     "patel2024",
+    "podkopaev2021labelshift",
+    "ramos2026transported_beta",
     "xu2024profit_risk_credit",
+    "xu2026selective_crc",
     "ziliaskopoulos2026dva",
+    "zhou2026audited_cp",
 }
 
 
@@ -155,16 +183,16 @@ def test_repository_literature_manifest_is_current_and_complete() -> None:
     assert build_manifest(check=True)
     assert payload["summary"] == {
         "active_metadata_only_keys": ["holm1979", "manski2003partial", "platt2000", "vovk2005"],
-        "bibliography_corpus_status_counts": {"current": 147, "metadata-only": 52},
-        "bibliography_entries": 199,
-        "citation_state_counts": {"active": 106, "reserve": 93},
+        "bibliography_corpus_status_counts": {"current": 151, "metadata-only": 56},
+        "bibliography_entries": 207,
+        "citation_state_counts": {"active": 106, "reserve": 101},
         "object_status_counts": EXPECTED_STATUS_COUNTS,
-        "pdf_bytes": 343_885_895,
-        "pdf_objects": 168,
-        "pdf_pages": 6_053,
-        "unique_sha256": 168,
+        "pdf_bytes": 346_669_707,
+        "pdf_objects": 171,
+        "pdf_pages": 6_121,
+        "unique_sha256": 171,
     }
-    assert len(pdfs) == 168
+    assert len(pdfs) == 171
     assert payload["validation"] == {
         "all_active_keys_current_or_explicit_metadata_only": True,
         "all_hashes_unique": True,
@@ -230,6 +258,14 @@ def test_master_bibliography_contains_coordinated_keys_and_pinned_urls() -> None
         "stanton2023feedback",
         "prinster2024feedback",
         "cpc2026",
+        "podkopaev2021labelshift",
+        "ramos2026transported_beta",
+        "xu2026selective_crc",
+        "zhou2026audited_cp",
+        "long2026cp_wdro",
+        "farzaneh2026oce_risk_control",
+        "braun2026conditional_coverage_diagnostics",
+        "wasserstein_regularized_cp_2025",
     }.issubset(entries)
     assert "https://openreview.net/forum?id=xRjOrcj08o" in entries["zhou2025credo"]
     assert "https://arxiv.org/abs/2605.08506v2" in entries["chen2026polyhedral_conformal_ro"]
@@ -237,6 +273,12 @@ def test_master_bibliography_contains_coordinated_keys_and_pinned_urls() -> None
         "https://arxiv.org/abs/2602.00989v3" in entries["wang2026optimal_decision_prediction_sets"]
     )
     assert "https://openreview.net/forum?id=iOMnn1hSBO" in entries["cortesgomez2025utility"]
+    assert "https://proceedings.mlr.press/v161/podkopaev21a.html" in entries[
+        "podkopaev2021labelshift"
+    ]
+    assert "https://arxiv.org/abs/2605.19024v1" in entries["ramos2026transported_beta"]
+    assert "https://arxiv.org/abs/2512.12844v2" in entries["xu2026selective_crc"]
+    assert "https://arxiv.org/abs/2606.14909v1" in entries["zhou2026audited_cp"]
     assert (
         "https://arxiv.org/abs/2605.06479v1" in entries["joshi2026risk_controlled_postprocessing"]
     )

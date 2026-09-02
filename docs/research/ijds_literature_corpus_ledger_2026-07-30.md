@@ -1,4 +1,4 @@
-# IJDS literature corpus ledger (through 2026-08-09)
+# IJDS literature corpus ledger (through 2026-09-01)
 
 Status: documentary literature-provenance record; not an empirical evidence
 source and not an entry in the active-evidence registry.
@@ -11,7 +11,9 @@ four-object theory-neighbor intake audited on 2026-08-01, the exact-version
 and nearest-neighbor refresh audited on 2026-08-06, and the decision-feedback
 and exact-version refresh audited on 2026-08-07, plus the risk-controlled
 policy-post-processing intake audited on 2026-08-08 and the selection/action-
-conditional exact-object refresh audited on 2026-08-09. The 2026-07-31
+conditional exact-object refresh audited on 2026-08-09, and the label-shift,
+finite-batch, and selective-coverage neighbor intake audited on 2026-09-01.
+The 2026-07-31
 frontier intake consists of five newly materialized PDFs plus the already-local
 non-monotonic conformal-risk-control preprint. The active-citation gap intake
 materialized 19 PDFs from primary or official open-access surfaces and left
@@ -90,11 +92,19 @@ v4, Yang--Kuchibhotla v3, and official Hegazy NeurIPS objects add 153 pages and
 exact downloaded hashes and were renamed without changing bytes; the Hegazy
 arXiv v1 is retained as a superseded object rather than overwritten.
 
-The 199-entry master bibliography currently partitions into **106 active**
-body-or-supplement citations and **93 reserve** entries. Of the 199 keys, 147
-have one current local PDF and 52 are metadata-only. The only four active
+**Current snapshot, 2026-09-01.** `Papers_tesis` contains **171 PDF objects,
+6,121 pages, and 346,669,707 bytes**. All 171 objects have distinct SHA-256
+values, pass strict PyPDF page-tree traversal, and are unencrypted. Three newly
+materialized exact objects add 68 pages and 2,783,812 bytes; the previously
+local Zhou--Fathony--Nguyen--Sesia object matched the primary arXiv v1 object
+byte for byte and was renamed to expose that identity without changing corpus
+counts or bytes.
+
+The 207-entry master bibliography currently partitions into **106 active**
+body-or-supplement citations and **101 reserve** entries. Of the 207 keys, 151
+have one current local PDF and 56 are metadata-only. The only four active
 metadata-only exceptions remain `holm1979`, `manski2003partial`, `platt2000`,
-and `vovk2005`; the other 48 metadata-only entries are reserve records whose
+and `vovk2005`; the other 52 metadata-only entries are reserve records whose
 PDF should be acquired only if the work becomes an active citation.
 
 The generated authority for this complete projection is
@@ -103,11 +113,60 @@ The generated authority for this complete projection is
 `tests/test_ijds_literature_corpus_manifest.py`. It records, for every local
 object, its BibTeX key or explicit unkeyed disposition, path, version, status,
 bytes, pages, SHA-256, strict-parser result, and source URL. Its object statuses
-are 147 `current`, five `superseded`, one `companion`, six `watchlist`, three
+are 151 `current`, five `superseded`, one `companion`, five `watchlist`, three
 `quarantined`, and six `legacy`; bibliography entries without a current PDF
 are separately marked `metadata-only`. Generation fails on an unrecognized
 status, stale explicit mapping, missing cited key, duplicate hash, encrypted or
 malformed PDF, or multiple current objects for one key.
+
+## Label-shift and adjacent-method intake — 2026-09-01
+
+The intake separates primary-source verification, exact-byte archiving, and
+manuscript activation. Podkopaev--Ramdas was verified against the official
+PMLR record rather than the tentative BibTeX in the non-authoritative audit:
+the work appeared at UAI 2021 in PMLR volume 161, pages 844--853. Its label-
+shift construction assumes invariant class-conditional feature laws and uses
+target information to estimate class-prior ratios; the citation does not show
+that CRPTO satisfies those assumptions or identify label shift as the archive's
+mechanism. Ramos et al. is a finite-batch reference law, Xu--Guo--Wei uses a
+unit-level selective-classification rule, and Zhou et al. requires a labeled
+target audit sample. None repairs CRPTO's temporal, label-delay, funded-set, or
+budget-coupled decision boundary.
+
+| Work / exact version | Canonical local PDF | Bytes | Pages | SHA-256 | BibTeX key | Primary record and disposition |
+|---|---|---:|---:|---|---|---|
+| Podkopaev and Ramdas, *Distribution-Free Uncertainty Quantification for Classification under Label Shift*, UAI 2021 / PMLR 161:844--853 | `Papers_tesis/supplement/Podkopaev Ramdas 2021 - Distribution-Free Uncertainty Quantification for Classification under Label Shift - UAI PMLR 161.pdf` | 932,732 | 10 | `76c4e956fff514c23546d8c5145f7331cdf4caddf458078fa59cefb9f91074ac` | `podkopaev2021labelshift` | [Official PMLR record](https://proceedings.mlr.press/v161/podkopaev21a.html). A-boundary neighbor; its invariance and target-prior information are prospective design requirements, not findings about this archive. |
+| Ramos, Graziadei, and Cabezas, *Conformal Prediction via Transported Beta Laws*, arXiv:2605.19024v1 | `Papers_tesis/supplement/Ramos Graziadei Cabezas 2026 - Conformal Prediction via Transported Beta Laws - arXiv 2605.19024v1.pdf` | 1,082,963 | 33 | `f4563aae0258ed80cf26155cee07f0c8476d2ba9261fc7738847030e20cbe577` | `ramos2026transported_beta` | [arXiv v1](https://arxiv.org/abs/2605.19024v1). A-boundary finite-batch neighbor; its continuous-iid beta reference and transported laws do not turn CRPTO's joint-block diagnostic into a validity result. |
+| Xu, Guo, and Wei, *Selective Conformal Risk Control*, arXiv:2512.12844v2 | `Papers_tesis/supplement/Xu Guo Wei 2026 - Selective Conformal Risk Control - arXiv 2512.12844v2.pdf` | 768,117 | 25 | `e5531ca84122c8fb5e56e9c0a2fe2b98521b69ca092f587eea9825a33e39d1f5` | `xu2026selective_crc` | [arXiv v2](https://arxiv.org/abs/2512.12844v2). B-boundary neighbor; its two-stage unit-level selection and exchangeability/PAC contracts are not CRPTO's fractional allocation rule. |
+| Zhou, Fathony, Nguyen, and Sesia, *Audited Conformal Prediction for Classification under Unknown Distribution Shift*, arXiv:2606.14909v1 | `Papers_tesis/supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction for Classification under Unknown Distribution Shift - arXiv 2606.14909v1.pdf` | 1,488,561 | 59 | `498e13b5b90e53335f18bc2a5757293d1c316302d7fba841e4808c5c7fdd00ea` | `zhou2026audited_cp` | [arXiv v1](https://arxiv.org/abs/2606.14909v1). B-boundary prospective design; the method requires a small labeled target sample unavailable at CRPTO's decision date. |
+
+Strict PyPDF traversed all 127 pages, found no encryption or empty extracted-
+text page, and recorded median page yields of 4,749.5, 1,914, 2,094, and 3,303
+characters in the table order. Bounded sequential Docling conversion used one
+thread, OCR disabled, and exact local artifacts. It completed Podkopaev--Ramdas
+in 20.27 seconds, Ramos et al. in 61.66 seconds, and Xu--Guo--Wei in 47.33
+seconds. The Zhou conversion was stopped after a bounded five-minute attempt
+without an emitted error or completed export; no partial parser output is
+canonical. This operational limit is not evidence against the PDF, which
+passed the strict parser and visual checks.
+
+Poppler renders of pages 1 and 3 (Podkopaev--Ramdas), 1 and 14 (Ramos et al.),
+1 and 8 (Xu--Guo--Wei), and 1 and 4 (Zhou et al.) were compared with extracted
+text. Titles, author and version identities, assumptions, theorem statements,
+formulae, plots, and audit-model descriptions were legible. Poppler reported
+missing display-font fallbacks for `Symbol` and `ArialUnicode` on the relevant
+objects; inspected mathematical glyphs showed no visible corruption. Scratch
+parser copies, exports, and renders remain noncanonical under
+`.tmp_pdf_intake_benchmark/l51short/`.
+
+Four additional records were verified on their primary surfaces and retained
+as metadata-only reserves: `long2026cp_wdro` (arXiv:2608.29789v1, submitted
+2026-08-30), `farzaneh2026oce_risk_control` (arXiv:2608.28179v1, submitted
+2026-08-28), `braun2026conditional_coverage_diagnostics`
+(arXiv:2512.11779v2, revised 2026-05-29), and
+`wasserstein_regularized_cp_2025` (ICLR 2025 official OpenReview record;
+arXiv:2501.13430v2). Their reserve status authorizes no manuscript claim, and
+no local PDF was acquired merely to enlarge the corpus.
 
 The six formerly implicit legacy objects now have explicit non-claim-bearing
 dispositions in that manifest:

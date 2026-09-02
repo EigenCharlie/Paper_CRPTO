@@ -29,7 +29,7 @@ CITATION_SOURCES = (
 )
 MANIFEST = ROOT / "configs" / "ijds_literature_corpus_manifest.json"
 
-SNAPSHOT_DATE = "2026-08-09"
+SNAPSHOT_DATE = "2026-09-01"
 ALLOWED_OBJECT_STATUSES = {
     "current",
     "superseded",
@@ -352,6 +352,28 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
     "supplement/Zhou Zhu 2025 - Calibrating Decision Robustness via Inverse Conformal Risk Control - arXiv 2510.07750v3.pdf": _override(
         "zhou2026creme", version="arXiv:2510.07750v3"
     ),
+    "supplement/Podkopaev Ramdas 2021 - Distribution-Free Uncertainty Quantification for Classification under Label Shift - UAI PMLR 161.pdf": _override(
+        "podkopaev2021labelshift",
+        version="UAI 2021 / PMLR 161:844--853",
+        note="Official PMLR proceedings object; venue and pagination verified on the primary record.",
+        source_url="https://proceedings.mlr.press/v161/podkopaev21a.html",
+    ),
+    "supplement/Ramos Graziadei Cabezas 2026 - Conformal Prediction via Transported Beta Laws - arXiv 2605.19024v1.pdf": _override(
+        "ramos2026transported_beta",
+        version="arXiv:2605.19024v1",
+        source_url="https://arxiv.org/abs/2605.19024v1",
+    ),
+    "supplement/Xu Guo Wei 2026 - Selective Conformal Risk Control - arXiv 2512.12844v2.pdf": _override(
+        "xu2026selective_crc",
+        version="arXiv:2512.12844v2",
+        source_url="https://arxiv.org/abs/2512.12844v2",
+    ),
+    "supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction for Classification under Unknown Distribution Shift - arXiv 2606.14909v1.pdf": _override(
+        "zhou2026audited_cp",
+        version="arXiv:2606.14909v1",
+        note="Exact v1 bytes matched the previously local unversioned watchlist object.",
+        source_url="https://arxiv.org/abs/2606.14909v1",
+    ),
     # Audited nearby PDFs intentionally not promoted to the master bibliography.
     "supplement/Ding Fermanian Salmon 2026 - Conformal Prediction for Long-Tailed Classification.pdf": _override(
         None, "watchlist", "unkeyed local PDF", "Audited B-grade nearby method; not promoted."
@@ -366,9 +388,6 @@ OBJECT_OVERRIDES: dict[str, ObjectOverride] = {
         None, "watchlist", "unkeyed local PDF", "Audited B-grade nearby method; not promoted."
     ),
     "supplement/Zecchin et al 2025 - Weighted Conformal Risk Control Under Covariate Shift.pdf": _override(
-        None, "watchlist", "unkeyed local PDF", "Audited B-grade nearby method; not promoted."
-    ),
-    "supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction Under Unknown Distribution Shift.pdf": _override(
         None, "watchlist", "unkeyed local PDF", "Audited B-grade nearby method; not promoted."
     ),
     "supplement/Alberge et al 2026 - Calibration of Survival Models with Competing Risks.pdf": _override(

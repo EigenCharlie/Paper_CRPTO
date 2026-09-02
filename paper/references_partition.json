@@ -193,7 +193,7 @@
   ],
   "generated_by": "scripts/build_ijds_bibliography_views.py",
   "master_bibliography": {
-    "entry_count": 199,
+    "entry_count": 207,
     "keys": [
       "angelopoulos2023",
       "angelopoulos2024risk",
@@ -296,6 +296,14 @@
       "rockafellar2000cvar",
       "bental2007oce",
       "tibshirani2019covshift",
+      "podkopaev2021labelshift",
+      "ramos2026transported_beta",
+      "xu2026selective_crc",
+      "zhou2026audited_cp",
+      "long2026cp_wdro",
+      "farzaneh2026oce_risk_control",
+      "braun2026conditional_coverage_diagnostics",
+      "wasserstein_regularized_cp_2025",
       "angelopoulos2024foundations",
       "guan2023localized",
       "cfpb2014bisg",
@@ -396,7 +404,7 @@
       "zhu2026action_conditional_risk_averse"
     ],
     "path": "paper/references.bib",
-    "sha256": "ad892c2e444acbdf665e0eadb13495b3c816c4db3271ab7c92ad9a8f7c9da7d4"
+    "sha256": "f3926ae504ad3e21bf57ba95efb6043a70176e9a69bb72f7d62d3f9880be3e91"
   },
   "schema_version": "1.0",
   "validation": {
@@ -521,7 +529,7 @@
       "sha256": "fb6af9d5b66bfd94913c1506144792c1f397566d4d7b99d4daeca3339a344363"
     },
     "reserve": {
-      "entry_count": 93,
+      "entry_count": 101,
       "keys": [
         "athey2019",
         "ayari2026",
@@ -580,6 +588,14 @@
         "zhou2024",
         "rockafellar2000cvar",
         "bental2007oce",
+        "podkopaev2021labelshift",
+        "ramos2026transported_beta",
+        "xu2026selective_crc",
+        "zhou2026audited_cp",
+        "long2026cp_wdro",
+        "farzaneh2026oce_risk_control",
+        "braun2026conditional_coverage_diagnostics",
+        "wasserstein_regularized_cp_2025",
         "angelopoulos2024foundations",
         "guan2023localized",
         "cfpb2014bisg",
@@ -618,7 +634,7 @@
         "lyocsa2022profit"
       ],
       "path": "paper/references_reserve.bib",
-      "sha256": "7cbacbefc84e6d96ca2fb68b9021ff3be4a458feb023dfeb6ef82c2f79472b30"
+      "sha256": "3c9fedddc1de5bd0fdd761e4e4989ea9daa74d14743a9229919d3758b5bcc22b"
     }
   }
 }

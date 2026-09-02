@@ -1131,6 +1131,94 @@
       "year": "2019"
     },
     {
+      "bibtex_key": "podkopaev2021labelshift",
+      "citation_state": "reserve",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Podkopaev Ramdas 2021 - Distribution-Free Uncertainty Quantification for Classification under Label Shift - UAI PMLR 161.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Podkopaev Ramdas 2021 - Distribution-Free Uncertainty Quantification for Classification under Label Shift - UAI PMLR 161.pdf"
+      ],
+      "title": "Distribution-Free Uncertainty Quantification for Classification under Label Shift",
+      "year": "2021"
+    },
+    {
+      "bibtex_key": "ramos2026transported_beta",
+      "citation_state": "reserve",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Ramos Graziadei Cabezas 2026 - Conformal Prediction via Transported Beta Laws - arXiv 2605.19024v1.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Ramos Graziadei Cabezas 2026 - Conformal Prediction via Transported Beta Laws - arXiv 2605.19024v1.pdf"
+      ],
+      "title": "Conformal Prediction via Transported Beta Laws",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "xu2026selective_crc",
+      "citation_state": "reserve",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Xu Guo Wei 2026 - Selective Conformal Risk Control - arXiv 2512.12844v2.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Xu Guo Wei 2026 - Selective Conformal Risk Control - arXiv 2512.12844v2.pdf"
+      ],
+      "title": "Selective Conformal Risk Control",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "zhou2026audited_cp",
+      "citation_state": "reserve",
+      "corpus_status": "current",
+      "current_pdf": "Papers_tesis/supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction for Classification under Unknown Distribution Shift - arXiv 2606.14909v1.pdf",
+      "metadata_only_reason": null,
+      "object_paths": [
+        "Papers_tesis/supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction for Classification under Unknown Distribution Shift - arXiv 2606.14909v1.pdf"
+      ],
+      "title": "Audited Conformal Prediction for Classification under Unknown Distribution Shift",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "long2026cp_wdro",
+      "citation_state": "reserve",
+      "corpus_status": "metadata-only",
+      "current_pdf": null,
+      "metadata_only_reason": "Reserve entry; acquire and validate an exact PDF only upon promotion.",
+      "object_paths": [],
+      "title": "A Unified Perspective on Conformal Prediction and Wasserstein Distributionally Robust Optimization for Uncertainty Quantification",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "farzaneh2026oce_risk_control",
+      "citation_state": "reserve",
+      "corpus_status": "metadata-only",
+      "current_pdf": null,
+      "metadata_only_reason": "Reserve entry; acquire and validate an exact PDF only upon promotion.",
+      "object_paths": [],
+      "title": "Conformal Risk-Averse Decision Making with Optimized Certainty Equivalent Risk Control",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "braun2026conditional_coverage_diagnostics",
+      "citation_state": "reserve",
+      "corpus_status": "metadata-only",
+      "current_pdf": null,
+      "metadata_only_reason": "Reserve entry; acquire and validate an exact PDF only upon promotion.",
+      "object_paths": [],
+      "title": "Conditional Coverage Diagnostics for Conformal Prediction",
+      "year": "2026"
+    },
+    {
+      "bibtex_key": "wasserstein_regularized_cp_2025",
+      "citation_state": "reserve",
+      "corpus_status": "metadata-only",
+      "current_pdf": null,
+      "metadata_only_reason": "Reserve entry; acquire and validate an exact PDF only upon promotion.",
+      "object_paths": [],
+      "title": "Wasserstein-Regularized Conformal Prediction under General Distribution Shift",
+      "year": "2025"
+    },
+    {
       "bibtex_key": "angelopoulos2024foundations",
       "citation_state": "reserve",
       "corpus_status": "current",
@@ -2297,7 +2385,7 @@
       "bibtex_key": "duchi2025sampleconditional",
       "bytes": 548349,
       "encrypted": false,
-      "match_margin": 0.45,
+      "match_margin": 0.405,
       "match_method": "title-author",
       "match_score": 0.975,
       "note": "Deterministic title-and-author match; unique current object enforced below.",
@@ -2873,7 +2961,7 @@
       "bibtex_key": "bao2024fcr_conformal",
       "bytes": 1050169,
       "encrypted": false,
-      "match_margin": 0.329167,
+      "match_margin": 0.266667,
       "match_method": "title-author",
       "match_score": 0.779167,
       "note": "Deterministic title-and-author match; unique current object enforced below.",
@@ -3609,7 +3697,7 @@
       "bibtex_key": "huang2026oce_rcps",
       "bytes": 2616718,
       "encrypted": false,
-      "match_margin": 0.493939,
+      "match_margin": 0.388384,
       "match_method": "title-author",
       "match_score": 0.963636,
       "note": "Deterministic title-and-author match; unique current object enforced below.",
@@ -3689,7 +3777,7 @@
       "bibtex_key": "jin2025focal",
       "bytes": 2151978,
       "encrypted": false,
-      "match_margin": 0.535119,
+      "match_margin": 0.491786,
       "match_method": "title-author",
       "match_score": 0.776786,
       "note": "Deterministic title-and-author match; unique current object enforced below.",
@@ -4118,6 +4206,22 @@
       "version": "arXiv:2601.20533v2"
     },
     {
+      "bibtex_key": "podkopaev2021labelshift",
+      "bytes": 932732,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Official PMLR proceedings object; venue and pagination verified on the primary record.",
+      "pages": 10,
+      "path": "Papers_tesis/supplement/Podkopaev Ramdas 2021 - Distribution-Free Uncertainty Quantification for Classification under Label Shift - UAI PMLR 161.pdf",
+      "sha256": "76c4e956fff514c23546d8c5145f7331cdf4caddf458078fa59cefb9f91074ac",
+      "source_url": "https://proceedings.mlr.press/v161/podkopaev21a.html",
+      "status": "current",
+      "strict_pypdf": "pass",
+      "version": "UAI 2021 / PMLR 161:844--853"
+    },
+    {
       "bibtex_key": "cpc2026",
       "bytes": 2426953,
       "encrypted": false,
@@ -4164,6 +4268,22 @@
       "status": "current",
       "strict_pypdf": "pass",
       "version": "unversioned local copy"
+    },
+    {
+      "bibtex_key": "ramos2026transported_beta",
+      "bytes": 1082963,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Human-adjudicated filename-to-work identity.",
+      "pages": 33,
+      "path": "Papers_tesis/supplement/Ramos Graziadei Cabezas 2026 - Conformal Prediction via Transported Beta Laws - arXiv 2605.19024v1.pdf",
+      "sha256": "f4563aae0258ed80cf26155cee07f0c8476d2ba9261fc7738847030e20cbe577",
+      "source_url": "https://arxiv.org/abs/2605.19024v1",
+      "status": "current",
+      "strict_pypdf": "pass",
+      "version": "arXiv:2605.19024v1"
     },
     {
       "bibtex_key": "rockafellar2000cvar",
@@ -4502,6 +4622,22 @@
       "version": "published version"
     },
     {
+      "bibtex_key": "xu2026selective_crc",
+      "bytes": 768117,
+      "encrypted": false,
+      "match_margin": null,
+      "match_method": "explicit",
+      "match_score": null,
+      "note": "Human-adjudicated filename-to-work identity.",
+      "pages": 25,
+      "path": "Papers_tesis/supplement/Xu Guo Wei 2026 - Selective Conformal Risk Control - arXiv 2512.12844v2.pdf",
+      "sha256": "e5531ca84122c8fb5e56e9c0a2fe2b98521b69ca092f587eea9825a33e39d1f5",
+      "source_url": "https://arxiv.org/abs/2512.12844v2",
+      "status": "current",
+      "strict_pypdf": "pass",
+      "version": "arXiv:2512.12844v2"
+    },
+    {
       "bibtex_key": "xu2025profit_uncertainty_credit",
       "bytes": 2536807,
       "encrypted": false,
@@ -4710,20 +4846,20 @@
       "version": "unversioned local copy"
     },
     {
-      "bibtex_key": null,
+      "bibtex_key": "zhou2026audited_cp",
       "bytes": 1488561,
       "encrypted": false,
       "match_margin": null,
       "match_method": "explicit",
       "match_score": null,
-      "note": "Audited B-grade nearby method; not promoted.",
+      "note": "Exact v1 bytes matched the previously local unversioned watchlist object.",
       "pages": 59,
-      "path": "Papers_tesis/supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction Under Unknown Distribution Shift.pdf",
+      "path": "Papers_tesis/supplement/Zhou Fathony Nguyen Sesia 2026 - Audited Conformal Prediction for Classification under Unknown Distribution Shift - arXiv 2606.14909v1.pdf",
       "sha256": "498e13b5b90e53335f18bc2a5757293d1c316302d7fba841e4808c5c7fdd00ea",
-      "source_url": null,
-      "status": "watchlist",
+      "source_url": "https://arxiv.org/abs/2606.14909v1",
+      "status": "current",
       "strict_pypdf": "pass",
-      "version": "unkeyed local PDF"
+      "version": "arXiv:2606.14909v1"
     },
     {
       "bibtex_key": "zhou2025credo",
@@ -4992,7 +5128,7 @@
     "master_bibliography": "paper/references.bib",
     "protected_extraction_manifest_modified": false
   },
-  "snapshot_date": "2026-08-09",
+  "snapshot_date": "2026-09-01",
   "summary": {
     "active_metadata_only_keys": [
       "holm1979",
@@ -5001,26 +5137,26 @@
       "vovk2005"
     ],
     "bibliography_corpus_status_counts": {
-      "current": 147,
-      "metadata-only": 52
+      "current": 151,
+      "metadata-only": 56
     },
-    "bibliography_entries": 199,
+    "bibliography_entries": 207,
     "citation_state_counts": {
       "active": 106,
-      "reserve": 93
+      "reserve": 101
     },
     "object_status_counts": {
       "companion": 1,
-      "current": 147,
+      "current": 151,
       "legacy": 6,
       "quarantined": 3,
       "superseded": 5,
-      "watchlist": 6
+      "watchlist": 5
     },
-    "pdf_bytes": 343885895,
-    "pdf_objects": 168,
-    "pdf_pages": 6053,
-    "unique_sha256": 168
+    "pdf_bytes": 346669707,
+    "pdf_objects": 171,
+    "pdf_pages": 6121,
+    "unique_sha256": 171
   },
   "validation": {
     "all_active_keys_current_or_explicit_metadata_only": true,
