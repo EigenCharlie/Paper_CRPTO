@@ -673,7 +673,7 @@ any claim.
 
 ### Prediction geometry and partial identification
 
-1. **Exact binary threshold geometry.** The calibration residuals of a stratum are the
+1. **Proposition 1 (exact binary threshold geometry).** The calibration residuals of a stratum are the
    multiset sum of the two mirror samples `{{p_i : Y_i=0}}` and
    `{{1-p_i : Y_i=1}}`, so the fitted threshold is exactly the `k`-th order
    statistic of that union whenever `p_i` lies in `[0,1]` and `k <= n`. With
@@ -685,14 +685,21 @@ any claim.
    threshold and does not place it below one half. Target-side statements need
    their own support condition, because neither calibration condition constrains
    target scores. Miscoverage remains exactly `1{Y=0,l>0} + 1{Y=1,u<1}`.
-2. **Exact crossed-band coverage identity.** For any fixed target
+2. **Lemma 1 (exact crossed-band coverage identity).** For any fixed target
    distribution and `0 <= c_L < c_H <= 1`,
    `Cov(c_H)-Cov(c_L) = P(Y=0,c_L<p<=c_H) +
    P(Y=1,1-c_H<=p<1-c_L)`. The identity is exact and nonnegative. It says that
    the change depends on target probability mass in the two crossed score
    bands, not on threshold distance alone; it does not imply continuity or
    preclude an order-one coverage change.
-**Lemma 1 (binary-set coverage does not identify the continuous decision
+3. **Corollary 1 (low-regime coverage ceiling).** On one fixed target
+   distribution, if a stratum threshold satisfies `c < 1/2`, then
+   `Cov_t <= 1-pi_t + pi_t*P_t(p >= 1-c | Y=1)`. If every target score in the
+   stratum is below `1-c`, this reduces to `Cov_t <= 1-pi_t`. The target-support
+   condition is sufficient, not necessary. Calibration geometry supplies only
+   the below-half premise; target support supplies the zero default-coverage
+   term. This is not a transport, individual-calibration, or mechanism claim.
+**Lemma 2 (binary-set coverage does not identify the continuous decision
 coefficient).** For
    `0<=l<=u<=1`, the induced set identifies whether `l=0` and whether `u=1`,
    but when label one is absent it identifies only `u<1`. In the active
@@ -711,14 +718,14 @@ coefficient).** For
    investment cap. This is a fibre-specific information-loss corollary, not a
    claim that nonidentification must change a decision or that marginal sets
    form a jointly covered Cartesian uncertainty set.
-3. **Sharp outcome-free fixed-allocation bounds.** For a fixed nonnegative
+4. **Lemma 3 (sharp outcome-free fixed-allocation bounds).** For a fixed nonnegative
    allocation normalized by positive total funded exposure, exposure in empty
    binary sets is the sharp lower bound on miscoverage over unrestricted binary
    outcomes; all exposure except that in full `{0,1}` sets is the sharp upper
    bound. A positive lower bound endpoint alone is not an outcome-free miss,
    and exposure with `u=1` is only total-capital-normalized mass capable of
    covering `Y=1`, not conditional positive-class coverage.
-4. **Sharp common-outcome partial identification.** Candidate and fixed-allocation
+5. **Lemma 4 (sharp common-outcome partial identification).** Candidate and fixed-allocation
    bounds use binary loan-wise extrema; paired-policy bounds assign each
    unresolved administrative outcome once over the funded union.
 <!-- claim:theory.binary_identification_width -->
@@ -732,7 +739,7 @@ coefficient).** For
    renormalizing away residual cash.
 ### Decision geometry
 
-5. **Feasible-difference score-order equivalence.** On a fixed nonempty convex
+6. **Proposition 2 (feasible-difference score-order equivalence).** On a fixed nonempty convex
    allocation set, two score vectors induce the same weak ordering of every
    feasible allocation if and only if their restrictions to the
    feasible-difference span are positive multiples. Equivalently,
@@ -748,12 +755,12 @@ coefficient).** For
    faces requires the corresponding relative-interior conditions. The
    full-budget additive-offset corollary does not transfer unchanged to a
    zero-score cash coordinate.
-6. **Comparator and ruler consequences.** Positive-affine scores admit
+7. **Corollary 2 (comparator and ruler consequences).** Positive-affine scores admit
    translated caps; normalized coordinates preserve positive-affine units;
    same-cap nesting and C2 funded-moment matching mechanically order only the
    plug-in objective. None of these facts orders status-indexed payoff,
    default, or miscoverage.
-7. **Conditional binary-set frontier collapse.** Under the exact-budget,
+8. **Remark (conditional binary-set frontier collapse).** Under the exact-budget,
    no-cash, partition, cap, exposure, rate, LGD, empty-set, feasibility, and
    singleton-zero-witness assumptions stated in the dual-coefficient section,
    every maximin optimizer is supported on singleton-zero sets and the optimal
@@ -761,7 +768,7 @@ coefficient).** For
    an algebraic property of the declared worst-label coefficients, not a joint
    coverage, probabilistic-robustness, funded-set-validity, uniqueness, or
    policy-selection result.
-8. **Conditional within-basis bound-endpoint sufficiency.** If the optimal
+9. **Supplemental Lemma 5 (conditional within-basis bound-endpoint sufficiency).** If the optimal
    allocation is unique and a fixed optimal basis remains valid on a cap range,
    allocations are affine in the cap and sharp lower/upper bounds are
    concave/convex, so that range's endpoints suffice for its adverse extrema.
@@ -784,7 +791,8 @@ than presented as additional numbered propositions in the body.
    `sup(F_target-F_cal)`. This is cellwise finite-archive identification, not a
    KS test, stochastic dominance, exchangeability, or a shift mechanism.
 - **Fixed-top-K JOMI reference-size law.** Let the `n` calibration and `m` test
-   selection scores be i.i.d. and continuous, let `1 <= K < m`, and apply a
+   selection scores be jointly exchangeable and almost surely tie-free, let
+   `1 <= K < m`, and apply a
    label-free fixed-top-K selector. Combining the universal reference-set
    identity in Proposition 6 of Jin and Ren with the analogous shared-threshold
    beta--binomial mechanism highlighted by Marques gives, for the
@@ -802,7 +810,8 @@ than presented as additional numbered propositions in the body.
    coverage, fractional-allocation validity, utility, or superiority. A finite
    cutoff need not yield a nonempty or otherwise informative set, and the
    beta--binomial law does not automatically extend to ties or sampling without
-   replacement.
+   replacement. I.i.d. continuous scores are a sufficient special case, not a
+   necessary premise.
 - The sealed synthetic protocol used `S` for this selection score. Current
   paper surfaces rename only that local symbol to `Z` to avoid collision with
   the prediction-set notation; the construction and formulas are unchanged.

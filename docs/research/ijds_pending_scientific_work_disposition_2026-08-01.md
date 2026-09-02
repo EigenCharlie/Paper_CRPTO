@@ -51,7 +51,7 @@ resolved rather than left as an undifferentiated menu:
 
 1. **Primary next contribution:** equal-notional fixed-$K$ JOMI on genuinely
    new, same-population contexts, with a frozen deterministic
-   permutation-equivariant selector and complete focal reference sets.
+   selection rule invariant to permutations of the calibration units and complete focal reference sets.
 2. **Required transport gate:** obtain an actual sampling/dependence authority
    for those new contexts; PSI, KS, residual gaps, rolling origins, and the new
    multi-source conformal paper are not substitutes.
@@ -668,7 +668,7 @@ loans while making count FCP and invested-dollar FCP identical?
 **Existing design.** Phase 1 of
 [`ijds_selected_exposure_validity_design_2026-07-30.md`](ijds_selected_exposure_validity_design_2026-07-30.md)
 freezes one learner, exact (K), equal exposure (B/K), a deterministic
-permutation-equivariant selector, disjoint policy-construction and final JOMI
+selection rule invariant to permutations of the calibration units, disjoint policy-construction and final JOMI
 calibration roles, complete administrative outcomes, and complete swap-specific reference
 sets.
 

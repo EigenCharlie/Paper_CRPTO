@@ -31,3 +31,30 @@ reconstructed or copied to replace either missing artifact.
 - Accepted: the closed calibrator-family scan has only logical target-outcome
   nonuse because its raw reader encounters chunks containing status values
   before retaining the locked 2011 IDs.
+
+### Phase 1 — theory
+
+- Accepted: the exact crossed-band identity is now Lemma 1 and is followed by
+  Corollary 1, which retains both the default-support term and the clean
+  sufficient target-support condition. The text explicitly denies necessity,
+  transport, individual calibration, and mechanism inferences.
+- Accepted with a governance-preserving implementation: the body now contains
+  only two propositions, four prediction lemmas, and two corollaries;
+  conditional basis-endpoint sufficiency is Supplemental Lemma 5. The
+  dual-coefficient result is a supplemental set-native-degeneracy Remark with
+  its assumptions and proof intact. Its existing ledger entry remains a
+  documented theorem because editorial display rank does not alter the exact
+  mathematical statement.
+- Accepted: the fixed-top-K reference-size proof now uses uniform combined
+  ranks under joint exchangeability and almost-sure absence of ties, with iid
+  continuous scores stated as a sufficient special case. The active ledger's
+  narrower iid-continuous scope remains valid and was not broadened without a
+  full evidence replay.
+- Corrected operationally: a proposed new standalone ceiling claim ID could
+  not be added without rebuilding the paper-facing manifest. The transactional
+  builder stopped before writing because the registered V5 binary-geometry
+  summary is not materialized locally; the DVC cache also lacks the registered
+  directory and the remote requires unavailable credentials. The corollary is
+  therefore governed under the existing active crossed-band claim rather than
+  leaving the ledger and manifest inconsistent. No manifest or descriptor was
+  edited manually.

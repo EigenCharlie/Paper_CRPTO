@@ -356,7 +356,8 @@ beta--binomial size corollary derived below is a narrower, role-reversed
 shared-threshold calculation; it is not stated by either proposition and is
 not a new beta--binomial law [@marques2025universal]. We do not retrofit JOMI
 because its coverage guarantee still requires focal calibration--target
-exchangeability and permutation-equivariant selection, which this audit does
+exchangeability and selection rules invariant to permutations of the calibration
+units, which this audit does
 not establish, and because our estimand is exposure-weighted set coverage over
 a fractional allocation rather than coverage conditional on one binary
 selection event. The 12,076 unresolved target outcomes do not obstruct
@@ -1199,7 +1200,7 @@ candidates is an outcome-free sufficient condition, not a necessary one.
 
 <!-- claim:theory.coverage_band_identity -->
 
-**Proposition 2 (exact coverage-band identity).** By @eq-binary-miss, stratum
+**Lemma 1 (exact coverage-band identity).** By @eq-binary-miss, stratum
 coverage at threshold $c$ is
 $(1-\pi_t)\Pr_t(p\le c\mid Y=0)+\pi_t\Pr_t(p\ge1-c\mid Y=1)$. Therefore, for
 any fixed target distribution and $0\le c_L<c_H\le1$,
@@ -1220,6 +1221,21 @@ change even when scores vary. For unresolved target outcomes, sharp bounds follo
 the minimum and maximum, over $y\in\{0,1\}$, of the difference between the two
 coverage indicators. Online Supplement B.5 proves both statements.
 
+**Corollary 1 (low-regime coverage ceiling).** In a stratum with $c<1/2$,
+coverage on one fixed target distribution satisfies
+
+$$
+\operatorname{Cov}_t
+\le 1-\pi_t+\pi_t\Pr_t(p\ge1-c\mid Y=1).
+$$ {#eq-low-regime-coverage-ceiling}
+
+If, in addition, every target score in the stratum is below $1-c$, then
+$\operatorname{Cov}_t\le1-\pi_t$: the stratum can cover at most the nondefault
+share. The target-support condition is sufficient, not necessary. The phase
+condition fixes $c<1/2$ from calibration data, while target support determines
+the remaining default-coverage term. This ceiling concerns one fixed target
+distribution; it is not a transport statement or a mechanism claim.
+
 The protocol-locked and hash-verified common-panel replay applies this identity to every adjacent
 pair: five learners by five fixed score strata by seven transitions, or 175
 contrasts, plus 35 learner-level aggregates. It recomputes all 200 calibration
@@ -1232,7 +1248,7 @@ extremized coverage intervals would answer a different, incoherent question.
 
 <!-- claim:theory.binary_set_embedding_nonidentification -->
 
-**Lemma 1 (binary-set coverage does not identify the continuous decision
+**Lemma 2 (binary-set coverage does not identify the continuous decision
 coefficient).** For any $0\le\ell_i\le u_i\le1$,
 
 $$
@@ -1297,14 +1313,14 @@ q_i^{(\theta)}-q_i^{(0)}
 $$ {#eq-active-embedding-score-change}
 
 Set preservation places no positive-affine restriction on this vector over
-feasible allocation differences. Proposition 5 states the exact
+feasible allocation differences. Proposition 2 states the exact
 decision-invariance condition.
 
 ### Binary completion bounds
 
 <!-- claim:theory.outcome_free_binary_set_bounds -->
 
-**Proposition 3 (sharp outcome-free bounds for a fixed allocation).** Fix
+**Lemma 3 (sharp outcome-free bounds for a fixed allocation).** Fix
 $a_i\ge0$ with total funded exposure $B_a=\sum_i a_i>0$. Over unrestricted
 loan-wise binary outcomes, exposure-weighted miscoverage satisfies the sharp
 bounds
@@ -1320,7 +1336,7 @@ made covered or missed independently, so both bound endpoints are attainable. A
 positive lower bound endpoint alone is not a miss: if $u_i=1$, label one is
 covered. Likewise, $\sum_i a_i1\{u_i=1\}/B_a$ measures total-capital exposure
 capable of covering a positive label, not conditional positive-class coverage.
-This proposition is fixed-allocation set algebra, not funded-set conformal
+This lemma is fixed-allocation set algebra, not funded-set conformal
 validity or an optimizer-direction result.
 
 <!-- claim:theory.sharp_common_outcome_bounds -->
@@ -1336,7 +1352,7 @@ be a finite or otherwise nonconvex subset of that hull, so interior values are
 not asserted attainable. Sharpness is cellwise unless joint attainability
 across cells is stated explicitly.
 
-**Proposition 4 (sharp common-outcome bounds and width).** Let $U$ index
+**Lemma 4 (sharp common-outcome bounds and width).** Let $U$ index
 unrestricted outcomes and write an additive fixed-allocation metric as
 $T(Y)=C+\sum_{i\in U}g_i(Y_i)$. Then
 
@@ -1400,7 +1416,7 @@ characterization of two linear functionals restricted to the span of feasible
 allocation differences; it invokes neither parametric-LP regularity nor
 optimizer uniqueness.
 
-**Proposition 5 (feasible-difference score-order equivalence).** Let
+**Proposition 2 (feasible-difference score-order equivalence).** Let
 $\mathcal A$ be the fixed nonempty convex allocation set before adding a score
 constraint and let
 $D=\operatorname{span}(\mathcal A-\mathcal A)$. Two score vectors $s$ and $t$
@@ -1443,7 +1459,7 @@ feasible allocation differences, not on loan ranks or set labels.
 Let $\mathcal F_s(\tau)$ denote the allocations satisfying @eq-lp when the
 risk score is $s$. All nonrisk constraints and the objective are held fixed.
 
-**Proposition 6 (what comparator matching preserves).** Suppose the budget
+**Corollary 2 (what comparator matching preserves).** Suppose the budget
 binds, $\sum_i a_i=B$.
 
 1. If $s_i=\kappa p_i+b$ with $\kappa>0$, then
@@ -1481,55 +1497,6 @@ $$ {#eq-c2-dominance}
 Parts 1 and 3 are exact invariances. Parts 2 and 4 mechanically order feasible
 plug-in objectives, not realized payoff, default, or miscoverage.
 
-### Set-native degeneracy
-
-<!-- claim:theory.dual_coefficient_binary_set_native_frontier_collapse -->
-
-**Proposition 7 (conditional binary-set frontier collapse).** Complete an
-empty prediction set to $\bar S_i=\{0,1\}$ as the declared fail-closed decision
-convention, and otherwise let $\bar S_i=S_i$. Define two set-native
-coefficients, writing LGD for loss given default,
-
-$$
-q_i=\max_{y\in\bar S_i}y,
-\qquad
-w_i=\min_{y\in\bar S_i}\{(1-y)r_i-y\,\mathrm{LGD}\}.
-$$ {#eq-dual-set-native-coefficients}
-
-If $r_i\ge0$ and $\mathrm{LGD}>0$, then
-$(q_i,w_i)=(0,r_i)$ exactly for $S_i=\{0\}$ and
-$(q_i,w_i)=(1,-\mathrm{LGD})$ otherwise. Consider allocations with nonnegative
-bounded loan exposures $0\le a_i\le\bar a_i$, exact budget
-$\sum_i a_i=B_0$, no cash, one exhaustive disjoint purpose group per loan, and
-upper purpose caps only. If a feasible full-budget
-allocation supported entirely on singleton-zero loans exists, then every
-optimizer of
-
-$$
-\max_a\sum_i a_iw_i
-\quad\text{subject to}\quad
-\sum_i a_iq_i\le \tau B_0,\qquad \tau\in[0,1],
-$$ {#eq-dual-set-native-program}
-
-uses only singleton-zero loans. Consequently the optimal value and full
-optimal face are identical for every $\tau\in[0,1]$.
-
-To see this, remove any positive exposure $\Delta$ outside the singleton-zero
-support. Existence of a feasible singleton-zero full-budget allocation, group
-disjointness, and upper-only caps imply at least $\Delta$ admissible unused capacity
-across singleton-zero groups. Reassigning the removed exposure restores the
-budget and improves the objective by at least $\Delta\,\mathrm{LGD}$, because every
-old dollar has coefficient $-\mathrm{LGD}$ and every replacement dollar has
-coefficient at least zero. Hence no optimizer can fund outside the
-singleton-zero class. Such allocations have constructed set risk zero and are
-therefore feasible at every cap. This substitution proof certifies a complete
-optimal face, not a unique allocation. It can fail with cash, a budget
-inequality, overlapping or lower group constraints, negative rates, zero LGD,
-a different empty-set convention, or insufficient singleton-zero capacity.
-Neither coefficient is a calibrated individual PD or expected payoff, and the
-result gives no joint-law, simultaneous-coverage, selected-set, causal, or
-prospective guarantee.
-
 ### Comparator-support boundary
 
 <!-- claim:theory.basis_endpoint_sufficiency -->
@@ -1547,23 +1514,13 @@ summarizes bound endpoints over a named finite comparator set. A sign survives o
 when the envelope lies strictly on one side of zero; this is deterministic
 design sensitivity, not universal quantification over baselines.
 
-**Proposition 8 (within-basis bound-endpoint sufficiency).** Suppose that on a cap
-range the optimal allocation is *unique*, so that $a(c)$ is single-valued. Within
-one fixed optimal basis it is then affine in $c$, and against a fixed full-upper-score allocation
-the observed-outcome contrast contributions are affine. For an unresolved binary
-outcome, the sharp lower contribution is the minimum of two affine functions and
-the sharp upper contribution is their maximum. The lower bound is concave and the
-upper bound convex on that range, so their adverse extrema occur at its cap-range
-endpoints. Consequently, an algorithm that certifies an exhaustive partition of a
-cap interval into all relevant ranges, *and* uniqueness on each, can recover the
-sharp interval-wide envelope from their cap-range endpoints, up to solver tolerance.
-
-Both hypotheses are stated because neither is established here. The registered
-support audit certifies objective-side facts: for a basic upper-only row with
-zero dual, a looser cap retains the incumbent optimum with the same dual
-certificate and the same objective value. The sharp payoff, default, and
-miscoverage contributions are functionals of the allocation, not of the objective,
-and under dual degeneracy the objective can be constant while the optimal set
+Supplemental Lemma 5 records a conditional endpoint-sufficiency fact: within
+one fixed basis, a unique optimizer varies affinely with the cap, so adverse
+sharp-bound extrema occur at that range's endpoints. Neither uniqueness nor an
+exhaustive partition of the continuous cap path is established here. The
+registered support audit instead certifies objective-side facts. Sharp payoff,
+default, and miscoverage are allocation functionals, and under dual degeneracy
+the objective can be constant while the optimal set
 moves. The audit records primal degeneracy and retains scale-aware warnings
 precisely so that no uniqueness claim is made. Basis ranging intervals are also
 not optimal-partition invariancy intervals under degeneracy, and are solver-path
@@ -2021,12 +1978,14 @@ $\theta$--$\gamma$ by metric partitions at monthly and pooled levels.
 
 ## Dual-coefficient binary-set-native frontier certificate
 
+<!-- claim:theory.dual_coefficient_binary_set_native_frontier_collapse -->
 <!-- claim:decision.dual_coefficient_binary_set_native_certificate_census -->
 
 The preceding challenger changes only the risk coefficient; its plug-in payoff
 therefore remains a separate source of ordering. The dual-coefficient audit
-instead applies @eq-dual-set-native-coefficients to both sides of the decision
-model and asks whether Proposition 7 can be certified on every inherited menu.
+instead applies the set-internal worst-label construction to both sides of the
+decision model and asks whether the Appendix D.2.2 degeneracy conditions can be
+certified on every inherited menu.
 It is outcome-free and does not reoptimize: it reconciles the predecessor's
 minimum-set-score solves and complete set taxonomies.
 
@@ -2087,7 +2046,7 @@ allocation contrast is identical across windows to cents: 44 loan-month position
 change and one-way turnover is USD 155,937.27. Its status-indexed payoff-proxy
 bound is [-USD 9,134.34, USD 5,603.66] and its default and miscoverage bounds are
 both [-0.0068, 0.1265] percentage points, so the repeated allocation is one
-unidentified contrast rather than eight independent confirmations. Proposition 4
+unidentified contrast rather than eight independent confirmations. Lemma 4
 reconciles the underlying window-specific bounds: in every window the unresolved exposure disagreement
 contributes exactly USD 14,738 of payoff-proxy width. At .50 every sharp window
 bound gives lower payoff and higher default and miscoverage; at .75 payoff and
@@ -2189,7 +2148,7 @@ Tables S9D--S9F report the complete censuses.
 <!-- claim:comparator.registered_cap_values_all_include_zero -->
 <!-- claim:optimization.finite_rhs_coverage_without_uniqueness -->
 
-The supporting C2 exercise reconciles Proposition 6, part 4, in all 1,080 cells,
+The supporting C2 exercise reconciles Corollary 2, part 4, in all 1,080 cells,
 yet named C0/C1/C2 directions still disagree. The registered point-cap audit
 evaluates 3,067 distinct cap values. In each of the 216
 window--policy--metric cells, the path-end contrast envelope over the evaluated values
@@ -2219,7 +2178,7 @@ The full-upper-score construction changes a score, feasible region, and allocati
 threshold cannot separate them. Objective matching fixes model-implied opportunity
 cost, whereas normalization fixes a scale-invariant relative score relaxation.
 Neither ruler is neutral. Selecting a ruler or coordinate by its realized sign
-would recreate the identification problem. Proposition 6 proves mechanical
+would recreate the identification problem. Corollary 2 proves mechanical
 same-threshold nesting, C0 reconciles it numerically, C2 removes one funded
 point-score moment, and the registered-cap audit
 shows that neither is a unique counterfactual. None of the 216 path-end contrast

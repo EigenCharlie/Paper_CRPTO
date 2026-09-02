@@ -204,7 +204,7 @@ def test_policy_post_processing_neighbor_keeps_quantitative_conditions() -> None
         assert r"F_{\widehat\Delta}" in surface
 
 
-def test_theory_has_two_suites_and_sequential_propositions() -> None:
+def test_theory_has_two_suites_and_compact_statement_hierarchy() -> None:
     body = BODY.read_text(encoding="utf-8")
     method = _section(body, "# Method", "# Audit Theory and Estimands")
     theory = _section(body, "# Audit Theory and Estimands", "# Results")
@@ -216,7 +216,20 @@ def test_theory_has_two_suites_and_sequential_propositions() -> None:
     proposition_numbers = [
         int(value) for value in re.findall(r"^\*\*Proposition (\d+)", theory, flags=re.MULTILINE)
     ]
-    assert proposition_numbers == list(range(1, 9))
+    lemma_numbers = [
+        int(value) for value in re.findall(r"^\*\*Lemma (\d+)", theory, flags=re.MULTILINE)
+    ]
+    corollary_numbers = [
+        int(value) for value in re.findall(r"^\*\*Corollary (\d+)", theory, flags=re.MULTILINE)
+    ]
+    assert proposition_numbers == [1, 2]
+    assert lemma_numbers == [1, 2, 3, 4]
+    assert corollary_numbers == [1, 2]
+    assert "**Proposition 7" not in theory
+
+    supplement = SUPPLEMENT.read_text(encoding="utf-8")
+    assert "**Remark (set-native degeneracy).**" in supplement
+    assert "**Lemma 5 (conditional within-basis bound-endpoint sufficiency).**" in supplement
 
     joint_block = "## Joint-block combined-rank reference diagnostic"
     assert method.count(joint_block) == 1
