@@ -678,6 +678,25 @@ S6J--S6P, and S9G--S9L. S6C, S6E, S6M, and the stratum rows of S6O are
 machine-readable-first layouts because their 192--200-row grids are unsuitable
 for complete display in a reviewer PDF.
 
+Historical display-label crosswalk (PDF -> canonical CSV stem):
+S2 -> table6_credit_controls + tableS2_credit_prediction_metrics
+S6 -> table1_coverage_windows + tableS6A_conformal_set_diagnostics
+S7 Panels A--B -> table2_phase_transition
+S7B -> tableS5_label_lag_sensitivity
+S7C -> tableS9_missingness_encoding_sensitivity
+S7F -> tableS11_fit_label_completion
+S9 -> table5_two_ruler_tracks
+S9B--S9C -> tableS6_endpoint_availability_sensitivity
+S9D--S9E -> tableS7_portfolio_structure_sensitivity
+S9F -> tableS12_allocation_granularity
+S10 -> tableS1_named_comparators
+S11 -> table4_direction_summary
+
+Those aggregate presentation files are not duplicated in this reviewer
+archive. Archive entries use their PDF suffix directly; for example,
+Table_S6B_exchangeability_cells.csv is the complete machine-readable companion
+to the PDF's Table S6B summary view.
+
 The joint-block columns preserve the executed calculation while using active
 reporting names. A threshold flag is a retrospective nominal reporting flag,
 not post-selection FWER control, proof of conformal-theorem failure, or proof

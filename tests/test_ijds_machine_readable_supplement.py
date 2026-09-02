@@ -220,6 +220,33 @@ def test_machine_readable_supplement_is_current_and_anonymous() -> None:
     assert s6b_header == S6B_PUBLICATION_COLUMNS
 
 
+def test_display_labels_are_crosswalked_to_historical_csv_stems() -> None:
+    expected = {
+        "S2": ("table6_credit_controls", "tableS2_credit_prediction_metrics"),
+        "S6": ("table1_coverage_windows", "tableS6A_conformal_set_diagnostics"),
+        "S7 Panels A--B": ("table2_phase_transition",),
+        "S7B": ("tableS5_label_lag_sensitivity",),
+        "S7C": ("tableS9_missingness_encoding_sensitivity",),
+        "S7F": ("tableS11_fit_label_completion",),
+        "S9": ("table5_two_ruler_tracks",),
+        "S9B--S9C": ("tableS6_endpoint_availability_sensitivity",),
+        "S9D--S9E": ("tableS7_portfolio_structure_sensitivity",),
+        "S9F": ("tableS12_allocation_granularity",),
+        "S10": ("tableS1_named_comparators",),
+        "S11": ("table4_direction_summary",),
+    }
+    with zipfile.ZipFile(OUTPUT) as archive:
+        archive_readme = archive.read("README.txt").decode("utf-8")
+    submission_readme = Path("paper/submission/README.md").read_text(encoding="utf-8")
+
+    for label, stems in expected.items():
+        assert label in archive_readme
+        assert label in submission_readme
+        for stem in stems:
+            assert stem in archive_readme
+            assert stem in submission_readme
+
+
 def test_common_panel_tables_have_complete_fixed_adjacent_grids() -> None:
     with zipfile.ZipFile(OUTPUT) as archive:
         strata = list(

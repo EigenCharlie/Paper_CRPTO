@@ -144,3 +144,22 @@ reconstructed or copied to replace either missing artifact.
   currentness check pass, Git whitespace validation passes, and the complete
   targeted claim-sync, bibliography, corpus-manifest, publication-integrity,
   supplement-table, and PDF-inspection suite passes without relaxing a test.
+
+### Phase 5 — figures, tables, and reviewer crosswalk
+
+- Blocked by the Phase 2 stop rule: both proposed figure replacements are
+  functions of the hash-bound evidence builder and would change registered
+  figure artifacts. The same unavailable V5 parent prevents a transactional
+  manifest rebuild. The class-decomposition columns proposed for the credit
+  control table depend on the likewise blocked Phase 2 derivation. No figure,
+  caption, table value, builder hash, or manifest descriptor was changed
+  outside that causal build.
+- Accepted independently: the submission README now maps every collision-prone
+  supplement display label to its historical canonical CSV stem. The
+  deterministic archive README carries the same mapping and distinguishes
+  aggregate PDF presentation sources from the nineteen detailed CSVs actually
+  included in the reviewer archive. Existing stems were not renamed.
+- Gates: the machine-readable supplement rebuild and currentness check pass;
+  its exact metadata, census, anonymity, cross-table, crosswalk, publication
+  integrity, PDF inspection, preview-layout, and claim-sync tests pass. Git
+  whitespace validation also passes.

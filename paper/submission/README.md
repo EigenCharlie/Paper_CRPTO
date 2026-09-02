@@ -52,6 +52,30 @@ closed-family shortfall is not established. The result selects no calibrator,
 does not transfer the Venn multiprobability guarantee to the scalar, and
 contains no alternative-map portfolio optimization.
 
+## Supplement table-to-CSV crosswalk
+
+Several canonical CSV stems predate the current supplement numbering. Treat
+the display label, not the numeral embedded in a filename, as authoritative:
+
+| Supplement display label | Canonical paper-facing CSV |
+|---|---|
+| S2 | `crpto_ijds_v4_table6_credit_controls.csv` and `crpto_ijds_v4_tableS2_credit_prediction_metrics.csv` |
+| S6 | `crpto_ijds_v4_table1_coverage_windows.csv` and detailed `crpto_ijds_v4_tableS6A_conformal_set_diagnostics.csv` |
+| S7 Panels A--B | `crpto_ijds_v4_table2_phase_transition.csv` |
+| S7B | `crpto_ijds_v4_tableS5_label_lag_sensitivity.csv` |
+| S7C | `crpto_ijds_v4_tableS9_missingness_encoding_sensitivity.csv` |
+| S7F | `crpto_ijds_v4_tableS11_fit_label_completion.csv` |
+| S9 | `crpto_ijds_v4_table5_two_ruler_tracks.csv` |
+| S9B--S9C | `crpto_ijds_v4_tableS6_endpoint_availability_sensitivity.csv` |
+| S9D--S9E | `crpto_ijds_v4_tableS7_portfolio_structure_sensitivity.csv` |
+| S9F | `crpto_ijds_v4_tableS12_allocation_granularity.csv` |
+| S10 | `crpto_ijds_v4_tableS1_named_comparators.csv` |
+| S11 | `crpto_ijds_v4_table4_direction_summary.csv` |
+
+Suffix-matched files such as S2C, S6A--S6P, S7D, and S9G--S9O retain their
+display labels. Renaming historical CSVs is deferred to an explicit submission
+freeze because the current names are bound by the active manifest.
+
 ## IJDS Requirements
 
 - IJDS-template PDF;
