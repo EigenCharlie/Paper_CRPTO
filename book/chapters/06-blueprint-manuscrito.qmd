@@ -95,7 +95,7 @@ escritura, no hipótesis independientes ni nombres de comparadores.
 | I5 | El endpoint reconstruido cambia la interpretación de direcciones previamente aparentes. | 376,890 candidatos; 364,814 resueltos y 12,076 no resueltos. | El archivo no es un snapshot administrativo verificado. |
 | I6 | Los bounds sharp y el exact support cuantifican identificación parcial sobre outcomes y caps declarados. | 216 broad-support envelopes cruzan cero; terminal default cruza cero en 72/72 celdas de development support. | No son intervalos de confianza ni una frontera continua universal. |
 | I7 | La ausencia de dirección universal sobrevive una sensibilidad estructural completa. | 36/36 escenarios; mínimo 17 celdas de default y 21 de miscoverage adversas por escenario; 0 escenarios uniformemente favorables o adversos. | No identifica un escenario ganador ni prueba daño universal. |
-| I8 | La evidencia es reproducible y outcome-isolated. | Registry hash-locked, freezes/evaluations DVC, manifest paper-facing y tests de publicación. | Reproducibilidad no convierte el estudio en prospectivo. |
+| I8 | La evidencia es reproducible; el linaje primario aísla físicamente el target outcome y cada sensibilidad aplica su contrato registrado de freeze físico, no-uso lógico o evaluación. | Registry hash-locked, freezes/evaluations DVC, manifest paper-facing y tests de publicación. | Un freeze retrospectivo no es un holdout prospectivo; el no-uso lógico no es un lockbox físico. |
 
 : Claims editoriales del manuscrito activo.
 :::
@@ -113,7 +113,7 @@ censo correlacionado de la grid, no 1,200 pruebas independientes.
 |---|---|---|
 | 1. Introduction | ¿Qué se rompe al inferir una policy a partir de cobertura candidata? | Gap, contribuciones I1--I8, subclaims I2a/I4a--I4c y límites. |
 | 2. Related Work | ¿Qué aportan y qué no transfieren los vecinos más cercanos? | Decision quality, CP bajo shift, conformal RO, crédito y madurez. |
-| 3. Data and Locked Evaluation Design | ¿Cuál era la información físicamente disponible? | Universo status-independent, roles temporales, outcome isolation y endpoint. |
+| 3. Data and Locked Evaluation Design | ¿Cuál era la información disponible en cada etapa? | Universo status-independent, roles temporales, aislamiento físico del linaje primario, contratos retrospectivos por linaje y endpoint. |
 | 4. Method | ¿Cómo se construyen scores, intervalos, payoff y LP? | CatBoost primario y cuatro controles, cada uno Platt-scaled; familia separada de cuatro mapas; embeddings y contraparte set-native. |
 | 5. Audit Theory and Estimands | ¿Qué puede ordenarse sin observar outcomes? | Fibre compatible, equivalencia sobre feasible differences, nesting, C2, geometría binaria y bounds sharp. |
 | 6. Results | ¿Transporta cobertura y es invariante la dirección downstream? | 40 celdas learner, 32 calibrator, V1d, GO1, GO2, W7--W8, two-ruler, estructura y exact support. |

@@ -40,8 +40,11 @@ information-value (WOE/IV) scorecards broaden
 model-class coverage checks; only the primary CatBoost enters optimization. The
 coverage record has three deliberately separate layers: sharp finite-archive
 identification bounds, a retrospective joint-block combined-rank reference
-diagnostic, and outcome-isolated sensitivities for timing and calibration
-taxonomy. The missingness-encoding, individual-age second-origin,
+diagnostic, and sensitivities for timing and calibration taxonomy with
+lineage-specific physical freezes or logical target-outcome-nonuse contracts.
+The primary allocation lineage separately enforces physical target-outcome
+isolation. The
+missingness-encoding, individual-age second-origin,
 label-Mondrian, and closed four-map CatBoost calibrator families are prespecified
 sensitivities rather than selection grids. The calibrator family uses one
 common uncalibrated-probability ($q_{\mathrm{raw}}$) taxonomy, reports every
@@ -3017,14 +3020,27 @@ contrasts, and 648 comparator envelopes. Separate complete families cover five
 credit learners, outcome-availability lag, portfolio structure, missingness encoding, and
 a second temporal origin. The evidence builder checks hashes, contracts, and
 cardinalities before producing 45 tables, five figure families in PNG and PDF,
-and one paper-facing manifest. Additional outcome-isolated families cover joint
+and one paper-facing manifest. Additional retrospective families cover joint
 fit-label completion, deterministic allocation granularity, marginal score and
 residual-distribution diagnostics, complete-catalog transport, and funded
 estimand dependence, plus the set-preserving continuous-embedding and closed
 CatBoost calibrator-family sensitivities, the complete-hull score certificate,
 the set-native worst-label counterpart with declared empty-set fail-closure, the
 complete binary-phase calibration census, and the dual-coefficient structural
-certificate census.
+certificate census. Their information boundaries are not interchangeable:
+
+| Lineage family | Enforced boundary | Interpretation limit |
+|---|---|---|
+| Primary V4 allocation, two-ruler, and credit-control lineages | Outcome-free artifacts are written and hash-verified before a separate keyed primary-OOT endpoint join | A physical phase boundary, but not a pristine prospective holdout |
+| Label-Mondrian sensitivity | F1 cannot load the raw archive or evaluation endpoint; E1 accepts only the hash-bound F1 freeze | A physical two-stage boundary; within-class target exchangeability remains unestablished |
+| Fit-label completion and set-native worst-label sensitivities | Scores, recipes, or allocations are frozen before their separate evaluators reconstruct the endpoint panel | A physical evaluation boundary inside retrospective, previously inspected designs |
+| Closed calibrator family | The raw scan reads chunks that contain status values before retaining only the locked 2011 fit IDs | Logical target-outcome nonuse, explicitly not a physical lockbox |
+| Marginal, residual, catalog, funded-estimand, hull, phase-census, and dual-certificate diagnostics | Registered frozen objects or allowlisted outcome-free inputs are reconciled before the declared diagnostic; outcome-reading families use outcomes only for their stated evaluation estimand | Evaluation or reconciliation boundaries, not new untouched holdouts |
+
+**Table S10A.** Lineage-specific information-boundary contracts. “Physical”
+describes artifact/process separation, not preregistration or prospective
+validity; “logical” describes enforced column nonuse in a run that can read a
+previously inspected archive.
 
 ## F.2 Replay contract
 
@@ -3315,7 +3331,7 @@ credit scoring, conformal prediction, or linear programming separately.
 | Feedback covariate shift [@fannjiang2022feedback; @stanton2023feedback; @prinster2024feedback] | Treats settings in which a deployed algorithm or adaptive query changes the covariate law, using the induced query distribution or corresponding weights under each method's contract | CRPTO records neither action propensities nor an evaluable policy-induced target law; optimized loan exposures are not conformal sampling weights and do not create an off-policy guarantee |
 | Multi-distribution robust conformal prediction [@yang2026multidistribution] | Gives finite-sample uniform coverage over a declared collection of labeled source distributions and their mixtures | CRPTO has not identified or sampled a theorem-compatible source family; calendar windows, PSI, and residual gaps do not instantiate one |
 | Credit scoring and cost-aware calibration [@lessmann2015; @yang2025costaware; @das2023creditgraph] | Probability quality and richer predictive structure | Treats a Platt-scaled default score as an input; no AUC-leadership claim |
-| Peer-to-peer (P2P) and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, outcome isolation, and comparator identification |
+| Peer-to-peer (P2P) and robust credit portfolios [@serrano2016profitscoring; @chi2019p2p; @babaei2020p2p] | Economic loan selection under risk and uncertainty | Adds binary-set geometry, lineage-specific physical or logical target-outcome boundaries, and comparator identification |
 | Classwise and nonexchangeable conformal prediction [@ding2023; @oliveira2024split; @gibbs2024online] | Label-category calibration and guarantees under explicit discrepancy, dependence, concentration, or feedback designs | Audits a retrospective label-Mondrian sensitivity but establishes neither within-class temporal exchangeability nor an online-feedback guarantee |
 | Joint-batch and dependent-sequence conformal prediction [@gazin2025batch; @barber2026timeseries] | Joint label-vector sets under iid sampling and, for the paper's symmetric combining rules, class-conditional sampling; plus sharp coverage-loss bounds for stationary beta-mixing sequences | The combined-rank statistic is a diagnostic rather than a joint batch prediction set; issue-month menus do not identify a stationary sequence or mixing coefficient |
 | Censoring-aware, drift-aware, and competing-risk prediction [@candes2023survival; @gui2024adaptive; @li2023online_loans; @peng2026drift_survival] | Lower prediction bounds for time-to-event outcomes under explicit censoring contracts, event-specific default/prepayment modeling, and dynamic landmark survival models under simulated drift | Uses a partially identified terminal binary label; it has neither exact event/censoring times nor a competing-risk estimand, overlap audit, conformal transport bound, or funded-set guarantee |
