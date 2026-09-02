@@ -163,3 +163,32 @@ reconstructed or copied to replace either missing artifact.
   its exact metadata, census, anonymity, cross-table, crosswalk, publication
   integrity, PDF inspection, preview-layout, and claim-sync tests pass. Git
   whitespace validation also passes.
+
+### Phase 6 — experimental dispositions
+
+- E-13 stopped at source sufficiency. The registered calibrator-family pickle
+  and aggregate outcome-free geometry parquet are present and match their
+  registered SHA-256 values. With the decision threshold fixed at 0.001 before
+  deserialization, the trusted pickle passes the existing calibrator-state
+  audit and reproduces its already registered beta-map parameters. The second
+  object contains 960 aggregate geometry rows, not the 640,543 ordered
+  candidate score vectors. That full registered V4 score frame is absent with
+  its DVC parent. Candidate-wise maximum Platt--beta difference, changed
+  stratum counts, and changed-set counts therefore remain uncomputed. No
+  near-identity sentence, receipt field, manifest field, or paper number was
+  added.
+- E-2 was already implemented more completely by the active two-stage
+  Label-Mondrian lineage. Its outcome-free freeze and endpoint evaluation have
+  distinct protocol commits and tags that predate their runs. Baseline columns
+  in Tables S6D--S6F retain the original score-Mondrian sets and report 40
+  aggregate rows with both class-ratio bounds and common-completion gaps, 200
+  stratum gap rows, and 400 stratum-by-class ratio rows. All declared baseline
+  fields are populated; the two resolved-class columns reconcile exactly to
+  S6A. The sealed protocol already requires complete reporting and limits the
+  interpretation to finite identification rather than label-conditional
+  validity. A duplicate protocol, run identity, tag, and evidence source were
+  therefore rejected.
+- Gates: the label-Mondrian and calibrator implementation tests plus active
+  claim synchronization pass. The DVC-dependent calibrator-evidence loader
+  fails closed at setup on the same missing registered V5 summary; this
+  correctly prevents E-13 promotion and was neither skipped nor reclassified.
