@@ -59,6 +59,25 @@ reconstructed or copied to replace either missing artifact.
   leaving the ledger and manifest inconsistent. No manifest or descriptor was
   edited manually.
 
+### Phase 2 — claims and derived numbers (F-19 fail-closure)
+
+- The phase stop rule fired before any scientific-code or evidence edit. The
+  registered parent
+  `models/experiments/ijds_audit/ijds-binary-geometry-frontier-v4-2026-07-15-v5/`
+  is absent, and its DVC pointer binds the three-file directory to MD5
+  `3e4af46a58d37e9687bee904b4f4ead7.dir` (82,440 bytes).
+- The earlier transactional `--stage-only` builder attempt failed before
+  writing because `binary_geometry_frontier_v4_summary.json` was unavailable.
+  The local DVC cache has no V5 directory object; the configured remote could
+  not be pulled without credentials. A fresh read-only `uv run dvc status`
+  reconfirmed that both registered V5 copies are `not in cache`.
+- Disposition: F-19 is recorded as an unavailable registered-parent blocker.
+  No derived class column, prevalence contrast, new numeric claim, table, JSON,
+  or paper sentence was reconstructed from a downstream surface. The builder,
+  active ledger, claim registry, and paper-facing manifest remain unchanged.
+  `publication-integrity` and byte-identical staging are inapplicable until the
+  exact registered object is materialized; no test or gate was relaxed.
+
 ### Phase 4 — literature intake
 
 - Accepted after primary-source verification: Podkopaev--Ramdas is UAI 2021,
